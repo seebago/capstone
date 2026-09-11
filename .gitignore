@@ -1,0 +1,46 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
+dist/
+build/
+coverage/
+*.log
+npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Entorno — nunca versionar secretos ni API keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Vercel
+.vercel/
+
+# Temporales de Office
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# Empaquetados temporales
+*.bundle
+
+# Salidas temporales del asistente
+Claude outputs/
