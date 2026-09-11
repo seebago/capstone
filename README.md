@@ -30,6 +30,7 @@ La información con Alloxentric se canaliza por el líder de equipo.
 | `BITACORA_PROGRESO.md` | Estado, avances, bloqueos y aportes de IA. |
 | `BITACORA_ARQUITECTURA.md` | Decisiones técnicas, su estado y contradicciones abiertas. |
 | `BITACORA_STAKEHOLDERS.md` | Preguntas abiertas con Alloxentric y la docente. |
+| `PLAN_RESGUARDO_DATOS.md` | Plan de protección de datos y compuerta previa a usar datos reales. |
 | `COMPARACION_ARQUITECTURAS_WELLQ.md` | Arquitectura propuesta v0.1. No ratificada. |
 | `BANCO_PREGUNTAS_TOMA_REQUERIMIENTOS.md` | 320 preguntas de levantamiento. |
 | `EVA1_CAPSTONE_Instrucciones.md` | Resumen de la evaluación de Fase 1. |
@@ -68,4 +69,6 @@ actual, y confirmar que no se pisa trabajo de otro integrante.
 No se versionan secretos, API keys, archivos `.env` reales ni datos de
 pacientes. En el repositorio solo va `.env.example` sin valores.
 Desarrollo y demostraciones usan datos sintéticos hasta que Alloxentric
-autorice lo contrario por escrito.
+autorice lo contrario por escrito. El detalle está en
+`PLAN_RESGUARDO_DATOS.md`: WellQ trata datos de salud del Reino Unido, que
+bajo UK GDPR son special category data.
