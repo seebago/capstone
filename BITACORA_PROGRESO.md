@@ -1,6 +1,6 @@
 # Bitácora de progreso — WellQ
 
-Última actualización: 10 de septiembre de 2026.
+Última actualización: 11 de septiembre de 2026.
 Estado verificado contra `origin/main` en el commit `4a367cd`.
 
 Esta bitácora registra estado real y verificable. Si algo no está en el
@@ -110,7 +110,8 @@ integrante humano. El protocolo completo está en `AGENTS.md`.
 | 2026-09-05 | Claude (vía Vicente) | Auditoría inicial del repositorio | Esta bitácora | Vicente | Validado |
 | 2026-09-07 | Claude (vía Vicente) | Guion de la reunión de requerimientos | — | Vicente | Validado |
 | 2026-09-07 al 09 | Sin declarar (vía Sebastián) | Documento maestro, especificaciones de endpoints y estándares | commits cf60388 a 4b56276 | Pendiente | Por revisar |
-| 2026-09-10 | Claude (vía Vicente) | Evidencias 1.1 y 1.2 de Vicente, AGENTS.md y bitácoras | Este commit | Vicente | En revisión |
+| 2026-09-10 | Claude (vía Vicente) | Evidencias 1.1 y 1.2 de Vicente, AGENTS.md y bitácoras | commit 92ca76c | Vicente | Validado |
+| 2026-09-11 | Claude (vía Vicente) | Evidencia 1.3 y registro de las respuestas de Karina | commits 2c64da7 y siguiente | Vicente | En revisión |
 
 ## Oportunidades de mejora detectadas
 
