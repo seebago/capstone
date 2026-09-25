@@ -1,7 +1,9 @@
 # Bitácora de progreso — WellQ
 
-Última actualización: 11 de septiembre de 2026.
-Estado verificado contra `origin/main` en el commit `4a367cd`.
+Última actualización: 25 de septiembre de 2026.
+Estado verificado contra `origin` en el commit `3056608` (rama
+`docs/bitacoras-y-evidencias-vicente`) y `origin/develop`
+(`fb4db39`, sin contenido relevante).
 
 Esta bitácora registra estado real y verificable. Si algo no está en el
 repositorio, aquí figura como pendiente, no como hecho.
@@ -61,6 +63,32 @@ evidencias académicas de Fase 1.
   lo que implica tratarla como entregable grupal. DOC-001 sigue sin
   respuesta formal.
 
+## Novedades del 21 al 25 de septiembre
+
+- Equipo incorporado a CoreStream (código DEM_57, Vicente como
+  TEAM_LEADER). Karina comunicó las fechas de los 3 hitos de Alloxentric
+  (ver `BITACORA_STAKEHOLDERS.md`, sección CoreStream). HITO 1 vence el
+  3 de octubre y pide "MVP con base de datos operativa".
+- Karina mostró en CoreStream una priorización de 7 componentes
+  ("DE-FG-ABC") para el módulo de exámenes médicos.
+- Vicente solicitó a Max el modelo de datos de WellQ para alinear
+  variables. Max lo compartió (`WellQ_Modelo_de_Datos.docx`).
+- Se verificó `git fetch --all`: no hay commits de implementación de
+  ningún integrante. Apareció `origin/develop` con dos commits
+  triviales de `.gitignore`, sin código.
+- Se leyeron íntegros los 6 documentos aportados (el modelo de datos de
+  Max y los 4 documentos técnicos ya presentes en el repositorio desde
+  el 7-09). Un sexto documento subido a la conversación
+  (`DART_14_1.1...docx`) resultó pertenecer a otro equipo/proyecto de
+  Alloxentric — registrado como ST-019, no se usó en el análisis.
+- Esta lectura resuelve, en la práctica, ST-011 (Max no prepara un
+  ejemplo: WellQ ya es un producto en producción del que este proyecto
+  es un módulo) y mueve AD-01 hacia FastAPI+MongoDB+Flutter/Drift,
+  pendiente de ratificación (ver `BITACORA_ARQUITECTURA.md`, ADR-006).
+- Se creó `PLAN_FASES_COMPONENTES.md`: plan de fases de los componentes
+  A–G acotado a los hitos de Duoc/Utem, con la Fase 1 (HITO 1)
+  enfocada en el componente C (esquema) y un subconjunto mínimo de A.
+
 ## Pendiente
 
 - **Vicente no figura en los antecedentes personales de la guía 1.5.**
@@ -112,6 +140,7 @@ integrante humano. El protocolo completo está en `AGENTS.md`.
 | 2026-09-07 al 09 | Sin declarar (vía Sebastián) | Documento maestro, especificaciones de endpoints y estándares | commits cf60388 a 4b56276 | Pendiente | Por revisar |
 | 2026-09-10 | Claude (vía Vicente) | Evidencias 1.1 y 1.2 de Vicente, AGENTS.md y bitácoras | commit 92ca76c | Vicente | Validado |
 | 2026-09-11 | Claude (vía Vicente) | Evidencia 1.3 y registro de las respuestas de Karina | commits 2c64da7 y siguiente | Vicente | En revisión |
+| 2026-09-25 | Claude (vía Vicente) | Análisis de los 6 documentos subidos, verificación de git, `PLAN_FASES_COMPONENTES.md`, actualización de AD-01/ST-011 y registro de ST-016 a ST-019 | Este commit | Vicente | Pendiente |
 
 ## Oportunidades de mejora detectadas
 
@@ -144,9 +173,15 @@ en el registro de aportes antes de integrarse.
 
 ## Próximos pasos
 
-1. Corregir los antecedentes personales de la guía 1.5 (falta Vicente).
-2. Resolver la contradicción de stack entre la arquitectura v0.1 y el
-   plan de trabajo de la 1.5 (AD-01).
-3. Confirmar con Max el alcance de su backend y frontend (ST-011).
-4. Completar la evidencia 1.3 una vez cerrada la guía 1.5.
-5. Recién después: flujo vertical mínimo con datos sintéticos.
+1. Ratificar con Karina (y, si es posible, Max) el motor de base de
+   datos para el componente C: MongoDB vs. PostgreSQL+RLS (ADR-006,
+   ST-016) — bloquea empezar a programar.
+2. Aclarar con Karina el significado de «DE-FG-ABC» (ST-017) y el
+   alcance exacto esperado para HITO 1 (ST-018).
+3. Confirmar si `DART_14_1.1...docx` fue un error de navegación en
+   CoreStream (ST-019).
+4. Implementar la Fase 1 de `PLAN_FASES_COMPONENTES.md`: esquema JSON
+   canónico (componente C) + 2-3 endpoints mínimos (componente A) con
+   datos sintéticos, antes del 3 de octubre.
+5. Registrar en CoreStream (equipo DEM_57) el avance a medida que se
+   complete, no solo en este repositorio.

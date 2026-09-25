@@ -1,6 +1,6 @@
 # Bitácora de stakeholders — WellQ
 
-Última actualización: 10 de septiembre de 2026.
+Última actualización: 25 de septiembre de 2026.
 
 Registra decisiones que **no** puede tomar el equipo. Una ausencia de
 respuesta no equivale a aprobación. No se inventa una respuesta para
@@ -18,6 +18,25 @@ Estados: `abierto` · `preguntado` · `parcial` · `respondido` · `validado`.
 La información con Alloxentric se canaliza por el líder de equipo,
 Vicente López.
 
+## CoreStream (plataforma de gestión de Alloxentric)
+
+El equipo fue incorporado a CoreStream (corestream.alloxentric.com),
+donde Alloxentric gestiona los ~40 equipos/proyectos Capstone en curso.
+Código de equipo/proyecto: **DEM_57**. Rol de Vicente: **TEAM_LEADER**.
+
+Fechas hito comunicadas por Karina (correo "Fechas Hito Alloxentric",
+21-09-2026):
+
+| Hito | Fecha | Entregable |
+|---|---|---|
+| HITO 1 | 28 sep – 3 oct 2026 | MVP con base de datos operativa |
+| HITO 2 | 26 – 31 oct 2026 | Todo el proyecto en Docker |
+| HITO 3 (Duoc) | 16 – 28 nov 2026 | Proyecto entregado y documentado |
+| HITO 3 (Utem) | 30 nov – 4 dic 2026 | Proyecto entregado y documentado |
+
+Ver el plan de fases y componentes acotado a estos hitos en
+`PLAN_FASES_COMPONENTES.md`.
+
 ## Respondido
 
 | ID | Asunto | Respuesta | Quién | Fecha | Qué falta |
@@ -25,12 +44,12 @@ Vicente López.
 | ST-013 | Líder de equipo | Vicente López | Karina | 2026-09-07 | — |
 | ST-014 | Infraestructura de IA | API key gratuita de NVIDIA; Alloxentric usa DeepSeek | Karina | 2026-09-07 | Nada en lo técnico |
 | ST-015 | Plataforma de despliegue | Vercel, recomendado | Karina | 2026-09-07 | Si la cuenta la provee Alloxentric o va en plan gratuito |
+| ST-011 | Alcance del backend/frontend de Max | Karina confirmó en reunión (CoreStream) que el proyecto es un módulo del WellQ existente, no un entorno de ejemplo aparte. Max compartió el modelo de datos real y el Documento Maestro/especificaciones ya en el repo describen el stack vigente (FastAPI, MongoDB, GCS, Flutter/Drift). | Karina / Max | 2026-09-25 | Ratificación formal del stack (ADR-006) y si el equipo tendrá acceso de lectura al backend real o trabajará contra un esquema espejo |
 
 ## Pendientes con Alloxentric
 
 | ID | Asunto | Por qué bloquea | Estado |
 |---|---|---|---|
-| ST-011 | Alcance del backend y frontend que prepara Max: ¿ejemplo, base del proyecto o entorno completo? ¿Cuándo lo entrega? | Define si el equipo escribe código propio y con qué stack | **Abierto — prioritario** |
 | ST-004 | Qué hará exactamente la IA en WellQ | La guía 1.5 ya sitúa la extracción con LLM en el objetivo general (A-15) | **Abierto — prioritario** |
 | ST-002 | Quién paga la infraestructura, y dónde vive la base de datos si el despliegue es en Vercel | Cierra la decisión sobre Supabase | Parcial |
 | ST-012 | Residencia de datos: Vercel y NVIDIA procesan fuera de Chile | Con datos sintéticos no hay problema; con datos reales abre la cadena UK/Chile | Abierto |
@@ -42,6 +61,10 @@ Vicente López.
 | ST-008 | Entidades legales y países de operación | Transferencias UK↔Chile y base jurídica | Abierto |
 | ST-009 | Anonimización de datos médicos | Diseño de las tablas de identidad | Abierto |
 | ST-010 | Quién aprueba requerimientos y mantiene el sistema tras el Capstone | Gobierno del proyecto | Abierto |
+| ST-016 | Motor de base de datos definitivo: MongoDB (alineado a WellQ real, según docs de Max) o PostgreSQL+RLS (alineado al brief del Capstone) — ADR-006 | Bloquea programar el componente C (esquema) para HITO 1 | **Abierto — prioritario** |
+| ST-017 | Qué significa exactamente el orden «DE-FG-ABC» mostrado en CoreStream: ¿orden de construcción, orden de reporte de avance en CoreStream, o agrupación en sprints? | El orden técnico defendible (A→C→D/G→E→F) no coincide literalmente con ese orden | **Abierto — prioritario** |
+| ST-018 | Alcance exacto de "MVP con base de datos operativa" para HITO 1 (28 sep–3 oct): ¿solo el esquema, o esquema + al menos un endpoint funcionando de punta a punta? | Define qué se puede prometer para el 3 de octubre | **Abierto — urgente, hito en una semana** |
+| ST-019 | El archivo `DART_14_1.1_Analisis_Documentacion...docx` subido a este chat corresponde a otro equipo (CoreStream DART 14) y a otro proyecto de Alloxentric (agente de voz, no WellQ). Confirmar si fue un error de navegación en CoreStream y si existe un archivo equivalente para el equipo DEM_57 | Evita construir sobre información que no es de este proyecto | Abierto |
 
 ## Pendientes académicos
 
