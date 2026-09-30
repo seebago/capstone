@@ -1,6 +1,6 @@
 # Bitácora de stakeholders — WellQ
 
-Última actualización: 25 de septiembre de 2026.
+Última actualización: 30 de septiembre de 2026.
 
 Registra decisiones que **no** puede tomar el equipo. Una ausencia de
 respuesta no equivale a aprobación. No se inventa una respuesta para
@@ -61,10 +61,11 @@ Ver el plan de fases y componentes acotado a estos hitos en
 | ST-008 | Entidades legales y países de operación | Transferencias UK↔Chile y base jurídica | Abierto |
 | ST-009 | Anonimización de datos médicos | Diseño de las tablas de identidad | Abierto |
 | ST-010 | Quién aprueba requerimientos y mantiene el sistema tras el Capstone | Gobierno del proyecto | Abierto |
-| ST-016 | Motor de base de datos definitivo: MongoDB (alineado a WellQ real, según docs de Max) o PostgreSQL+RLS (alineado al brief del Capstone) — ADR-006 | Bloquea programar el componente C (esquema) para HITO 1 | **Abierto — prioritario** |
+| ST-016 | Motor de base de datos definitivo: MongoDB (alineado a WellQ real, según docs de Max) o PostgreSQL+RLS (alineado al brief del Capstone) — ADR-006 | Sebastián ya construyó y probó la capa de reglas (D/E); no puede persistir nada de HITO 1 sin esta decisión | **Abierto — urgente, bloquea HITO 1 en curso** |
 | ST-017 | Qué significa exactamente el orden «DE-FG-ABC» mostrado en CoreStream: ¿orden de construcción, orden de reporte de avance en CoreStream, o agrupación en sprints? | El orden técnico defendible (A→C→D/G→E→F) no coincide literalmente con ese orden | **Abierto — prioritario** |
 | ST-018 | Alcance exacto de "MVP con base de datos operativa" para HITO 1 (28 sep–3 oct): ¿solo el esquema, o esquema + al menos un endpoint funcionando de punta a punta? | Define qué se puede prometer para el 3 de octubre | **Abierto — urgente, hito en una semana** |
 | ST-019 | El archivo `DART_14_1.1_Analisis_Documentacion...docx` subido a este chat corresponde a otro equipo (CoreStream DART 14) y a otro proyecto de Alloxentric (agente de voz, no WellQ). Confirmar si fue un error de navegación en CoreStream y si existe un archivo equivalente para el equipo DEM_57 | Evita construir sobre información que no es de este proyecto | Abierto |
+| ST-020 | Descalce de calendario: el equipo recibió el modelo de datos completo y la confirmación de que el proyecto es un módulo del WellQ existente recién entre el 23 y el 29 de septiembre, con HITO 1 (Alloxentric) venciendo el 3 de octubre. La capa de reglas D/E ya está construida y probada (rama `feature/wellq-base-de-fg-abc`), pero una base de datos operativa real depende de ST-016, todavía sin resolver | Puede impedir cumplir HITO 1 en la fecha tal como está definido; corresponde informarlo con evidencia antes de la fecha, no explicarlo después | **Abierto — comunicar a Karina esta semana** |
 
 ## Pendientes académicos
 

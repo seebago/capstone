@@ -1,9 +1,10 @@
 # Bitácora de progreso — WellQ
 
-Última actualización: 25 de septiembre de 2026.
-Estado verificado contra `origin` en el commit `3056608` (rama
-`docs/bitacoras-y-evidencias-vicente`) y `origin/develop`
-(`fb4db39`, sin contenido relevante).
+Última actualización: 30 de septiembre de 2026.
+Estado verificado contra `origin` en el commit `37f909b` (rama
+`docs/bitacoras-y-evidencias-vicente`), `origin/develop` (`fb4db39`,
+sin contenido relevante) y `origin/feature/wellq-base-de-fg-abc`
+(`38830fa`, aporte de Sebastián — ver más abajo).
 
 Esta bitácora registra estado real y verificable. Si algo no está en el
 repositorio, aquí figura como pendiente, no como hecho.
@@ -89,6 +90,53 @@ evidencias académicas de Fase 1.
   A–G acotado a los hitos de Duoc/Utem, con la Fase 1 (HITO 1)
   enfocada en el componente C (esquema) y un subconjunto mínimo de A.
 
+## Novedades del 29-30 de septiembre — aporte de Sebastián
+
+Sebastián publicó la rama `feature/wellq-base-de-fg-abc` (commit
+`38830fa`, sobre `main`, sin tocar la rama de Vicente ni `develop`).
+Verificado por Vicente con Claude: se hizo `git checkout` del commit en
+un worktree aparte, se corrió `python -m unittest discover -s tests -v`
+(22 pruebas, todas `ok`) y `python -m prototype.demo` (ejecuta y
+devuelve JSON con `score: null` de forma intencional). El workflow de
+GitHub Actions (`domain.yml`) corre exactamente esos dos comandos en
+Python 3.12, así que debería quedar en verde.
+
+**Qué construyó, en concreto:**
+
+- Reglas de dominio en Python puro (sin framework, sin DB, sin API) para
+  el componente **D** (confirmación del paciente / validación clínica:
+  doble puerta, preservación de la propuesta original, rechazo de datos
+  sin confirmar, aislamiento por tenant/paciente/permiso) y una
+  **compuerta de elegibilidad** del componente **E** (qué marcadores
+  pueden entrar a puntuación y por qué se excluyen otros — sin fórmula
+  ni cálculo clínico real).
+- 22 pruebas automatizadas, verificadas localmente por Claude, cubriendo
+  aislamiento cruzado de tenant/paciente, permisos y feature gating,
+  confirmaciones obsoletas, baja confianza, y las reglas de negocio de D/E.
+- Reordenó el backlog de fases como **DE → FG → ABC** en
+  `PRIORIDADES_DE_FG_ABC.md`, explícitamente sobre la tabla A–G del
+  Documento Maestro y la instrucción de Karina, y citando
+  `PLAN_FASES_COMPONENTES.md` (commit `37f909b`) como antecedente.
+- `ARQUITECTURA_BASE.md`, ADR-007 e Informe de Avance Fase 2 (md + pdf).
+- **Lo dice el propio informe, sin que haga falta que Claude lo señale**:
+  "La entrega no constituye todavía un backend integrado ni una base de
+  datos operativa (...) no acredita el cumplimiento del Hito 1". La
+  carpeta `Fase 2/.../Base de datos/` sigue con solo un `.gitkeep`.
+
+**Lo que falta para que HITO 1 quede realmente cumplido:** una base de
+datos operativa conectada (Mongo o Postgres) que persista al menos la
+confirmación de un examen de prueba y sobreviva a un reinicio. Eso
+requiere cerrar primero ADR-006 / ST-016 (motor de base de datos), que
+sigue sin ratificar por Karina/Max — es decir, el bloqueo no es solo de
+tiempo, es también de una decisión de arquitectura pendiente.
+
+**Riesgo de calendario registrado como ST-020** (ver
+`BITACORA_STAKEHOLDERS.md`): el equipo recibió el modelo de datos y la
+confirmación de que el proyecto es un módulo de WellQ existente recién
+entre el 23 y el 29 de septiembre — es decir, 1 semana o menos antes del
+cierre de HITO 1 (3 de octubre). El Informe de Avance de Sebastián ya
+dice esto mismo con otras palabras ("no acredita el cumplimiento").
+
 ## Pendiente
 
 - **Vicente no figura en los antecedentes personales de la guía 1.5.**
@@ -141,6 +189,7 @@ integrante humano. El protocolo completo está en `AGENTS.md`.
 | 2026-09-10 | Claude (vía Vicente) | Evidencias 1.1 y 1.2 de Vicente, AGENTS.md y bitácoras | commit 92ca76c | Vicente | Validado |
 | 2026-09-11 | Claude (vía Vicente) | Evidencia 1.3 y registro de las respuestas de Karina | commits 2c64da7 y siguiente | Vicente | En revisión |
 | 2026-09-25 | Claude (vía Vicente) | Análisis de los 6 documentos subidos, verificación de git, `PLAN_FASES_COMPONENTES.md`, actualización de AD-01/ST-011 y registro de ST-016 a ST-019 | Este commit | Vicente | Pendiente |
+| 2026-09-29/30 | Codex (vía Sebastián) | Base de dominio D/E, 22 pruebas, workflow CI, `PRIORIDADES_DE_FG_ABC.md`, ADR-007, Informe de Avance Fase 2 | rama `feature/wellq-base-de-fg-abc`, commit `38830fa` | Verificado por Vicente con Claude (pruebas re-ejecutadas, ok); validación humana de fondo pendiente | En revisión |
 
 ## Oportunidades de mejora detectadas
 
