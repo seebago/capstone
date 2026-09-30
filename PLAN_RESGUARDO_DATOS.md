@@ -12,6 +12,20 @@ qué depende de Alloxentric.
 > concretas las valida Alloxentric con su asesoría. Los puntos marcados con
 > `*` son pendientes que no puede cerrar el equipo por sí solo.
 
+> **Actualización 30-09-2026.** Se investigó la política de privacidad
+> pública de WellQ Ltd (la empresa real, no el equipo) — es la referencia
+> más autorizada disponible sobre cómo interpretan estas mismas leyes
+> para el mismo tipo de dato. Resumen completo con fuentes en
+> `ANALISIS_WELLQ_REAL_MARCA_Y_LEGAL.md` §3: base jurídica Art. 9(2)(h)
+> UK GDPR, hosting en Microsoft Azure Reino Unido sin transferencias
+> internacionales rutinarias, DCB0129 (estándar de seguridad clínica de
+> NHS Digital) como marco de referencia, no clasificados como
+> dispositivo médico, y **sin certificación ISO 27001 todavía** (útil
+> como referencia de qué nivel de madurez es razonable exigirle a un
+> proyecto Capstone). No resuelve la parte chilena (Ley 20.584) ni
+> asume que el módulo del equipo herede automáticamente esa cobertura
+> legal — eso sigue abierto en `BITACORA_STAKEHOLDERS.md`.
+
 ---
 
 ## Principio rector

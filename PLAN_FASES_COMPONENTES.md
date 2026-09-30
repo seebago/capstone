@@ -375,3 +375,83 @@ Este formato ya lo siguió, casi punto por punto, el
 que Aron y quien avance después lo use igual, y para que cualquiera
 (incluida la docente) pueda examinar el detalle sin tener que leer
 código.
+
+## 7. Avance técnico 30-09: repositorio con persistencia real
+
+Se implementó `persistence/sqlite_repository.py`, envolviendo
+`prototype/domain.py` de Sebastián (sin modificarlo) en un repositorio
+SQLite con persistencia real en disco: `apply_outcome()` guarda la
+extracción y su evento de auditoría en una sola transacción y encola un
+job en una tabla `outbox`; toda lectura filtra por `client_id` en la
+consulta SQL. 7 pruebas nuevas (29 en total con las de Sebastián, todas
+verificadas). Detalle completo en
+`Informe_Avance_Persistencia_Simulada.md`. **Rama separada**
+`feature/wellq-persistencia-simulada`, creada desde la rama de
+Sebastián — no toca su trabajo ni la interfaz que está construyendo con
+Aron. Queda para revisión del equipo antes de integrar.
+
+## 8. Despliegue en Vercel: por qué la simulación SQLite no alcanza para esto
+
+La profesora pidió desplegar el MVP en Vercel para que otras personas lo
+prueben. Esto cambia el requisito de la Fase 1: ya no basta con que la
+base de datos "sobreviva a un reinicio en la laptop de alguien" — tiene
+que sobrevivir en un entorno de producción real, con múltiples usuarios
+concurrentes.
+
+**Confirmado en la documentación oficial de Vercel (`vercel.com/docs/
+functions/runtimes`, actualizada 12-08-2026)**: las funciones de Vercel
+corren con **sistema de archivos de solo lectura**, con un directorio
+`/tmp` de escritura limitado a 500 MB que es **efímero** — se reinicia
+entre invocaciones frías y no hay garantía de que dos invocaciones (o
+dos instancias concurrentes) vean el mismo archivo. En criollo: **un
+archivo SQLite en disco, como el que se acaba de construir para HITO 1,
+no sirve una vez desplegado en Vercel.** Funciona perfecto para
+desarrollo local, para las pruebas automatizadas y para el workflow de
+GitHub Actions — pero no para que Karina u otro usuario entren a la app
+desplegada y vean datos que persisten entre sus visitas.
+
+La propia documentación de Vercel lo dice explícitamente en la sección
+"Vercel Storage": para persistencia real, la función debe hablar con un
+almacén de datos externo por red, no con el disco local.
+
+**Esto hace que ADR-006 (motor de base de datos) ya no se pueda seguir
+posponiendo únicamente como decisión "de producción a futuro".** Para
+poder cumplir el pedido de Karina esta semana, el equipo necesita elegir
+ahora un motor alcanzable por red, aunque sea en su capa gratuita:
+
+| Opción | A favor | En contra |
+|---|---|---|
+| **MongoDB Atlas (free tier M0)** | Coincide con el stack real de WellQ (FastAPI+MongoDB, ver AD-01/A-16); cero fricción si más adelante se integra con el backend real de Max | No trae RLS nativo; el aislamiento de tenant queda 100% en la capa de aplicación (ya lo asumía la nota de A-16) |
+| **Postgres gestionado (Neon o Supabase, free tier)** | Coincide con el brief original del Capstone (A-04, RLS); Supabase ya estaba recomendado por Karina el 7 de septiembre (A-13/ST-015) para el frontend | Se aleja del stack real de WellQ; si más adelante se integra con Max, habría que migrar datos/esquema |
+
+**Se registra como ST-022 (urgente)**: cuál de las dos usar para el
+despliegue de Vercel. El repositorio ya construido
+(`SqliteRepository`) se diseñó con un contrato de métodos simple
+(`apply_outcome`, `get_extraction`, `list_extractions`,
+`list_audit_events`, `save_eligibility`, `get_eligibility`,
+`pending_outbox`) precisamente para que cambiar el motor debajo sea
+reemplazar una clase, no reescribir las reglas de negocio ni los
+endpoints. El siguiente paso, en cuanto se decida, es escribir un
+`MongoRepository` o `PostgresRepository` con la misma interfaz.
+
+Mientras tanto, y solo para destrabar el despliegue de esta semana, se
+puede desplegar con el motor gratuito que el equipo prefiera
+operacionalmente (Mongo Atlas es la recomendación de Claude, por
+continuidad con el stack real), **dejando explícito en el propio
+despliegue y en el informe que es una elección de conveniencia para
+demo, no la ratificación final de ADR-006.**
+
+El runtime Python de Vercel corre FastAPI/Flask/Django de forma nativa
+(ASGI/WSGI) — no obliga a cambiar de lenguaje para desplegar el backend.
+
+## 9. Sobre trabajar a dos calendarios (Duoc y Alloxentric)
+
+Karina confirmó que ambos cronogramas — el académico de Duoc y el de
+Alloxentric (CoreStream) — deben cumplirse en paralelo, y que
+Alloxentric espera que el equipo muestre un ritmo de entrega real de
+industria. Esto no cambia el plan de fases: lo que cambia es que el
+proceso de "fase bien integrada antes de pasar a la siguiente" (§6.4)
+deja de ser un lujo académico y pasa a ser la única forma de sostener
+ese ritmo sin acumular deuda técnica invisible — avanzar rápido y
+avanzar por partes chicas y verificadas no son objetivos en conflicto,
+son la misma disciplina.

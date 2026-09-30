@@ -160,6 +160,42 @@ dice esto mismo con otras palabras ("no acredita el cumplimiento").
   Sebastián la usen cada vez que cierren un avance, y quede para
   revisión en GitHub (`PLAN_FASES_COMPONENTES.md` §6.4-6.6).
 
+## Novedades del 30 de septiembre (noche) — persistencia, marca real y Vercel
+
+- **Avance técnico**: se construyó `persistence/sqlite_repository.py`,
+  un repositorio con persistencia real en disco sobre `prototype/domain.py`
+  de Sebastián (sin modificarlo). 7 pruebas nuevas, 29 en total
+  verificadas en el árbol real del repositorio (incluidas las 22 de
+  Sebastián, sin cambios). Publicado en la rama nueva
+  `feature/wellq-persistencia-simulada` (commits `34a26fe` y `e3dba1e`,
+  este último corrige un descuido: se habían colado archivos
+  `__pycache__` en el primer commit; se agregó `.gitignore` — el
+  repositorio no tenía uno). Detalle en
+  `Informe_Avance_Persistencia_Simulada.md`.
+- **Investigación de la app WellQ real**: sitio oficial, ficha de Google
+  Play, ficha de App Store y política de privacidad publicada. Hallazgo
+  a comunicar al equipo: la demo de Sebastián usa tema oscuro
+  verde/negro; la app real de WellQ muestra tema claro azul/blanco — no
+  coinciden (ST-023). También se extrajo el marco legal UK completo que
+  WellQ Ltd declara sobre sí misma (empresa registrada, ICO
+  ZB953651, Art. 9(2)(h) UK GDPR, hosting Azure UK sin transferencias
+  rutinarias, DCB0129 como estándar de seguridad clínica, no
+  clasificados como dispositivo médico, sin ISO 27001 aún). Todo en
+  `ANALISIS_WELLQ_REAL_MARCA_Y_LEGAL.md`, con fuentes.
+- **Despliegue en Vercel**: Karina pidió desplegar el MVP para pruebas
+  de terceros. Se confirmó contra la documentación oficial de Vercel
+  que las funciones corren con sistema de archivos de solo lectura
+  (salvo un `/tmp` efímero de 500 MB) — la simulación SQLite en disco
+  de esta misma noche **no sirve una vez desplegada**. Se registró
+  ST-021/ST-022 (urgentes) y se detalló la alternativa en
+  `PLAN_FASES_COMPONENTES.md` §8: elegir ahora un motor alcanzable por
+  red (MongoDB Atlas o Postgres gestionado, capa gratuita) solo para
+  destrabar el despliegue, dejando ADR-006 formalmente abierto.
+- **Calendario dual confirmado por Karina**: los cronogramas de Duoc y
+  de Alloxentric deben cumplirse en paralelo, sin extensión — Alloxentric
+  quiere ver ritmo de entrega real. Registrado como contexto en ST-020
+  (ya no es solo un riesgo, es una instrucción explícita a sostener).
+
 ## Pendiente
 
 - **Vicente no figura en los antecedentes personales de la guía 1.5.**
@@ -213,6 +249,7 @@ integrante humano. El protocolo completo está en `AGENTS.md`.
 | 2026-09-11 | Claude (vía Vicente) | Evidencia 1.3 y registro de las respuestas de Karina | commits 2c64da7 y siguiente | Vicente | En revisión |
 | 2026-09-25 | Claude (vía Vicente) | Análisis de los 6 documentos subidos, verificación de git, `PLAN_FASES_COMPONENTES.md`, actualización de AD-01/ST-011 y registro de ST-016 a ST-019 | Este commit | Vicente | Pendiente |
 | 2026-09-29/30 | Codex (vía Sebastián) | Base de dominio D/E, 22 pruebas, workflow CI, `PRIORIDADES_DE_FG_ABC.md`, ADR-007, Informe de Avance Fase 2 | rama `feature/wellq-base-de-fg-abc`, commit `38830fa` | Verificado por Vicente con Claude (pruebas re-ejecutadas, ok); validación humana de fondo pendiente | En revisión |
+| 2026-09-30 (noche) | Claude (vía Vicente) | Repositorio SQLite con persistencia real sobre domain.py, 7 pruebas nuevas; investigación de marca/legal de WellQ real; análisis de la restricción de Vercel y ST-021/022 | rama `feature/wellq-persistencia-simulada`, commits `34a26fe`/`e3dba1e` | Pendiente de revisión por Sebastián/Aron antes de integrar | En revisión |
 
 ## Oportunidades de mejora detectadas
 
