@@ -196,6 +196,46 @@ dice esto mismo con otras palabras ("no acredita el cumplimiento").
   quiere ver ritmo de entrega real. Registrado como contexto en ST-020
   (ya no es solo un riesgo, es una instrucción explícita a sostener).
 
+## Novedades del 30 de septiembre (noche) — main quedó al día con la documentación
+
+- Vicente pidió explícitamente arreglar `main`, agregar sus propias
+  evidencias y **no** mezclar todavía las ramas `feature/wellq-base-de-fg-abc`
+  ni `feature/wellq-persistencia-simulada` (deben madurar y revisarse
+  antes de integrarse). Esto es casi con certeza el "error" que Karina
+  reportó al equipo sin detallarlo: `main` (comprobado con
+  `git ls-tree -r`) no tenía `README.md`, `AGENTS.md`, ninguna bitácora,
+  `PLAN_FASES_COMPONENTES.md`, `PLAN_RESGUARDO_DATOS.md`, ni las
+  evidencias individuales de Fase 1 de Vicente — solo las de Sebastián y
+  Aron estaban presentes.
+- Antes de tocar `main` se hizo una fusión de prueba descartable (rama
+  local `_merge_check_main`, nunca subida, luego eliminada) fusionando
+  en orden `docs/bitacoras-y-evidencias-vicente` →
+  `feature/wellq-base-de-fg-abc` → `feature/wellq-persistencia-simulada`
+  para confirmar que las tres ramas son compatibles entre sí (un solo
+  conflicto menor en `.gitignore`, resuelto quedándose con la versión
+  más completa) y que las 29 pruebas y ambos demos siguen pasando en el
+  árbol combinado. Esa fusión de prueba **no se subió a ningún lado**.
+- Se actualizó `README.md` para reflejar el estado real (equipo, hitos
+  CoreStream, por qué el código todavía vive en ramas `feature/*` y no
+  en `main`) y se fusionó `docs/bitacoras-y-evidencias-vicente` en
+  `main` sin conflictos — esto trae README, AGENTS.md, todas las
+  bitácoras, los planes, el análisis de marca/legal, la revisión de
+  código senior, el informe para Sebastián y las tres evidencias de
+  Fase 1 de Vicente.
+- Se eliminó de `main` el archivo duplicado
+  `WellQ_Clinical_Test_Upload_API_Specification (1).docx` (idéntico byte
+  a byte al original, mismo SHA1) — quedaba por un upload repetido.
+- **Las dos ramas feature quedaron intactas a propósito**, en los mismos
+  commits de siempre (`38830fa` y `e3dba1e`): no se integraron a `main`
+  en esta acción. Quedan para revisión e integración posterior, per
+  §6.4 de `PLAN_FASES_COMPONENTES.md`.
+- Commits locales en `main`: fusión de `docs/bitacoras-y-evidencias-vicente`
+  (sin historial de merge commit propio porque fue fast-forward-compatible
+  con contenido nuevo) y `chore(cleanup): eliminar duplicado de
+  WellQ_Clinical_Test_Upload_API_Specification.docx`. Pendiente `git push
+  origin main` desde la máquina de Vicente (el shell remoto usado por
+  Claude no tiene credenciales de GitHub configuradas).
+
 ## Pendiente
 
 - **Vicente no figura en los antecedentes personales de la guía 1.5.**
@@ -250,6 +290,7 @@ integrante humano. El protocolo completo está en `AGENTS.md`.
 | 2026-09-25 | Claude (vía Vicente) | Análisis de los 6 documentos subidos, verificación de git, `PLAN_FASES_COMPONENTES.md`, actualización de AD-01/ST-011 y registro de ST-016 a ST-019 | Este commit | Vicente | Pendiente |
 | 2026-09-29/30 | Codex (vía Sebastián) | Base de dominio D/E, 22 pruebas, workflow CI, `PRIORIDADES_DE_FG_ABC.md`, ADR-007, Informe de Avance Fase 2 | rama `feature/wellq-base-de-fg-abc`, commit `38830fa` | Verificado por Vicente con Claude (pruebas re-ejecutadas, ok); validación humana de fondo pendiente | En revisión |
 | 2026-09-30 (noche) | Claude (vía Vicente) | Repositorio SQLite con persistencia real sobre domain.py, 7 pruebas nuevas; investigación de marca/legal de WellQ real; análisis de la restricción de Vercel y ST-021/022 | rama `feature/wellq-persistencia-simulada`, commits `34a26fe`/`e3dba1e` | Pendiente de revisión por Sebastián/Aron antes de integrar | En revisión |
+| 2026-09-30 (noche) | Claude (vía Vicente) | Informe para Sebastián (interfaz/privacidad/Vercel), subida a GitHub; auditoría completa de `main` (sin secretos, sin binarios grandes, CI verde) y corrección: README actualizado + fusión de `docs/bitacoras-y-evidencias-vicente` en `main` + eliminación de archivo duplicado. Ramas feature dejadas intencionalmente sin integrar | `main`, pendiente `git push`; ver Novedades del 30-09 más arriba | Pendiente | Pendiente de push |
 
 ## Oportunidades de mejora detectadas
 
