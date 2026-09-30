@@ -1,6 +1,6 @@
 # Plan de fases y componentes — WellQ (módulo Exámenes Médicos)
 
-Última actualización: 25 de septiembre de 2026, por Vicente López con Claude.
+Última actualización: 30 de septiembre de 2026, por Vicente López con Claude.
 
 Este documento traduce el Documento Maestro de Alloxentric (los 7
 componentes A–G) y la priorización que Karina mostró en CoreStream
@@ -241,3 +241,137 @@ Componentes: **A** completo + inicio de **G**.
    o trabajará contra un esquema espejo/sintético.
 
 Todo esto se traslada a `BITACORA_STAKEHOLDERS.md`.
+
+## 6. Actualización 30-09-2026: base "simulada" y proceso entre fases
+
+### 6.1 La primera entrega de la Fase 1 ya existe — y confirma que simular es el camino correcto
+
+Sebastián publicó `feature/wellq-base-de-fg-abc` (commit `38830fa`):
+reglas de dominio en Python puro para D (confirmación/validación) y una
+compuerta de elegibilidad de E, con 22 pruebas. Verificado por Vicente
+con Claude — ver `REVISION_38830fa_wellq-base.md` para la revisión
+técnica completa (nivel senior: diseño, seguridad y huecos de cobertura,
+no solo "pasan los tests").
+
+Esa entrega **ya es, en esencia, la simulación que Vicente y Sebastián
+proponen**: los `dataclass` de `domain.py` (`Marker`, `Extraction`,
+`AuditEvent`, `Eligibility`) son el esquema canónico (componente C)
+representado en memoria, con nombres de campo pensados para mapear 1:1
+a una colección real más adelante. La decisión correcta no es
+descartar ese código cuando se resuelva ADR-006: es envolverlo en un
+repositorio (capa de persistencia) sin tocar las reglas.
+
+### 6.2 Qué significa "simular la base de datos" aquí, en concreto
+
+**Simular ≠ solo memoria RAM.** Una estructura puramente en memoria se
+pierde al reiniciar el proceso y no sirve como evidencia de "base de
+datos operativa" para HITO 1. Se propone un repositorio de dos capas:
+
+1. **Capa de reglas** (ya existe): `domain.py`, sin cambios — no sabe
+   nada de bases de datos, y así debe seguir.
+2. **Capa de repositorio simulado, con persistencia real en disco**:
+   un adaptador simple (SQLite embebido, o un archivo JSON/NDJSON por
+   colección) que guarda `Extraction`, `AuditEvent` y `Eligibility`
+   usando exactamente los mismos nombres de campo, indexado siempre por
+   `(client_id, extraction_id)` — nunca solo por `extraction_id` — para
+   que la prueba de aislamiento multi-tenant sea real desde el primer
+   día y no solo una función pura en memoria.
+
+Con eso, el equipo puede demostrar para HITO 1: "cargamos una
+confirmación sintética, el proceso se reinicia, y el dato sigue ahí,
+aislado por cliente" — que es una interpretación defendible de "base de
+datos operativa" sin haber cerrado todavía si el motor final es MongoDB
+o PostgreSQL (ADR-006 sigue abierto). **Esto se comunica explícitamente
+como lo que es**: una simulación con persistencia local, no el motor de
+producción. No se presenta a Karina como "ya tenemos la base de datos
+definitiva".
+
+### 6.3 De dónde deben salir los nombres de variable
+
+No inventar nombres nuevos. Orden de precedencia para nombrar cada
+campo:
+
+1. `WellQ_Modelo_de_Datos.docx` (el modelo real de Max), si existe un
+   campo equivalente (ej. `patient_id`, `client_id`/`clinic_id`,
+   `created_at`, convención `snake_case`).
+2. El esquema JSON canónico §6 del Documento Maestro, para los campos
+   específicos de examen/marcador que no existen en el WellQ actual
+   (`marker_code`, `value_canonical`, `unit_canonical`, etc. — ya
+   reflejados en `domain.py`).
+3. Si ninguno de los dos lo cubre, se documenta como campo nuevo y se
+   justifica en el informe de la fase — nunca se agrega en silencio.
+
+### 6.4 Definición de "fase bien integrada" antes de pasar a la siguiente
+
+Antes de empezar la fase N+1, la fase N debe cumplir **todo** lo
+siguiente (quien la cierra lo marca explícitamente en su informe, no se
+asume):
+
+- [ ] Corre en una rama propia (`feature/<algo>`), nunca directo sobre
+      `main` ni sobre la rama de bitácoras.
+- [ ] Pruebas automatizadas en verde, ejecutadas localmente por quien
+      revisa (no basta con "el autor dice que pasan"; ver §6.5) y por
+      el workflow de GitHub Actions.
+- [ ] Usa los nombres de variable del modelo real (§6.3) o documenta
+      por qué se desvía.
+- [ ] Todo acceso a datos pasa por el filtro de tenant
+      `(client_id, ...)`, con al menos una prueba que intente cruzar
+      tenants y falle.
+- [ ] No rompe ni reescribe silenciosamente el trabajo de una fase
+      anterior — si algo de una fase previa cambia, se explica por qué.
+- [ ] Informe de fase entregado (plantilla en §6.6), commiteado junto
+      con el código, no después.
+- [ ] Revisión cruzada por al menos otro integrante (o por Claude, a
+      pedido de quien no escribió el código — nunca autoevaluación de
+      la misma IA que lo generó, regla de `AGENTS.md`).
+
+Si falta alguno de estos puntos, la fase se considera "en curso", no
+"integrada", aunque el código funcione.
+
+### 6.5 Verificación independiente, no solo "correr y confiar"
+
+Cuando Sebastián o Aron avancen una fase, quien revisa (Vicente, con
+Claude si hace falta) debe, como mínimo:
+
+1. Hacer `git fetch` y revisar el commit en una rama/worktree aparte,
+   sin mezclarlo todavía con el resto del trabajo.
+2. Ejecutar las pruebas él mismo — no asumir que "ya las corrieron".
+3. Leer el código fuente, no solo el informe — un informe puede
+   describir bien una intención que el código no cumple del todo.
+4. Registrar hallazgos (fortalezas y huecos) en un documento de
+   revisión, aunque el veredicto general sea positivo — ver
+   `REVISION_38830fa_wellq-base.md` como formato de referencia.
+
+### 6.6 Plantilla mínima del informe de fase (para GitHub)
+
+Cada integrante que cierre una fase agrega, junto a su código, un
+archivo `Informe_Avance_<Fase>.md` con al menos estas secciones:
+
+```
+# Informe de avance — <Fase/Componente>
+
+Fecha / Autor / Herramienta de IA usada (si aplica)
+
+## Qué se construyó
+(lista concreta, componente por componente, con lo que SÍ y lo que NO
+incluye esta entrega — igual que hizo el Informe de Avance Fase 2)
+
+## Cómo se probó
+(comandos exactos para correr las pruebas y la demo; resultado)
+
+## Qué no cubre esta entrega
+(explícito, no implícito — evita que se asuma más de lo que hay)
+
+## Decisiones/documentos fuente usados
+(qué parte del Documento Maestro, del modelo de datos o de las
+bitácoras se siguió, para que se pueda auditar de dónde salió cada
+nombre de campo o regla)
+
+## Pendiente para la siguiente fase
+```
+
+Este formato ya lo siguió, casi punto por punto, el
+`Informe_Avance_WellQ_Fase_2.md` de Sebastián — se formaliza aquí para
+que Aron y quien avance después lo use igual, y para que cualquiera
+(incluida la docente) pueda examinar el detalle sin tener que leer
+código.

@@ -137,6 +137,29 @@ entre el 23 y el 29 de septiembre — es decir, 1 semana o menos antes del
 cierre de HITO 1 (3 de octubre). El Informe de Avance de Sebastián ya
 dice esto mismo con otras palabras ("no acredita el cumplimiento").
 
+## Novedades del 30 de septiembre (tarde) — revisión de código y proceso entre fases
+
+- Se hizo una revisión técnica línea por línea (no solo "corre y pasan
+  los tests") de `domain.py` y `test_domain.py` del commit `38830fa`.
+  Resultado completo en `REVISION_38830fa_wellq-base.md`: el diseño es
+  sólido (inmutabilidad, denegar por `NOT_FOUND` entre tenants en vez de
+  `FORBIDDEN`, auditoría sin valores clínicos, doble puerta D bien
+  modelada); quedan como deuda técnica documentada, no como bloqueo: la
+  anulación de discrepancia de identidad y de baja confianza no dejan
+  rastro de auditoría propio, y el umbral de confianza no está
+  versionado como sí lo están `scoring_version`/`catalog_version`.
+- Vicente y Sebastián acordaron simular la base de datos con los
+  nombres de variable del modelo real, en vez de esperar a ADR-006 para
+  empezar a integrar. Se documentó en `PLAN_FASES_COMPONENTES.md` §6:
+  la capa de reglas ya construida (`domain.py`) se envuelve en un
+  repositorio con persistencia local real (no solo memoria), para que
+  cuente como evidencia de HITO 1 sin declarar cerrado el motor
+  definitivo.
+- Se formalizó un checklist de "fase bien integrada" antes de pasar a
+  la siguiente, y una plantilla de informe de avance para que Aron o
+  Sebastián la usen cada vez que cierren un avance, y quede para
+  revisión en GitHub (`PLAN_FASES_COMPONENTES.md` §6.4-6.6).
+
 ## Pendiente
 
 - **Vicente no figura en los antecedentes personales de la guía 1.5.**
