@@ -80,6 +80,15 @@ pendientes de revisión e integración (ver `BITACORA_PROGRESO.md`). Este
 
 # Avance WellQ de Fase 2
 
+## Nuevo MVP MongoDB e interfaz del 30 de septiembre
+
+[Iniciar el MVP local](<Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base/README.md>)
+y [modelo aplicado, pruebas y límites](<Evidencias Proyecto/Evidencias de documentación/MVP_MongoDB_Interfaz_2026-09-30.md>).
+El incremento agrega persistencia real, autenticación de demo e interfaz de
+confirmación y revisión. El informe previo y el prototipo se conservan como
+evidencia histórica; la descripción de ausencia de DB corresponde a esa
+entrega anterior, no al nuevo MVP.
+
 ## Contenido de esta entrega
 
 - [Aplicación y pruebas](<Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base/prototype/README.md>): prototipo sintético D/E.
