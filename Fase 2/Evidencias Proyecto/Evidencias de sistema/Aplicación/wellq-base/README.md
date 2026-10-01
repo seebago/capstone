@@ -40,7 +40,8 @@ Esta distribución solo acepta nombres de BD `wellq_demo*` o `wellq_test*`.
 5. Entrar como Beta: no ve el examen Alpha. Reiniciar la aplicación y volver
    a Alpha: los datos permanecen.
 
-Interfaz en español/inglés y modo claro/oscuro. Es una pantalla de pruebas
+Interfaz en español/inglés, filtros de estado y modo oscuro predeterminado,
+adaptado a las capturas oficiales de WellQ. Incluye modo claro opcional. Es una pantalla de pruebas
 web, no reemplaza Flutter/Drift ni adopta un nuevo frontend de producción.
 
 ## Arranque manual y pruebas
@@ -89,3 +90,24 @@ Las pruebas originales sin DB siguen funcionando con
 Para detener la demo, identificar los procesos propios registrados en
 `.runtime/app.pid` y `.runtime/mongo.pid`; comprobar su ejecutable antes de
 detenerlos. No detener instancias ajenas. No borrar el directorio de datos.
+
+## Verificación visual y ensayo de navegador
+
+El resultado y las diferencias intencionales con la app están en
+[design-qa.md](design-qa.md). Las capturas y el informe final están en
+`../../../Evidencias de documentación/evidencias-mvp-2026-10-01` y
+`../../../Evidencias de documentación/INFORME_AVANCE_MVP_2026-10-01.md`.
+
+Para repetir el ensayo con la demo ya iniciada:
+
+```powershell
+.runtime/venv/Scripts/python -m pip install -r requirements.browser.txt
+.runtime/venv/Scripts/python -m playwright install chromium
+.runtime/venv/Scripts/python scripts/browser_smoke.py
+```
+
+El ensayo usa la clave local sin imprimirla, crea un nuevo examen ficticio
+Alpha, recorre paciente/profesional/Beta y conserva el resultado en la base
+de demo. Guarda capturas y `browser-results.json` en `.runtime/browser-evidence`.
+No descarga ni controla perfiles personales del navegador. La prueba de
+navegador es adicional a las 37 pruebas automatizadas de dominio/API/MongoDB.
