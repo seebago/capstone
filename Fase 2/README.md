@@ -1,36 +1,54 @@
-# Avance WellQ de Fase 2
+# WellQ — avances de Fase 2
 
-## Contenido de esta entrega
+## MVP actual: MongoDB e interfaz de pruebas
 
-- [Aplicación y pruebas](<Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base/prototype/README.md>): prototipo sintético D/E.
-- [Informe PDF](<Evidencias Proyecto/Evidencias de documentación/Informe_Avance_WellQ_Fase_2.pdf>): actividades, evidencias, resultados y pendientes.
-- [Arquitectura](<Evidencias Proyecto/Evidencias de documentación/arquitectura/ARQUITECTURA_BASE.md>).
-- [Prioridades DE-FG-ABC](<Evidencias Proyecto/Evidencias de documentación/arquitectura/PRIORIDADES_DE_FG_ABC.md>).
+Actualización: 1 de octubre de 2026. Código y documentación preparados con
+asistencia de Codex; aceptación académica y revisión humana pendientes.
 
-## Ejecutar
+- [Abrir y ejecutar la demo](<Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base/README.md>).
+- [Informe del avance y guion de presentación](<Evidencias Proyecto/Evidencias de documentación/INFORME_AVANCE_MVP_2026-10-01.md>).
+- [Aplicación del modelo de datos y arquitectura del MVP](<Evidencias Proyecto/Evidencias de documentación/MVP_MongoDB_Interfaz_2026-09-30.md>).
+- [Verificación visual](<Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base/design-qa.md>).
+- [Capturas y resultados](<Evidencias Proyecto/Evidencias de documentación/evidencias-mvp-2026-10-01>).
 
-Desde la raíz del repositorio:
+El MVP agrega MongoDB real, acceso por perfiles, revisión/corrección del
+paciente y validación del profesional. La interfaz sigue el estilo oscuro
+y turquesa observado en la app oficial de WellQ. Usa datos ficticios.
 
-```sh
-cd "Fase 2/Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base"
-python -m unittest discover -s tests -v
-python -m prototype.demo
+Verificación: 37 pruebas de dominio/API/MongoDB, 15 subpruebas y recorrido
+completo de navegador aprobados. Sin carga de PDF, extracción IA ni puntaje
+clínico numérico. No es un despliegue de producción ni cubre todo A–G.
+
+### Ejecutar en Windows
+
+Desde `Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\start-demo.ps1
 ```
 
-Estado: 22 pruebas locales aprobadas. D implementa reglas parciales de
-confirmación/revisión; E solo elegibilidad, sin cálculo clínico. No hay
-API, persistencia, interfaz ni conexiones a producción. La carpeta Base de
-datos conserva su estructura original: todavía no hay una BD operativa.
+Abre http://127.0.0.1:8765 y usa la clave local de `.runtime/access.txt`.
+Requisitos, puertos, persistencia y pruebas adicionales están en el README
+de la aplicación. Las claves y los archivos de ejecución quedan fuera de Git.
 
-El workflow permanece en `.github/workflows/`, ubicación requerida por GitHub.
-Las bitácoras y el README general permanecen en la raíz como índice del equipo.
-La revisión humana y la ratificación de decisiones pendientes siguen abiertas.
+## Arquitectura y prioridades conservadas
 
-## Alcance de la publicación del 30 de septiembre
+- [Arquitectura base](<Evidencias Proyecto/Evidencias de documentación/arquitectura/ARQUITECTURA_BASE.md>).
+- [Prioridades DE → FG → ABC](<Evidencias Proyecto/Evidencias de documentación/arquitectura/PRIORIDADES_DE_FG_ABC.md>).
 
-Esta publicación contiene exclusivamente Fase 2 y el workflow de pruebas.
-Se aplica sobre main sin integrar la rama documental de Vicente ni publicar
-las modificaciones locales de las bitácoras de la raíz. Esa rama se conserva
-en el remoto como referencia del contexto. Los hashes citados en el informe
-son los commits locales de preparación; la publicación por el conector
-GitHub se registra en un commit independiente y su pull request.
+El incremento desarrolla la base de D y E; no cambia esa priorización.
+El modelo original recibido no se publica ni se modifica.
+
+## Entrega anterior: base sintética del 30 de septiembre
+
+- [Prototipo de dominio](<Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base/prototype/README.md>).
+- [Informe histórico PDF](<Evidencias Proyecto/Evidencias de documentación/Informe_Avance_WellQ_Fase_2.pdf>).
+- [Informe histórico Markdown](<Evidencias Proyecto/Evidencias de documentación/Informe_Avance_WellQ_Fase_2.md>).
+
+Las referencias a ausencia de API, persistencia e interfaz en esos informes
+corresponden al prototipo anterior. Se preservan como evidencia histórica.
+Sus 22 pruebas se ejecutan con `python -m unittest discover -s tests -p test_domain.py`
+desde `wellq-base`; las 37 del MVP, con `python -m pytest -q` y MongoDB activo.
+
+Los workflows permanecen en `.github/workflows/`, ubicación requerida por
+GitHub. Las ramas y bitácoras generales del equipo no se sobrescriben.
