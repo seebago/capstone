@@ -119,13 +119,24 @@ instalación completa en otro equipo sigue pendiente de ensayo.
 ## Adaptación visual solicitada el 1 de octubre
 
 Referencia proporcionada por el usuario: [WellQ app en App Store](https://apps.apple.com/cl/app/wellq-app/id6755544981).
-La ficha pública se consultó y se localizaron las URL de las capturas.
-El navegador integrado falló al iniciarse por un error de ACL del entorno.
-Se solicitó autorización para usar un navegador automatizado alternativo,
-como exige la habilidad de diseño. Hasta disponer de captura y comparación
-visual, no se declara que la interfaz actual reproduzca la identidad de
-WellQ ni que la prueba de navegador esté aprobada. Estado detallado en
-`wellq-base/design-qa.md`. La UI existente continúa como banco de pruebas.
+Las capturas oficiales se abrieron en Chromium de prueba tras el fallo del
+navegador integrado y la instrucción del usuario de continuar. Se observó
+un fondo carbón, tarjetas oscuras redondeadas, tipografía clara, acentos
+cian y colores semánticos. Se adaptó el módulo existente a ese lenguaje,
+con tema oscuro predeterminado, icono oficial atribuido y tema claro opcional.
+No se presenta como copia exacta ni como guía de marca aprobada por WellQ.
+
+La prueba completa en navegador aprobó creación, corrección de 5 a 7,
+cotejo de identidad/baja confianza, confirmación, validación profesional,
+elegibilidad sin puntaje, filtros, idiomas, temas y aislamiento Alpha/Beta.
+No se registraron errores de consola. Se comprobó ausencia de desborde
+horizontal en 428 y 390 px. La comparación visual conjunta detectó y
+corrigió contraste durante el cambio de tema; se repitió el ensayo y la
+comparación. `wellq-base/design-qa.md` registra `final result: passed`
+para este alcance de adaptación, manteniendo pendiente la revisión humana.
+
+Evidencias y resultados: [carpeta de verificación](evidencias-mvp-2026-10-01).
+Resumen y guion final: [informe del 1 de octubre](INFORME_AVANCE_MVP_2026-10-01.md).
 
 ## Guion y prioridades hasta el sábado
 
