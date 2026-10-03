@@ -1,5 +1,13 @@
 # Comparación de arquitecturas y definición WellQ v0.1
 
+## Actualización vigente de orientación — 2026-10-03
+
+Por instrucción de Sebastián: producto principal móvil; portal médico web propuesto; flujo objetivo archivo → extracción → análisis preliminar/prediagnóstico → usuario y médico designado. El MVP existente queda en pausa y su nueva entrega por definir. PostgreSQL/MongoDB siguen en evaluación; no hay migración acordada. El detalle clínico se abordará al llegar a `H-IA-01`, avisando previamente a Sebastián.
+
+Ver [bases actualizadas](BASES_PROYECTO_2026-10-03.md) y [evaluación de base de datos](EVALUACION_BD_2026-10-03.md). Esta orientación sustituye las prioridades internas incompatibles descritas abajo. El contenido anterior se conserva como antecedente; no acredita aprobación externa del cambio de alcance ni de fechas.
+
+## Antecedentes anteriores al cambio de orientación
+
 **Proyecto:** WellQ medical exams / Capstone para Alloxentric
 **Versión:** 0.1 · **Fecha de corte:** 5 de septiembre de 2026
 **Estado:** propuesta técnica consolidada para revisión del equipo y Alloxentric. No acredita implementación ni aprobación jurídica o productiva.

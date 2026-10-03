@@ -1,5 +1,13 @@
 # Bitácora de arquitectura — WellQ
 
+## Actualización vigente de orientación — 2026-10-03
+
+Por instrucción de Sebastián: producto principal móvil; portal médico web propuesto; flujo objetivo archivo → extracción → análisis preliminar/prediagnóstico → usuario y médico designado. El MVP existente queda en pausa y su nueva entrega por definir. PostgreSQL/MongoDB siguen en evaluación; no hay migración acordada. El detalle clínico se abordará al llegar a `H-IA-01`, avisando previamente a Sebastián.
+
+Ver [bases actualizadas](BASES_PROYECTO_2026-10-03.md) y [evaluación de base de datos](EVALUACION_BD_2026-10-03.md). Esta orientación sustituye las prioridades internas incompatibles descritas abajo. El contenido anterior se conserva como antecedente; no acredita aprobación externa del cambio de alcance ni de fechas.
+
+## Antecedentes anteriores al cambio de orientación
+
 Última actualización: 25 de septiembre de 2026.
 
 Registra qué está **decidido**, qué está **condicionado**, qué está

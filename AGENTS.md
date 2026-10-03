@@ -7,6 +7,10 @@ Este repositorio lo trabajan varias personas y varios asistentes de IA.
 trabajas con una que busca otro nombre, este archivo sigue siendo la
 fuente: léelo igual.
 
+## Orientación vigente
+
+Leer primero `BASES_PROYECTO_2026-10-03.md`. El MVP está en pausa. Antes de diseñar o implementar interpretación clínica, avisar a Sebastián al llegar a `H-IA-01` y definir su alcance con él. La intención de prediagnóstico no constituye una validación clínica ni decide el orden de revisión/publicación.
+
 ## Los cuatro pasos obligatorios antes de tocar nada
 
 1. Lee `BITACORA_PROGRESO.md` — estado real, bloqueos y quién hizo qué.
