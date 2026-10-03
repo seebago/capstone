@@ -17,24 +17,13 @@ el contacto con los líderes de otros equipos.
 
 Integrantes: Sebastián González Garrido, Vicente López, Aron Germain Navarro.
 
-## Estado actual
+## Estado actual — 2026-10-03
 
-Fase de definición y documentación. **No existe código de aplicación en
-este repositorio.** Lo que hay es documentación de arquitectura,
-especificaciones técnicas, el banco de preguntas de levantamiento y las
-evidencias académicas de Fase 1.
+MVP en pausa por instrucción de Sebastián, nueva fecha por definir. Hay código en ramas feature: dominio D/E, persistencia SQLite experimental y MVP FastAPI/MongoDB con interfaz web. `main` contiene documentación; no incluye aún esas implementaciones. PR #1 y #2 continúan abiertos en la revisión del 3 de octubre.
 
-| Área | Estado | Nota |
-|---|---|---|
-| Multi-tenancy | Diseñado, no implementado | COMPARACION §4 |
-| RBAC | Modelo conceptual | COMPARACION §5 |
-| Feature gating | Diseñado | COMPARACION §6 |
-| Auditoría | Diseñada | COMPARACION §8 |
-| API de carga de exámenes | Especificada, no implementada | Especificacion_Endpoints |
-| Frontend | No iniciado | Max prepara una base (ST-011) |
-| Base de datos | Sin migraciones ni proyecto creado | — |
-| Pruebas | No existen | — |
-| CI/CD | No configurado | — |
+La nueva dirección es app móvil, portal médico propuesto y carga de archivos para un futuro análisis preliminar/prediagnóstico. Ver `BASES_PROYECTO_2026-10-03.md`. PostgreSQL/MongoDB en evaluación; detalle clínico diferido hasta `H-IA-01`.
+
+Evidencia del alcance anterior: 22 pruebas de dominio reejecutadas el 3 de octubre, aprobadas. GitHub Actions del commit `5cd26c5` registra 37 pruebas y 15 subpruebas aprobadas (ejecución 37050645693). No acreditan el nuevo flujo clínico. Revisión humana del cambio documental pendiente.
 
 ## Documentos incorporados al repositorio
 
@@ -321,7 +310,7 @@ puede reconstruir cómo se llegó a esas decisiones.
 Regla adoptada: todo documento generado con asistencia de IA se registra
 en el registro de aportes antes de integrarse.
 
-## Próximos pasos
+## Próximos pasos históricos — reemplazados por las bases del 2026-10-03
 
 1. Ratificar con Karina (y, si es posible, Max) el motor de base de
    datos para el componente C: MongoDB vs. PostgreSQL+RLS (ADR-006,
@@ -335,3 +324,9 @@ en el registro de aportes antes de integrarse.
    datos sintéticos, antes del 3 de octubre.
 5. Registrar en CoreStream (equipo DEM_57) el avance a medida que se
    complete, no solo en este repositorio.
+
+## Aporte de IA — reorientación 2026-10-03
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-03 | Codex vía Sebastián | Bases móviles, pausa del MVP, comparación PostgreSQL/MongoDB y punto H-IA-01 | BASES_PROYECTO_2026-10-03.md; EVALUACION_BD_2026-10-03.md; rama docs/reorientacion-movil-2026-10-03 | Pendiente | Para revisión humana |
