@@ -1,10 +1,12 @@
 # Bitácora de progreso — WellQ
 
-Última actualización: 30 de septiembre de 2026.
-Estado verificado contra `origin` en el commit `37f909b` (rama
-`docs/bitacoras-y-evidencias-vicente`), `origin/develop` (`fb4db39`,
-sin contenido relevante) y `origin/feature/wellq-base-de-fg-abc`
-(`38830fa`, aporte de Sebastián — ver más abajo).
+Última actualización: 3 de octubre de 2026.
+Estado verificado contra `origin/main` (`66c57b2`, incluye el fix de
+nomenclatura de Aron y el archivo 1.4/presentación de Sebastián),
+`origin/develop` (`fb4db39`, sin contenido relevante),
+`origin/feature/wellq-base-de-fg-abc` (`38830fa`) y
+`origin/feature/wellq-mvp-mongodb` (`5cd26c5`, MVP real MongoDB de
+Sebastián — ver Novedades del 1-3 de octubre).
 
 Esta bitácora registra estado real y verificable. Si algo no está en el
 repositorio, aquí figura como pendiente, no como hecho.
@@ -236,8 +238,73 @@ dice esto mismo con otras palabras ("no acredita el cumplimiento").
   origin main` desde la máquina de Vicente (el shell remoto usado por
   Claude no tiene credenciales de GitHub configuradas).
 
+## Novedades del 1-3 de octubre — MVP MongoDB de Sebastián, giro de prioridad del profesor, y entrada a Fase 2
+
+- **Avance de Sebastián (vía Codex), rama `feature/wellq-mvp-mongodb`,
+  push del 1-oct:** MVP real con FastAPI + MongoDB real (no simulado),
+  basado en un documento nuevo que Max le envió (`WellQ_Modelo_de_Datos.docx`,
+  mantenido fuera de Git a propósito). Aislamiento multi-tenant real vía
+  schema validator de Mongo e índices únicos por `client_id`, JWT
+  HS256 con expiración e issuer/audience, confirmación/validación/
+  rechazo con escritura atómica, interfaz web simple de prueba. 37
+  pruebas (22 de dominio + 15 de integración Mongo), CI verde. Revisado
+  por Claude a nivel de código (JWT, hashing de contraseñas, índices de
+  aislamiento) — sólido. Pendiente: todavía no tiene Pull Request, y
+  parte del `main` viejo (anterior a la corrección del 30-09), así que
+  al integrarla habrá que rebasarla sobre el `main` actual, no
+  mezclarla tal cual. Intentó además alinear la interfaz visualmente
+  con la app real de WellQ (ST-023) pero quedó bloqueado por un error
+  de su navegador automatizado — lo dejó documentado honestamente como
+  "blocked" en `design-qa.md` en vez de forzarlo.
+- **Giro importante en clase (3-10):** el equipo le planteó al profesor
+  la sobrecarga de sostener ambos cronogramas (Duoc + Alloxentric) en
+  paralelo. El profesor respondió que **el cronograma de DuocUC es la
+  prioridad** — Alloxentric no puede exigir ritmo empresarial a
+  estudiantes, y lo está resolviendo internamente. Esto **reemplaza**
+  la resolución del 30-09 ("ambos cronogramas en paralelo, sin
+  extensión"). El equipo seguirá cumpliendo con Alloxentric, pero sin
+  apuro. Actualizado en `BITACORA_STAKEHOLDERS.md` (ST-020) y
+  `PLAN_FASES_COMPONENTES.md` §9.
+- **Correo de Karina del 3-10** con varios pedidos concretos, registrados
+  como ST-024 a ST-026 en `BITACORA_STAKEHOLDERS.md`: fecha estimada del
+  MVP (formulario — el equipo acordó responder con una fecha realista
+  cerca de fin de semestre, según el cronograma de clases, sin presión),
+  documento de Gap Analysis tras mostrar el MVP (nombre de archivo
+  `ID EQUIPO_NOMBRE PROYECTO_FECHA`), enlace de Vercel en la
+  descripción/fijado del WhatsApp del equipo una vez desplegado.
+  También: CoreStream con intermitencias por migración (hoy 18:00 a
+  lunes mediodía — no usar la plataforma en esa ventana) y la lista fija
+  de documentación para HITO 3 (manuales de usuario/admin/desarrollo,
+  diagrama de BD físico, lista de endpoints, motor de logs) — ambos
+  registrados en `BITACORA_STAKEHOLDERS.md` y `PLAN_FASES_COMPONENTES.md` §11.
+- **Entramos a Fase 2 de DuocUC.** Recién ahora corresponde abordar
+  diseño e interfaz (coincide con el intento de Sebastián de alinear la
+  paleta visual). Checklist completo de los documentos nuevos que pide
+  la guía (IEEE 830/HU, diagramas de casos de uso/clases/actividad,
+  modelo de BD, mockups, plan/casos/resultados de pruebas,
+  documentación de metodología, actas de reunión, plan del proyecto) en
+  `PLAN_FASES_COMPONENTES.md` §10. Confirmado con Vicente: WellQ **no**
+  es un emprendimiento del equipo (es una rama de un producto existente
+  de Alloxentric), así que no corresponde agregar un Business Model
+  Canvas.
+- **Orden de GitHub:** el profesor avisó que el formato de entregas
+  individuales no se entendía bien — debían nombrarse
+  `Apellido_Nombre_X.X_APT122...` y solo Vicente cumplía. Aron ya
+  corrigió sus archivos 1.1/1.2 (renombrados) y subió 1.3 con el
+  formato correcto, todo el 3-10. **Falta que Sebastián renombre sus
+  evidencias de Fase 1** (hoy tienen el nombre al final, no al inicio).
+  Sebastián también subió el archivo grupal 1.4 de Fase 1 (que el
+  equipo debía generar por su cuenta, no el docente) y una presentación
+  PDF de la Evaluación 1.
+
 ## Pendiente
 
+- **Falta que Sebastián renombre sus evidencias individuales de Fase 1**
+  al formato `Apellido_Nombre_X.X_APT122...` (ver DOC-004 en
+  `BITACORA_STAKEHOLDERS.md`).
+- Definir con el equipo la fecha exacta a comprometer en el formulario
+  de Karina (ST-024) y el nombre exacto del proyecto para el archivo de
+  Gap Analysis (ST-025).
 - **Vicente no figura en los antecedentes personales de la guía 1.5.**
   La tabla registra solo a Sebastián González y Aron Germain, con un solo
   RUT. Debe corregirse antes de la entrega del 12 de septiembre.
@@ -263,9 +330,10 @@ dice esto mismo con otras palabras ("no acredita el cumplimiento").
 
 | Evidencia | Sebastián | Vicente | Aron |
 |---|---|---|---|
-| 1.1 Autoevaluación de competencias | Entregada | Entregada | Entregada |
-| 1.2 Diario de reflexión | Entregada | Entregada | Entregada |
-| 1.3 Autoevaluación Definición Proyecto APT | Entregada | Pendiente | Pendiente |
+| 1.1 Autoevaluación de competencias | Entregada (nombre pendiente de corregir) | Entregada | Entregada (corregida 3-10) |
+| 1.2 Diario de reflexión | Entregada (nombre pendiente de corregir) | Entregada | Entregada (corregida 3-10) |
+| 1.3 Autoevaluación Definición Proyecto APT | Entregada (nombre pendiente de corregir) | Entregada | Entregada (3-10) |
+| 1.4 Formativa (Evidencia Grupal) | Entregada (3-10, por Sebastián) | — | — |
 
 Convención de nombres acordada, para que ordenen por número de evidencia:
 
@@ -290,7 +358,9 @@ integrante humano. El protocolo completo está en `AGENTS.md`.
 | 2026-09-25 | Claude (vía Vicente) | Análisis de los 6 documentos subidos, verificación de git, `PLAN_FASES_COMPONENTES.md`, actualización de AD-01/ST-011 y registro de ST-016 a ST-019 | Este commit | Vicente | Pendiente |
 | 2026-09-29/30 | Codex (vía Sebastián) | Base de dominio D/E, 22 pruebas, workflow CI, `PRIORIDADES_DE_FG_ABC.md`, ADR-007, Informe de Avance Fase 2 | rama `feature/wellq-base-de-fg-abc`, commit `38830fa` | Verificado por Vicente con Claude (pruebas re-ejecutadas, ok); validación humana de fondo pendiente | En revisión |
 | 2026-09-30 (noche) | Claude (vía Vicente) | Repositorio SQLite con persistencia real sobre domain.py, 7 pruebas nuevas; investigación de marca/legal de WellQ real; análisis de la restricción de Vercel y ST-021/022 | rama `feature/wellq-persistencia-simulada`, commits `34a26fe`/`e3dba1e` | Pendiente de revisión por Sebastián/Aron antes de integrar | En revisión |
-| 2026-09-30 (noche) | Claude (vía Vicente) | Informe para Sebastián (interfaz/privacidad/Vercel), subida a GitHub; auditoría completa de `main` (sin secretos, sin binarios grandes, CI verde) y corrección: README actualizado + fusión de `docs/bitacoras-y-evidencias-vicente` en `main` + eliminación de archivo duplicado. Ramas feature dejadas intencionalmente sin integrar | `main`, pendiente `git push`; ver Novedades del 30-09 más arriba | Pendiente | Pendiente de push |
+| 2026-09-30 (noche) | Claude (vía Vicente) | Informe para Sebastián (interfaz/privacidad/Vercel), subida a GitHub; auditoría completa de `main` (sin secretos, sin binarios grandes, CI verde) y corrección: README actualizado + fusión de `docs/bitacoras-y-evidencias-vicente` en `main` + eliminación de archivo duplicado. Ramas feature dejadas intencionalmente sin integrar | `main`, commits `7fc7e1c`/`8d53031`, pusheados | Vicente | Validado |
+| 2026-10-01 | Codex (vía Sebastián) | MVP real FastAPI + MongoDB, JWT, aislamiento multi-tenant, 37 pruebas, interfaz web de prueba | rama `feature/wellq-mvp-mongodb`, commit `87b272d`/`5cd26c5` | Revisado por Claude a nivel de código (sólido); validación humana de fondo y PR pendientes | En revisión |
+| 2026-10-03 | Claude (vía Vicente) | Registro del giro de prioridad (cronograma Duoc), de los pedidos del correo de Karina (ST-024 a 026), del checklist de documentos de Fase 2 y HITO 3, y del estado de la nomenclatura de evidencias | `BITACORA_STAKEHOLDERS.md`, `BITACORA_PROGRESO.md`, `PLAN_FASES_COMPONENTES.md` | Vicente | Pendiente |
 
 ## Oportunidades de mejora detectadas
 
@@ -323,15 +393,37 @@ en el registro de aportes antes de integrarse.
 
 ## Próximos pasos
 
-1. Ratificar con Karina (y, si es posible, Max) el motor de base de
-   datos para el componente C: MongoDB vs. PostgreSQL+RLS (ADR-006,
-   ST-016) — bloquea empezar a programar.
-2. Aclarar con Karina el significado de «DE-FG-ABC» (ST-017) y el
-   alcance exacto esperado para HITO 1 (ST-018).
-3. Confirmar si `DART_14_1.1...docx` fue un error de navegación en
+> Actualizado 03-10-2026 tras el giro de prioridad hacia el cronograma
+> de DuocUC — ver Novedades del 1-3 de octubre. El orden ya no está
+> forzado por el vencimiento de HITO 1 de Alloxentric.
+
+1. **Sebastián**: renombrar sus evidencias individuales de Fase 1 al
+   formato `Apellido_Nombre_X.X_APT122...` (DOC-004).
+2. Fijar con el equipo la fecha a comprometer en el formulario de
+   Karina (ST-024) y el nombre exacto del proyecto para el documento de
+   Gap Analysis (ST-025), y enviarlos.
+3. Empezar los documentos de Fase 2 (`PLAN_FASES_COMPONENTES.md` §10):
+   priorizar IEEE 830/Historias de Usuario y el modelo de BD (conceptual,
+   aunque ADR-006 no esté ratificado), ya que son base para los
+   diagramas de clases/casos de uso/actividad y para los mockups.
+4. Documentar honestamente el proceso de trabajo real del equipo
+   (reuniones espontáneas por los horarios de cada uno) en vez de
+   simular ceremonias SCRUM que no ocurrieron — ver nota de agenda en
+   `PLAN_FASES_COMPONENTES.md` §10.
+5. Revisar a nivel senior y con pruebas re-ejecutadas el MVP MongoDB de
+   Sebastián (rama `feature/wellq-mvp-mongodb`) antes de abrir su Pull
+   Request, y planear el rebase sobre el `main` ya corregido.
+6. Ratificar con Karina (y, si es posible, Max) el motor de base de
+   datos definitivo (ADR-006, ST-016/022) — de facto encaminado a
+   MongoDB por el MVP de Sebastián, falta la ratificación formal.
+7. Aclarar con Karina el significado de «DE-FG-ABC» (ST-017) y el
+   alcance exacto esperado para HITO 1 (ST-018) — ya sin la urgencia
+   de antes, pero sigue sin responderse.
+8. Confirmar si `DART_14_1.1...docx` fue un error de navegación en
    CoreStream (ST-019).
-4. Implementar la Fase 1 de `PLAN_FASES_COMPONENTES.md`: esquema JSON
-   canónico (componente C) + 2-3 endpoints mínimos (componente A) con
-   datos sintéticos, antes del 3 de octubre.
-5. Registrar en CoreStream (equipo DEM_57) el avance a medida que se
-   complete, no solo en este repositorio.
+9. Una vez haya despliegue real en Vercel, poner el enlace (y
+   usuario/contraseña si aplica) en la descripción y el chat fijado del
+   WhatsApp del equipo (ST-026).
+10. Registrar en CoreStream (equipo DEM_57) el avance a medida que se
+    complete, no solo en este repositorio — recordar que CoreStream
+    tendrá intermitencias hasta el lunes mediodía.

@@ -446,12 +446,99 @@ El runtime Python de Vercel corre FastAPI/Flask/Django de forma nativa
 
 ## 9. Sobre trabajar a dos calendarios (Duoc y Alloxentric)
 
-Karina confirmó que ambos cronogramas — el académico de Duoc y el de
+> **Actualización 03-10-2026 — reemplaza lo que decía esta sección.**
+> El equipo planteó directamente al profesor, en clase, la sobrecarga
+> que generaba sostener el ritmo de Alloxentric en paralelo al
+> académico. El profesor respondió que **el cronograma que importa es
+> el de DuocUC** — Alloxentric no puede exigirle a estudiantes un ritmo
+> de entrega empresarial, y está gestionando esa tensión internamente
+> con Alloxentric. El equipo seguirá cumpliendo con Alloxentric (MVP,
+> Vercel, CoreStream), pero a su propio ritmo y sin sacrificar calidad
+> por velocidad. Ver `BITACORA_STAKEHOLDERS.md` ST-020 (actualizado) y
+> ST-024/025/026 (los pedidos concretos del correo de Karina del 3-10).
+>
+> Esto **sí** cambia el plan de fases, al revés de lo que decía la
+> versión anterior de esta sección: ya no hay urgencia artificial por
+> HITO 1 de Alloxentric. El ritmo lo fija el avance real de Fase 2 en
+> DuocUC (ver §10), y el MVP con Vercel se entrega cuando esté bien
+> hecho, no antes. El proceso de "fase bien integrada antes de pasar a
+> la siguiente" (§6.4) sigue siendo la disciplina de trabajo, ahora sin
+> la presión de un hito externo encima.
+
+~~Karina confirmó que ambos cronogramas — el académico de Duoc y el de
 Alloxentric (CoreStream) — deben cumplirse en paralelo, y que
 Alloxentric espera que el equipo muestre un ritmo de entrega real de
-industria. Esto no cambia el plan de fases: lo que cambia es que el
-proceso de "fase bien integrada antes de pasar a la siguiente" (§6.4)
-deja de ser un lujo académico y pasa a ser la única forma de sostener
-ese ritmo sin acumular deuda técnica invisible — avanzar rápido y
-avanzar por partes chicas y verificadas no son objetivos en conflicto,
-son la misma disciplina.
+industria.~~ *(resolución del 30-09, superada por la del 3-10 arriba)*
+
+## 10. Fase 2 (DuocUC) — qué documentos exige la guía académica
+
+A diferencia de Fase 1 (definición del proyecto), Fase 2 pide evidencia
+de diseño y de proceso de desarrollo, no solo de código. Checklist según
+la guía de la asignatura (actualizado 03-10-2026):
+
+### Requerimientos y diseño
+
+| Documento | Estado |
+|---|---|
+| Documento de requerimientos IEEE 830 / Historias de Usuario | Pendiente |
+| Diagrama de casos de uso | Pendiente |
+| Diagrama de clases | Pendiente |
+| Diagramas de actividad | Pendiente |
+| Modelo de base de datos | Pendiente — depende de ADR-006 (motor definitivo, ver ST-016/022); puede documentarse a nivel conceptual/lógico ya, aunque el físico cambie según el motor |
+| Mockups de interfaz | Pendiente — recién ahora corresponde abordar diseño visual (ver ST-023, tema oscuro vs. paleta real de WellQ) |
+
+### Pruebas (todo nuevo en Fase 2)
+
+| Documento | Estado |
+|---|---|
+| Plan de pruebas | Pendiente |
+| Casos de prueba | Pendiente — ya existe base real: 22 pruebas de dominio + 15 de integración Mongo de Sebastián, hace falta documentarlas como casos de prueba formales, no solo como código |
+| Resultados de las pruebas | Pendiente |
+
+### Gestión y metodología (todo nuevo en Fase 2)
+
+| Documento | Estado |
+|---|---|
+| Documentación según metodología elegida (ej. SCRUM: product backlog, sprint backlog, actas de reunión) | Pendiente — ver nota de agenda del equipo abajo |
+| Actas de reunión | Pendiente |
+| Resolución de conflictos | Pendiente (sin conflictos registrados a la fecha) |
+| Documentación de stakeholders | Ya existe — `BITACORA_STAKEHOLDERS.md` cubre este requisito |
+| Plan del proyecto (según metodología) | Pendiente |
+| Business Model Canvas | **No aplica** — confirmado con Vicente (03-10): WellQ no es un emprendimiento del equipo, es una rama/módulo de un producto ya existente de Alloxentric que se va a implementar |
+
+### Nota sobre por qué la documentación de reuniones va a ser liviana
+
+Los horarios del equipo son difíciles de coordinar, lo que hay que
+dejar explícito en la documentación de metodología en vez de simular
+reuniones formales que no ocurrieron:
+
+- **Vicente**: trabaja, llega a casa recién a las 17:30.
+- **Aron**: práctica profesional hasta las 18:00, además tiene clases
+  martes y jueves.
+- **Sebastián**: disponible fuera de eso, pero es **bombero
+  voluntario** — puede ser llamado a una emergencia en cualquier
+  momento y debe salir a resolverla.
+
+Por esto las reuniones del equipo son espontáneas y poco
+pre-organizadas. Si la metodología elegida es SCRUM (o similar), esto
+debe quedar dicho en la documentación de proceso en vez de inventar un
+ritmo de ceremonias que el equipo no sostiene en la práctica — es
+preferible documentar honestamente un proceso asíncrono/ad-hoc que
+simular dailies o sprints que no pasaron.
+
+## 11. HITO 3 — documentación fija (correo de Karina, 03-10-2026)
+
+Fecha fija para Duoc y Utem por igual. Se solicitará como "proyecto
+documentado":
+
+- Manual de Usuario.
+- Manual de Administrador.
+- Manual de Desarrollo.
+- Diagrama de BD físico, con relaciones e índices.
+- Lista de endpoints: descripción, parámetros, tipos y mensajes de error.
+- Descripción del motor de logs y estructura de los mensajes logueados
+  (para troubleshooting).
+
+Conviene ir redactando estos en paralelo a medida que el código avanza
+(especialmente la lista de endpoints y el diagrama físico de BD), en vez
+de dejarlos todos para el final del semestre.
