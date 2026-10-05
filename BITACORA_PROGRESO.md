@@ -1,12 +1,13 @@
 # Bitácora de progreso — WellQ
 
-Última actualización: 3 de octubre de 2026.
-Estado verificado contra `origin/main` (`66c57b2`, incluye el fix de
-nomenclatura de Aron y el archivo 1.4/presentación de Sebastián),
-`origin/develop` (`fb4db39`, sin contenido relevante),
+Última actualización: 5 de octubre de 2026.
+Estado verificado contra `origin/main` (`66c57b2`, sin cambios desde el
+3-10), `origin/develop` (`fb4db39`, sin contenido relevante),
 `origin/feature/wellq-base-de-fg-abc` (`38830fa`) y
 `origin/feature/wellq-mvp-mongodb` (`5cd26c5`, MVP real MongoDB de
-Sebastián — ver Novedades del 1-3 de octubre).
+Sebastián — ver Novedades del 1-3 de octubre). La rama
+`docs/reorientacion-movil-2026-10-03` (propuesta de pivote a app móvil
+de Sebastián) sigue sin tocar `main` y sin resolverse en equipo.
 
 Esta bitácora registra estado real y verificable. Si algo no está en el
 repositorio, aquí figura como pendiente, no como hecho.
@@ -297,8 +298,35 @@ dice esto mismo con otras palabras ("no acredita el cumplimiento").
   equipo debía generar por su cuenta, no el docente) y una presentación
   PDF de la Evaluación 1.
 
+## Novedades del 5 de octubre — reunión con Karina: fecha de entrega y despliegue continuo
+
+- **Fecha de entrega final del MVP acordada**: entre semana 12 y semana
+  15 del calendario de Duoc (aprox. 9-nov a 6-dic-2026, coincide con la
+  ventana de HITO 3 — confirmar fechas exactas). Resuelve ST-024.
+- **Matiz importante sobre el giro de prioridad del 3-10**: priorizar el
+  cronograma de Duoc fija la fecha de entrega *final*, pero Karina fue
+  enfática en que el despliegue para testing de Alloxentric **no puede
+  esperar** — necesitan poder probar cada funcionalidad a medida que se
+  construye, de forma continua, no solo al cierre. Actualizado en
+  `PLAN_FASES_COMPONENTES.md` §9 y `BITACORA_STAKEHOLDERS.md`
+  (ST-020/021/024).
+- **Ngrok autorizado explícitamente por Karina** como alternativa si
+  Vercel no resulta viable esta semana. Esto destraba el testing
+  inmediato sin depender de resolver ADR-006 ni de tener un motor de
+  base de datos en la nube: un túnel Ngrok hacia el MongoDB local del
+  MVP de Sebastián (`feature/wellq-mvp-mongodb`, ya probado con 37+
+  pruebas) cumpliría el pedido de "testeable ya" esta misma semana.
+- **Sigue sin resolverse** la propuesta de pivote a app móvil +
+  prediagnóstico de Sebastián (rama `docs/reorientacion-movil-2026-10-03`,
+  ver Novedades del 1-3 de octubre). Esto es más urgente ahora: si el
+  equipo decide pausar el MVP actual, hay que decidir primero qué se
+  despliega para cumplir con el pedido de testing continuo de Karina.
+
 ## Pendiente
 
+- **Decidir qué se despliega esta semana para testing continuo de
+  Alloxentric** (Vercel o Ngrok, ver Novedades del 5-10) — no puede
+  esperar a resolver el pivote de Sebastián ni ADR-006.
 - **Falta que Sebastián renombre sus evidencias individuales de Fase 1**
   al formato `Apellido_Nombre_X.X_APT122...` (ver DOC-004 en
   `BITACORA_STAKEHOLDERS.md`).

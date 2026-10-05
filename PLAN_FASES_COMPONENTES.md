@@ -446,6 +446,27 @@ El runtime Python de Vercel corre FastAPI/Flask/Django de forma nativa
 
 ## 9. Sobre trabajar a dos calendarios (Duoc y Alloxentric)
 
+> **Actualización 05-10-2026 — matiza lo que decía la actualización del
+> 03-10, no la revierte.** En la reunión con Karina quedó acordada la
+> **fecha de entrega final del MVP: entre semana 12 y semana 15** del
+> calendario de Duoc (aprox. 9-nov a 6-dic-2026, coincide con la ventana
+> de HITO 3 — confirmar fechas exactas contra el calendario oficial).
+> Eso confirma que el ritmo lo fija Duoc, como se dijo el 3-10.
+>
+> Pero Karina fue enfática en algo que la actualización del 3-10 no
+> cubría: **el despliegue para testing de Alloxentric no puede esperar
+> a la entrega final.** Necesitan poder probar cada funcionalidad a
+> medida que se construye, de forma continua. Si Vercel no resulta
+> viable, autorizó expresamente usar **Ngrok** como alternativa. Ver
+> `BITACORA_STAKEHOLDERS.md` ST-020/021/024 (actualizados 05-10).
+>
+> En la práctica: no hay que esperar a resolver ADR-006 (Mongo vs.
+> Postgres) ni a tener un motor en la nube para empezar a mostrar
+> avances — un túnel Ngrok hacia el MongoDB local de la demo de
+> Sebastián (`feature/wellq-mvp-mongodb`) ya cumpliría el pedido de
+> testing continuo esta semana, independiente de qué se decida para el
+> despliegue final en semana 12-15.
+
 > **Actualización 03-10-2026 — reemplaza lo que decía esta sección.**
 > El equipo planteó directamente al profesor, en clase, la sobrecarga
 > que generaba sostener el ritmo de Alloxentric en paralelo al

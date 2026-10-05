@@ -1,6 +1,6 @@
 # Bitácora de stakeholders — WellQ
 
-Última actualización: 3 de octubre de 2026.
+Última actualización: 5 de octubre de 2026.
 
 > **Giro importante (3 de octubre, en sala de clases).** El profesor
 > aclaró presencialmente que el equipo debe priorizar el **cronograma de
@@ -9,6 +9,16 @@
 > equipos, señalando que no corresponde presionar a estudiantes con
 > plazos de ritmo empresarial. El equipo cumplirá con Alloxentric, pero
 > sin apurarse ni sacrificar calidad — ver ST-020 actualizado más abajo.
+>
+> **Precisión importante (5 de octubre, reunión con Karina).** Lo
+> anterior **no** significa que el despliegue pueda esperar. Karina fue
+> enfática: Alloxentric necesita poder testear cada funcionalidad a
+> medida que se construye, no solo al final — el despliegue es continuo,
+> no un evento único al cierre. La fecha de **entrega final del MVP**
+> quedó acordada entre semana 12 y semana 15 (ver ST-024 actualizado),
+> pero el **despliegue para testing** debe estar disponible ya. Si
+> Vercel no resulta viable, Karina autorizó explícitamente usar **Ngrok**
+> como alternativa.
 
 Registra decisiones que **no** puede tomar el equipo. Una ausencia de
 respuesta no equivale a aprobación. No se inventa una respuesta para
@@ -87,10 +97,10 @@ troubleshooting). Registrado también en `PLAN_FASES_COMPONENTES.md`.
 | ST-018 | Alcance exacto de "MVP con base de datos operativa" para HITO 1 (28 sep–3 oct): ¿solo el esquema, o esquema + al menos un endpoint funcionando de punta a punta? | Define qué se puede prometer para el 3 de octubre | **Abierto — urgente, hito en una semana** |
 | ST-019 | El archivo `DART_14_1.1_Analisis_Documentacion...docx` subido a este chat corresponde a otro equipo (CoreStream DART 14) y a otro proyecto de Alloxentric (agente de voz, no WellQ). Confirmar si fue un error de navegación en CoreStream y si existe un archivo equivalente para el equipo DEM_57 | Evita construir sobre información que no es de este proyecto | Abierto |
 | ST-023 | El tema oscuro verde/negro de la demo que construye Sebastián no coincide con la app real de WellQ (tema claro, azul/blanco, según Google Play). Confirmar si es intencional o si conviene alinear la paleta — idealmente pidiendo a Max el kit de marca real en vez de reconstruirlo por inspección de capturas | Evita rehacer trabajo de diseño dos veces | Abierto — ver `ANALISIS_WELLQ_REAL_MARCA_Y_LEGAL.md` §1 |
-| ST-020 | Descalce de calendario entre Duoc y Alloxentric | El equipo lo informó directamente al profesor en clase (3-10). Respuesta: **el profesor indicó seguir el cronograma de DuocUC como prioridad**, no el de Alloxentric — reconoce que no corresponde exigirle a estudiantes un ritmo empresarial, y está gestionando esto internamente con Alloxentric. El equipo sí cumplirá con Alloxentric, pero a su propio ritmo, sin sacrificar calidad | **Respondido (3-10) — reemplaza la resolución del 30-09 ("ambos cronogramas en paralelo"). Prioridad: Duoc** |
-| ST-021 | Karina pidió desplegar el MVP en Vercel para que otros usuarios lo prueben | El sistema de archivos de las funciones de Vercel es de solo lectura (confirmado en la documentación oficial, ver `ANALISIS_WELLQ_REAL_MARCA_Y_LEGAL.md`); la simulación SQLite en disco construida para HITO 1 no persiste una vez desplegada — hace falta un motor de base de datos alcanzable por red | Abierto — ya no urgente tras ST-020, se resuelve al ritmo de Duoc |
-| ST-022 | Cuál motor usar para ese despliegue: MongoDB Atlas (free tier, alineado al stack real de WellQ, y es lo que Sebastián ya dejó corriendo en `feature/wellq-mvp-mongodb`) o Postgres gestionado (Neon/Supabase, alineado al brief original) — mientras ADR-006 no se ratifica formalmente | Bloquea el despliegue pedido por Karina, no solo el diseño de datos | Abierto — de facto encaminado a MongoDB por el MVP de Sebastián, falta ratificación formal |
-| ST-024 | Karina pide (correo 3-10) una fecha estimada, vía formulario, de cuándo se podrán entregar enlaces de Vercel para testing de usuarios | Define el compromiso formal del equipo con Alloxentric | **Abierto — el equipo acordó (3-10) responder con una fecha realista cerca del final del semestre, según el cronograma de clases de Duoc, sin presión. Falta fijar la fecha exacta y enviar el formulario** |
+| ST-020 | Descalce de calendario entre Duoc y Alloxentric | El equipo lo informó directamente al profesor en clase (3-10). Respuesta: **el profesor indicó seguir el cronograma de DuocUC como prioridad**, no el de Alloxentric — reconoce que no corresponde exigirle a estudiantes un ritmo empresarial, y está gestionando esto internamente con Alloxentric. El equipo sí cumplirá con Alloxentric, pero a su propio ritmo, sin sacrificar calidad. **Matiz confirmado con Karina el 5-10: esto fija la fecha de entrega FINAL (semana 12-15), no exime de desplegar y mostrar avances de forma continua mientras tanto** | **Respondido (3-10, precisado 5-10) — reemplaza la resolución del 30-09 ("ambos cronogramas en paralelo"). Prioridad: Duoc para la nota; testing continuo para Alloxentric** |
+| ST-021 | Karina pidió desplegar el MVP para que Alloxentric pueda testearlo | El sistema de archivos de las funciones de Vercel es de solo lectura (confirmado en la documentación oficial, ver `ANALISIS_WELLQ_REAL_MARCA_Y_LEGAL.md`); la simulación SQLite en disco no persiste una vez desplegada — hace falta un motor de base de datos alcanzable por red, o un túnel (Ngrok) hacia un backend corriendo localmente | **Abierto — urgente de nuevo (5-10): Karina exige testing continuo de cada funcionalidad, no solo al cierre. Autorizó Ngrok como alternativa si Vercel no resulta viable esta semana** |
+| ST-022 | Cuál motor usar para ese despliegue: MongoDB Atlas (free tier, alineado al stack real de WellQ, y es lo que Sebastián ya dejó corriendo en `feature/wellq-mvp-mongodb`) o Postgres gestionado (Neon/Supabase, alineado al brief original) — mientras ADR-006 no se ratifica formalmente | Bloquea el despliegue pedido por Karina, no solo el diseño de datos | Abierto — de facto encaminado a MongoDB por el MVP de Sebastián, falta ratificación formal. **Con Ngrok como alternativa (ST-021), esta decisión ya no bloquea el testing inmediato**: se puede exponer el MongoDB local de la demo sin esperar un motor en la nube |
+| ST-024 | Karina pide (correo 3-10) una fecha estimada, vía formulario, de cuándo se podrán entregar enlaces para testing de usuarios | Define el compromiso formal del equipo con Alloxentric | **Respondido (5-10, en reunión): entrega final del MVP entre semana 12 y semana 15 del calendario Duoc (aprox. 9-nov a 6-dic-2026, coincide con la ventana de HITO 3 — confirmar fechas exactas contra el calendario oficial). Falta enviar el formulario formalmente si no se hizo en la reunión** |
 | ST-025 | Karina pide (correo 3-10) un documento de Gap Analysis tras mostrar el MVP en reunión, con nombre de archivo `ID EQUIPO_NOMBRE PROYECTO_FECHA ENTREGA` (ej. `DEM_57_WELLQ_<fecha>`), enviado por correo | Acredita avance real vs. requerimientos para proyectar fechas por ítem | **Abierto — falta definir con el equipo cuándo se muestra el MVP y confirmar el nombre exacto del proyecto para el archivo** |
 | ST-026 | Karina pide (correo 3-10) que el enlace de Vercel (y usuario/contraseña si aplica) quede en la descripción del grupo de WhatsApp y fijado en el chat | Visibilidad para Alloxentric una vez desplegado | Abierto — depende de que exista un despliegue real (ST-021/022) |
 
@@ -113,3 +123,5 @@ Una respuesta sin criterio de aceptación observable no está cerrada.
 | ST-014 | IA vía NVIDIA, sin costo | Karina | 2026-09-07 | AI Gateway con proveedor NVIDIA (A-14) | Correo del 7 de septiembre con pasos de acceso |
 | ST-015 | Vercel como plataforma de despliegue | Karina | 2026-09-07 | Decisión A-13, condicionada | Pendiente de confirmar quién provee la cuenta |
 | ST-020 | Prioridad: cronograma de DuocUC, no el de Alloxentric | Profesor (en clase) | 2026-10-03 | El equipo avanza al ritmo de Duoc; cumple con Alloxentric sin apuro | Comunicación verbal en clase; reemplaza la resolución anterior (30-09) |
+| ST-024 | Entrega final del MVP: semana 12 a 15 de Duoc (aprox. 9-nov a 6-dic-2026) | Karina | 2026-10-05 | Fecha formal para el formulario de Alloxentric | Acordado en reunión; falta confirmar fecha exacta y enviar el formulario si no se hizo en la reunión |
+| ST-021 | Despliegue continuo para testing; Ngrok autorizado si Vercel no resulta viable | Karina | 2026-10-05 | El equipo debe tener algo testeable por Alloxentric ya, no solo al final | Acordado en reunión; falta el despliegue real |
