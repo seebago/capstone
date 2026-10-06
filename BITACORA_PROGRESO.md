@@ -1,8 +1,8 @@
 # Bitácora de progreso — WellQ
 
-Última actualización: 5 de octubre de 2026.
-Estado verificado contra `origin/main` (`66c57b2`, sin cambios desde el
-3-10), `origin/develop` (`fb4db39`, sin contenido relevante),
+Última actualización: 6 de octubre de 2026.
+Estado verificado contra `origin/main` (`ccc3893` remoto; `4e70dda`
+en local, pendiente de push — commits `d4a9508` y `4e70dda`), `origin/develop` (`fb4db39`, sin contenido relevante),
 `origin/feature/wellq-base-de-fg-abc` (`38830fa`) y
 `origin/feature/wellq-mvp-mongodb` (`5cd26c5`, MVP real MongoDB de
 Sebastián — ver Novedades del 1-3 de octubre). La rama
@@ -321,6 +321,35 @@ dice esto mismo con otras palabras ("no acredita el cumplimiento").
   ver Novedades del 1-3 de octubre). Esto es más urgente ahora: si el
   equipo decide pausar el MVP actual, hay que decidir primero qué se
   despliega para cumplir con el pedido de testing continuo de Karina.
+
+## Novedades del 6 de octubre — bloqueo de cupo en Codex, avance en documentación de Fase 2
+
+- **Sebastián sin cupo en Codex** para continuar hoy (menos del 10% de
+  su cupo semanal) y por lo tanto no puede levantar la demo + Ngrok
+  para el despliegue continuo que pidió Karina (ver Novedades del
+  5-oct). Lo retoma mañana. Esto es un riesgo de capacidad nuevo: el
+  despliegue para testing depende de una herramienta con cupo limitado
+  de un solo integrante — a evaluar si conviene documentar el
+  procedimiento de `start-demo.ps1` + `ngrok http 8765` para que
+  cualquiera del equipo con acceso a un Windows pueda ejecutarlo, no
+  solo Sebastián.
+- **Mientras tanto, se adelantó documentación de Fase 2 que no depende
+  del despliegue**: se organizó la estructura de carpetas de
+  `Fase 2/` en GitHub (README con nomenclatura y checklist, commit
+  `d4a9508`) y se generaron, a partir del código real del MVP
+  (`feature/wellq-mvp-mongodb`, no inventados):
+  - Diagrama de casos de uso (9 casos de uso, roles `patient`/`clinician`
+    tal como están definidos en `mvp/security.py`).
+  - Diagrama de actividad del flujo "Confirmar extracción" (UC-04),
+    con las reglas de negocio reales de `prototype/domain.py:transition()`.
+  - Diagrama de estados complementario del ciclo de vida de una
+    extracción clínica.
+  Todo en `Fase 2/Evidencias Proyecto/Evidencias de documentación/arquitectura/`
+  (commit `4e70dda`), con las fuentes `.mmd` versionadas para poder
+  regenerarlos si el código del MVP cambia.
+- Explícitamente no se incorporó la propuesta de pivote a app móvil +
+  prediagnóstico a estos diagramas — el equipo aún no la ha conversado
+  (confirmado por Vicente).
 
 ## Pendiente
 
