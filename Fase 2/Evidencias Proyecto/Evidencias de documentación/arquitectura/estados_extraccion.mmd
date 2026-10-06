@@ -1,0 +1,19 @@
+stateDiagram-v2
+    [*] --> awaiting_confirmation : Crear examen clínico sintético (UC-03)
+
+    awaiting_confirmation --> confirmed : confirm (Paciente) - UC-04
+    awaiting_confirmation --> discarded : discard (Paciente) - UC-05
+
+    confirmed --> clinically_validated : validate (Clínico) - UC-06
+    confirmed --> rejected : reject (Clínico) - UC-07
+
+    discarded --> [*]
+    rejected --> [*]
+    clinically_validated --> [*] : Elegible para consultar eligibility (UC-08)
+
+    note right of confirmed
+        Requiere: identity_match resuelto,
+        validación técnica OK y confianza
+        ≥ 0.9 en todos los marcadores
+        (o resueltos manualmente)
+    end note

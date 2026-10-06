@@ -1,0 +1,37 @@
+flowchart TD
+    START([Inicio: Paciente solicita<br/>confirmar extracción]) --> A1
+
+    A1{"¿Tiene permiso<br/>exam:confirm y feature<br/>clinical_tests habilitada?"}
+    A1 -- No --> E1["Rechazar:<br/>PERMISSION_DENIED /<br/>FEATURE_NOT_INCLUDED"] --> ENDE
+
+    A1 -- Sí --> A2{"¿extraction_id y<br/>revision coinciden<br/>con lo esperado?"}
+    A2 -- No --> E2["Rechazar:<br/>EXTRACTION_SUPERSEDED /<br/>REVISION_CONFLICT"] --> ENDE
+
+    A2 -- Sí --> A3{"¿Estado actual es<br/>'awaiting_confirmation'?"}
+    A3 -- No --> E3["Rechazar:<br/>INVALID_TRANSITION"] --> ENDE
+
+    A3 -- Sí --> A4{"¿identity_match ≠ 'match'<br/>y no fue confirmada<br/>manualmente?"}
+    A4 -- Sí --> E4["Rechazar:<br/>IDENTITY_UNRESOLVED"] --> ENDE
+
+    A4 -- No --> A5{"¿Todos los marcadores<br/>pasaron validación<br/>técnica?"}
+    A5 -- No --> E5["Rechazar:<br/>VALIDATION_FAILED"] --> ENDE
+
+    A5 -- Sí --> A6{"¿Hay marcadores con<br/>confianza &lt; 0.9 sin<br/>resolver manualmente?"}
+    A6 -- Sí --> E6["Rechazar:<br/>CONFIDENCE_UNRESOLVED"] --> ENDE
+
+    A6 -- No --> P1["Marcar extracción como<br/>'confirmed', guardar<br/>confirmed_by / confirmed_at"]
+    P1 --> P2["Incrementar revisión<br/>(revision + 1)"]
+    P2 --> P3["Registrar evento de<br/>auditoría (AuditEvent):<br/>quién, qué, cuándo,<br/>desde dónde, resultado"]
+    P3 --> P4["Encolar acción de scoring<br/>(score_action = 'enqueue')"]
+    P4 --> OK([Fin: extracción<br/>'confirmed'])
+
+    ENDE([Fin: solicitud<br/>rechazada])
+
+    classDef decision fill:#fef9c3,stroke:#ca8a04,color:#713f12;
+    classDef error fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+    classDef process fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    classDef terminal fill:#1e293b,stroke:#0f172a,color:#fff;
+    class A1,A2,A3,A4,A5,A6 decision;
+    class E1,E2,E3,E4,E5,E6 error;
+    class P1,P2,P3,P4 process;
+    class START,OK,ENDE terminal;
