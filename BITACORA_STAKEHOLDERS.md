@@ -1,6 +1,6 @@
 # Bitácora de stakeholders — WellQ
 
-Última actualización: 5 de octubre de 2026.
+Última actualización: 6 de octubre de 2026.
 
 > **Giro importante (3 de octubre, en sala de clases).** El profesor
 > aclaró presencialmente que el equipo debe priorizar el **cronograma de
@@ -103,6 +103,7 @@ troubleshooting). Registrado también en `PLAN_FASES_COMPONENTES.md`.
 | ST-024 | Karina pide (correo 3-10) una fecha estimada, vía formulario, de cuándo se podrán entregar enlaces para testing de usuarios | Define el compromiso formal del equipo con Alloxentric | **Respondido (5-10, en reunión): entrega final del MVP entre semana 12 y semana 15 del calendario Duoc (aprox. 9-nov a 6-dic-2026, coincide con la ventana de HITO 3 — confirmar fechas exactas contra el calendario oficial). Falta enviar el formulario formalmente si no se hizo en la reunión** |
 | ST-025 | Karina pide (correo 3-10) un documento de Gap Analysis tras mostrar el MVP en reunión, con nombre de archivo `ID EQUIPO_NOMBRE PROYECTO_FECHA ENTREGA` (ej. `DEM_57_WELLQ_<fecha>`), enviado por correo | Acredita avance real vs. requerimientos para proyectar fechas por ítem | **Abierto — falta definir con el equipo cuándo se muestra el MVP y confirmar el nombre exacto del proyecto para el archivo** |
 | ST-026 | Karina pide (correo 3-10) que el enlace de Vercel (y usuario/contraseña si aplica) quede en la descripción del grupo de WhatsApp y fijado en el chat | Visibilidad para Alloxentric una vez desplegado | Abierto — depende de que exista un despliegue real (ST-021/022) |
+| ST-027 | El MVP (`feature/wellq-mvp-mongodb`) **no tiene endpoint para asignar un paciente a un clínico**: la relación (`care_team_links`) solo existe como dato sembrado a mano en `mvp/database.py:initialize()` (un paciente por clínico, por tenant demo, más un paciente deliberadamente sin vincular para probar aislamiento). Confirmado revisando el código el 6-10 al armar el diagrama de casos de uso. | Sin esta asignación, `GET /api/patients` y el acceso del clínico a exámenes (`context_for` en `mvp/app.py`) dependen de datos hardcodeados — no hay forma real de dar de alta la relación paciente-clínico en producción, ni un rol de administración para crearla | **Abierto — no se incluyó como caso de uso en el diagrama porque no está implementado; evaluar si entra al alcance de Fase 2 o queda como deuda técnica documentada** |
 
 ## Pendientes académicos
 
