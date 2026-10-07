@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css"></head>
+<body>
+  <div class="disclaimer">Paleta provisional — pendiente kit de marca real (Max)</div>
+  <div class="topbar">
+    <h1>Pacientes a mi cargo</h1>
+    <span style="font-size:12px;color:#64748B;">Demo Clinician Alpha</span>
+  </div>
+  <div class="content">
+    <div class="card">
+      <h3>Demo Patient Alpha</h3>
+      <p>1 examen confirmado, pendiente de tu validación</p>
+      <span class="badge confirmed">Confirmado por el paciente</span>
+    </div>
+    <div class="card" style="opacity:.55;">
+      <h3>Demo Patient Alpha</h3>
+      <p>1 examen aún no confirmado por el paciente</p>
+      <span class="badge pending">No visible para ti todavía</span>
+    </div>
+    <p style="font-size:11px;color:#94A3B8;margin-top:6px;">
+      UC-02 GET /api/v1/clinical-tests (status filtrado: solo confirmed/validated/rejected para rol clínico)
+    </p>
+  </div>
+  <div class="tabbar">
+    <div class="tab active"><div class="dot"></div>Pacientes</div>
+    <div class="tab"><div class="dot"></div>Perfil</div>
+  </div>
+</body></html>
