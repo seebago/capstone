@@ -67,3 +67,9 @@ class ActionInput(StrictModel):
 
 class DemoProfile(StrictModel):
     role: Literal["patient", "clinician"]
+
+
+class DocumentReview(StrictModel):
+    action: Literal['confirm', 'validate', 'error']
+    expected_revision: int = Field(strict=True, ge=1)
+    reason: str = Field(default='', max_length=240)

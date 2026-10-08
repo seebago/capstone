@@ -14,3 +14,5 @@ body:not(.dark) .stats article:nth-child(4) strong{color:#257c32}
 .documents-panel{margin-bottom:26px}.document-item{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding:16px 0}.document-item strong{overflow-wrap:anywhere;flex:1 1 220px}.document-item small{flex-basis:100%}#upload-form{max-width:620px;margin-bottom:22px}#upload-form button{margin-top:12px}
 
 .profile-entry button{width:100%;margin-top:14px}.profile-entry h2{margin-bottom:10px}.profile-entry .small{margin:10px 0 18px}
+
+.document-actions,.document-guidance,.document-reason,.document-audit,.document-item>label,.document-item>textarea{flex-basis:100%}.document-item>label{margin-top:4px}.document-item p{margin:6px 0}.document-status.validated{background:var(--soft);color:var(--accent)}.document-status.error{color:var(--danger)}.document-audit summary{cursor:pointer;color:var(--muted);font-size:13px}

@@ -17,7 +17,7 @@ from pymongo import ReturnDocument
 from pymongo.errors import DuplicateKeyError, PyMongoError
 from prototype.domain import Context, Extraction, Marker, RuleError, transition, score_eligibility
 from .database import connect, initialize, now_string
-from .models import ActionInput, CreateExam, Login, DemoProfile
+from .models import ActionInput, CreateExam, Login, DemoProfile, DocumentReview
 from .security import PERMISSIONS, check_password, subject_from_token, token_for
 from .settings import Settings
 from .documents import MAX_FILE_BYTES, validate_document
@@ -172,8 +172,10 @@ def create_app(settings=None):
                 for p in db.patients.find({'client_id': ctx.client_id, 'patient_id': {'$in': list(ctx.patient_ids)}})]
 
     def public_document(doc):
-        return {k: doc[k] for k in ('document_id', 'patient_id', 'filename', 'content_type',
-                'size_bytes', 'status', 'created_at', 'audit')}
+        return {**{k: doc[k] for k in ('document_id', 'patient_id', 'filename', 'content_type',
+                'size_bytes', 'status', 'created_at', 'audit')},
+                'revision': doc.get('revision', 1), 'review_reason': doc.get('review_reason', ''),
+                'updated_at': doc.get('updated_at', doc['created_at'])}
 
     def document_scope(ctx, user):
         scope = {'client_id': ctx.client_id, 'patient_id': {'$in': list(ctx.patient_ids)}}
@@ -222,7 +224,8 @@ def create_app(settings=None):
         document = {'_id': identifier, 'document_id': identifier, 'client_id': ctx.client_id,
                     'patient_id': patient_id, 'clinician_ids': sorted(clinicians), 'filename': filename,
                     'content_type': media_type, 'size_bytes': len(content), 'content': content,
-                    'status': 'received', 'created_at': timestamp, 'created_by': ctx.actor_id,
+                    'status': 'received', 'revision': 1, 'updated_at': timestamp, 'review_reason': '',
+                    'created_at': timestamp, 'created_by': ctx.actor_id,
                     'creation_key': key, 'creation_hash': digest, 'audit': [event]}
         try:
             db.exam_documents.insert_one(document)
@@ -235,6 +238,53 @@ def create_app(settings=None):
         ctx = access(request, user, 'exam:read')
         return [public_document(doc) for doc in request.app.state.db.exam_documents.find(
             document_scope(ctx, user), {'content': 0}).sort('created_at', -1)]
+
+    @app.patch('/api/v1/exam-documents/{identifier}/review')
+    def review_document(identifier: str, body: DocumentReview, request: Request,
+                        user=Depends(current_user), idempotency_key: str | None = Header(default=None)):
+        ctx = access(request, user, 'exam:validate')
+        db, key = request.app.state.db, ctx.actor_id + ':' + require_key(idempotency_key)
+        scope = {**document_scope(ctx, user), 'document_id': identifier}
+        doc = db.exam_documents.find_one(scope, {'content': 0})
+        if not doc:
+            fail('NOT_FOUND', 404)
+        digest = fingerprint(body.model_dump())
+        def replay(document):
+            for receipt in document.get('review_receipts', []):
+                if receipt['key'] == key:
+                    if receipt['hash'] != digest:
+                        fail('IDEMPOTENCY_CONFLICT', 409)
+                    return receipt['result']
+            return None
+        previous = replay(doc)
+        if previous:
+            return previous
+        if body.expected_revision != doc.get('revision', 1):
+            fail('REVISION_CONFLICT', 409)
+        allowed = {'received': {'confirm', 'error'}, 'confirmed': {'validate', 'error'}}
+        if body.action not in allowed.get(doc['status'], set()):
+            fail('INVALID_TRANSITION', 409)
+        if body.action == 'error' and len(body.reason.strip()) < 3:
+            fail('REVIEW_REASON_REQUIRED', 422)
+        new_status = {'confirm': 'confirmed', 'validate': 'validated', 'error': 'error'}[body.action]
+        timestamp = now_string()
+        result = {'document_id': identifier, 'status': new_status, 'revision': body.expected_revision + 1}
+        event = {'actor_id': ctx.actor_id, 'action': 'document_' + body.action, 'occurred_at': timestamp,
+                 'origin': ctx.origin, 'result': 'success', 'target_id': identifier,
+                 'from_status': doc['status'], 'to_status': new_status, 'reason': body.reason}
+        revision = {'revision': body.expected_revision} if 'revision' in doc else {'revision': {'$exists': False}}
+        changed = db.exam_documents.find_one_and_update({**scope, **revision, 'status': doc['status']},
+            {'$set': {'status': new_status, 'revision': result['revision'], 'updated_at': timestamp,
+                      'review_reason': body.reason},
+             '$push': {'audit': event, 'review_receipts': {'key': key, 'hash': digest, 'result': result}}},
+            return_document=ReturnDocument.AFTER, projection={'content': 0})
+        if not changed:
+            current = db.exam_documents.find_one(scope, {'content': 0})
+            previous = replay(current) if current else None
+            if previous:
+                return previous
+            fail('REVISION_CONFLICT', 409)
+        return result
 
     @app.get('/api/v1/exam-documents/{identifier}/file')
     def document_file(identifier: str, request: Request, user=Depends(current_user)):

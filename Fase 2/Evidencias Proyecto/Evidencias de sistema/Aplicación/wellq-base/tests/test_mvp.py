@@ -350,3 +350,74 @@ def test_demo_direct_access_disabled_and_revoked_persona(setup):
             assert demo.post('/api/demo/session',json={'role':'patient'}).status_code==403
     finally:
         db.users.update_one({'_id':'user_patient_alpha'},{'$set':{'state':'active'}})
+
+
+def review_file(setup, doc, action, role='clinician.alpha', key=None, revision=None, reason=''):
+    client, _, headers, _ = setup
+    return client.patch('/api/v1/exam-documents/'+doc['document_id']+'/review',
+        json={'action':action,'expected_revision':doc['revision'] if revision is None else revision,'reason':reason},
+        headers={**headers[role],'Idempotency-Key':key or uuid4().hex})
+
+
+def test_document_review_flow_and_patient_sees_saved_status(setup):
+    client, db, headers, config = setup
+    doc=upload(setup).json(); original=db.exam_documents.find_one({'document_id':doc['document_id']})['content']
+    assert review_file(setup,doc,'validate').json()['detail']=='INVALID_TRANSITION'
+    one=review_file(setup,doc,'confirm');assert one.status_code==200
+    assert one.json()['status']=='confirmed'
+    two=review_file(setup,one.json(),'validate');assert two.status_code==200
+    assert two.json()['status']=='validated'
+    stored=db.exam_documents.find_one({'document_id':doc['document_id']})
+    assert stored['content']==original and stored['revision']==3
+    assert [e['action'] for e in stored['audit']]==['upload_document','document_confirm','document_validate']
+    with TestClient(create_app(config)) as restarted:
+        shown=next(d for d in restarted.get('/api/v1/exam-documents',headers=headers['patient.alpha']).json() if d['document_id']==doc['document_id'])
+        assert shown['status']=='validated' and shown['revision']==3
+    assert review_file(setup,two.json(),'error',reason='Synthetic mistake').status_code==409
+
+
+def test_document_error_requires_reason_and_keeps_original(setup):
+    doc=upload(setup).json()
+    assert review_file(setup,doc,'error').status_code==422
+    result=review_file(setup,doc,'error',reason='Synthetic scan is unreadable')
+    assert result.status_code==200 and result.json()['status']=='error'
+    stored=setup[1].exam_documents.find_one({'document_id':doc['document_id']})
+    assert stored['review_reason']=='Synthetic scan is unreadable' and stored['content']==pdf_file()
+    assert review_file(setup,result.json(),'confirm').status_code==409
+
+
+def test_document_review_scope_permissions_and_features(setup):
+    doc=upload(setup).json()
+    assert review_file(setup,doc,'confirm',role='patient.alpha').status_code==403
+    assert review_file(setup,doc,'confirm',role='clinician.beta').status_code==404
+    db=setup[1];db.care_team_links.update_one({'_id':'link_alpha'},{'$set':{'state':'inactive'}})
+    try:
+        assert review_file(setup,doc,'confirm').status_code==404
+    finally:
+        db.care_team_links.update_one({'_id':'link_alpha'},{'$set':{'state':'active'}})
+    db.tenants.update_one({'_id':'demo_alpha'},{'$set':{'features':[]}})
+    try:
+        assert review_file(setup,doc,'confirm').status_code==403
+    finally:
+        db.tenants.update_one({'_id':'demo_alpha'},{'$set':{'features':['clinical_tests','lab_scoring']}})
+
+
+def test_document_review_idempotence_concurrency_and_stale_revision(setup):
+    doc=upload(setup).json();key=uuid4().hex
+    first=review_file(setup,doc,'confirm',key=key)
+    assert first.status_code==200 and review_file(setup,doc,'confirm',key=key).json()==first.json()
+    assert review_file(setup,doc,'error',key=key,reason='Synthetic error').status_code==409
+    assert review_file(setup,doc,'error',reason='Synthetic error').json()['detail']=='REVISION_CONFLICT'
+    current=first.json()
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results=list(pool.map(lambda action:review_file(setup,current,action,reason='Synthetic review').status_code,['validate','error']))
+    assert sorted(results)==[200,409]
+    saved=setup[1].exam_documents.find_one({'document_id':doc['document_id']})
+    assert saved['revision']==3 and len(saved['audit'])==3
+
+
+def test_existing_document_without_revision_can_be_reviewed(setup):
+    doc=upload(setup).json();db=setup[1]
+    db.exam_documents.update_one({'document_id':doc['document_id']},{'$unset':{'revision':''}})
+    assert review_file(setup,doc,'confirm').status_code==200
+    assert db.exam_documents.find_one({'document_id':doc['document_id']})['revision']==2

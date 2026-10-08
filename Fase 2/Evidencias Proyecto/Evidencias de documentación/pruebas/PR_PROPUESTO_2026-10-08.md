@@ -23,10 +23,14 @@ Entrada actual: dos botones paciente/profesional, sin correo ni clave, con perso
 Alpha fijadas por el backend. Modo directo explícito, deshabilitado por defecto fuera del
 arranque local. RBAC/tenant/vínculos se conservan; no autentica la identidad de un humano.
 
-Validación local 8-oct: 52 pruebas + 15 subpruebas con MongoDB real. Navegador: carga paciente,
+Validación local 8-oct: 57 pruebas + 15 subpruebas con MongoDB real. Navegador: carga paciente,
 recepción/descarga idéntica por médico vinculado, aislamiento Alpha/Beta, i18n, temas y 390/428 px,
 sin errores de consola. Evidencias de ambas iteraciones preservadas en Fase 2/pruebas.
 
 Ngrok instalado; intento real rechazado ERR_NGROK_4018 porque aún falta configurar la cuenta.
 Sin URL pública. Build cloud, red/Atlas, smoke externo, CI de rama publicada y aceptación humana
 pendientes. Los PR anteriores se mantienen; revisar con el equipo cómo sustituir la cadena #1/#2.
+
+Revisión profesional añadida: confirmar recepción antes de validar, o marcar error con motivo.
+Estado y auditoría persistidos atómicamente con revisión e idempotencia; visibles al paciente.
+Originales y evidencias anteriores conservados. Pruebas incluyen concurrencia, permisos y legado.

@@ -519,3 +519,14 @@ y 15 subpruebas, navegador de carga/descarga/cambio de perfil, idiomas/temas/mó
 | Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
 |---|---|---|---|---|---|
 | 2026-10-08 | Codex vía Sebastián | Entrada demo sin clave con perfiles sintéticos fijos | PERFILES_SIN_CLAVE_2026-10-08.md y profiles-2026-10-08.* | Pendiente humano | Local; ngrok pendiente de token |
+
+## Revisión profesional de archivos — 8 de octubre
+
+Solicitud de Sebastián: confirmar/validar/marcar con error en archivos recibidos. Implementado
+con transiciones verificadas en backend, revisión atómica, idempotencia, auditoría y motivo
+obligatorio de error visible al paciente. Conserva documentos existentes y originales.
+57 pruebas + 15 subpruebas y ensayo de navegador aprobados. Sin push ni despliegue público.
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-08 | Codex vía Sebastián | Revisión del profesional con estados e historial | REVISION_PROFESIONAL_ARCHIVOS_2026-10-08.md y review-2026-10-08.* | Pendiente humano | Local |
