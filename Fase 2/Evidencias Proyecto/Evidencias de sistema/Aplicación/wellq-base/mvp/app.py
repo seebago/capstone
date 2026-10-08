@@ -63,7 +63,7 @@ def create_app(settings=None):
 
     @app.middleware('http')
     async def headers(request, call_next):
-        if request.headers.get('host', '').split(':')[0] not in {'127.0.0.1', 'localhost', 'testserver'}:
+        if request.headers.get('host', '').split(':')[0].lower() not in settings.allowed_hosts:
             return JSONResponse({'detail': 'LOCAL_DEMO_ONLY'}, status_code=403)
         response = await call_next(request)
         response.headers['Cache-Control'] = 'no-store'

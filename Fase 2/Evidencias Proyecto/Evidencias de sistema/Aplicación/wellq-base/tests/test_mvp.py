@@ -198,3 +198,17 @@ def test_demo_configuration_and_host_guard(setup):
     response = setup[0].get('/api/health', headers={'Host': 'untrusted.example'})
     assert response.status_code == 403
     assert response.json()['detail'] == 'LOCAL_DEMO_ONLY'
+
+
+def test_explicit_evaluation_host_preserves_access_guards(setup):
+    from dataclasses import replace
+    config = replace(setup[3], allowed_hosts=('evaluation.example',))
+    with TestClient(create_app(config), base_url='https://evaluation.example') as hosted:
+        assert hosted.get('/api/health').status_code == 200
+        assert hosted.get('/api/me').status_code == 401
+        assert hosted.get('/api/me', headers=setup[2]['patient.alpha']).json()['client_id'] == 'demo_alpha'
+        assert hosted.get('/api/health', headers={'Host': 'other.example'}).status_code == 403
+        assert hosted.get('/api/health', headers={'Host': 'evaluation.example.attacker.test'}).status_code == 403
+    for hosts in [('*',), ('https://evaluation.example',), ('evaluation.example:443',), ()]:
+        with pytest.raises(RuntimeError):
+            replace(setup[3], allowed_hosts=hosts)

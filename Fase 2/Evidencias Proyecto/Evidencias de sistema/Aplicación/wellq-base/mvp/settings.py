@@ -1,4 +1,5 @@
 import os
+import re
 from dataclasses import dataclass
 
 
@@ -8,8 +9,11 @@ class Settings:
     database: str
     jwt_secret: str
     demo_password: str
+    allowed_hosts: tuple[str, ...] = ("127.0.0.1", "localhost", "testserver")
 
     def __post_init__(self):
+        if not self.allowed_hosts or any(not re.fullmatch(r"[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?", h) or ".." in h for h in self.allowed_hosts):
+            raise RuntimeError("Set exact lowercase hostnames without schemes, ports or wildcards")
         if not self.database.startswith(('wellq_demo', 'wellq_test')):
             raise RuntimeError('This MVP only permits wellq_demo* or wellq_test* databases')
         if len(self.jwt_secret) < 32 or len(self.demo_password) < 12:
@@ -19,4 +23,5 @@ class Settings:
     def load(cls):
         return cls(os.getenv('WELLQ_MONGO_URI', 'mongodb://127.0.0.1:27018'),
                      os.getenv('WELLQ_DATABASE', 'wellq_demo'),
-                     os.getenv('WELLQ_JWT_SECRET', ''), os.getenv('WELLQ_DEMO_PASSWORD', ''))
+                     os.getenv('WELLQ_JWT_SECRET', ''), os.getenv('WELLQ_DEMO_PASSWORD', ''),
+                     tuple(h.strip().lower() for h in os.getenv('WELLQ_ALLOWED_HOSTS', '127.0.0.1,localhost,testserver').split(',')))
