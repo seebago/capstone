@@ -1,29 +1,28 @@
-# PR propuesto (pendiente de autorización para publicar)
+# PR propuesto (pendiente de autorización de publicación)
 
-Título: Integrar MVP MongoDB con evidencias actuales y preparar evaluación en Vercel
+Título: Integrar MVP y carga de exámenes con entrega automática al médico vinculado
 Base: main
 Rama: feature/wellq-evaluation-deploy
 
-Main contiene la documentación reciente de Fase 2 pero no el MVP MongoDB ni sus pruebas.
-Esta rama reúne la implementación existente y sus evidencias con el main 7e9094f, preservando
-la documentación de Vicente y las evidencias históricas. Conserva el recorrido sintético
-paciente → corrección → confirmación → validación profesional.
+Main tiene documentación actual de Fase 2 pero no el MVP. Esta rama reúne el código y las
+ evidencias existentes con main 7e9094f y conserva la documentación de Vicente.
 
-Prepara un punto de entrada FastAPI, dependencias y configuración para Vercel; permite hosts
-exactos autorizados sin quitar la protección local predeterminada. Incluye guía Vercel + Atlas
-y alternativa ngrok con --host-header=rewrite. No incorpora el pivote móvil, funciones clínicas
-ni el endpoint de asociación paciente-clínico pendiente ST-027.
+La vista del paciente ahora permite subir PDF/PNG/JPEG en vez de crear o confirmar valores.
+Por ejemplo, un paciente Alpha adjunta un PDF sintético; el backend obtiene su identidad y
+el vínculo con el clínico desde MongoDB y el profesional recibe/descarga el mismo archivo.
+No hay selección de médico en el cliente; no tener vínculo bloquea la carga. Cada lectura
+requiere tenant, rol, feature y vínculo activo. La carga conserva bytes/metadatos/auditoría
+ en una inserción e idempotencia por clave. Los endpoints históricos de creación/confirmación
+ quedan denegados por defecto para el paciente y disponibles solo como fixtures explícitos.
 
-Validación local del 8 de octubre: 38 pruebas y 15 subpruebas aprobadas con MongoDB real y
-versiones de dependencias coincidentes con el lock; ensayo de navegador aprobado, sin errores
-de consola, es/en, claro/oscuro y 390/428 px. Importación del entrypoint y lifespan comprobados.
-Salida completa, XML y capturas en las evidencias de pruebas de Fase 2.
+Prepara entrypoint y hosts exactos para Vercel, y asistente ngrok con captura local oculta del
+authtoken. Sin secretos en Git. No hay administración de vínculos (ST-027), extracción,
+interpretación clínica ni diagnóstico. No se incorpora el pivote móvil.
 
-Pendiente: aceptación humana, CI de esta rama una vez publicada, cuentas/red/Atlas, build real
-de Vercel y smoke test externo. No hay URL pública ni despliegue cloud verificado.
-El limitador de login es por proceso; la auditoría cubre transiciones, sin cobertura universal
-ni outbox/WORM. No se declara aptitud para datos médicos reales.
+Validación local 8-oct: 50 pruebas + 15 subpruebas con MongoDB real. Navegador: carga paciente,
+recepción/descarga idéntica por médico vinculado, aislamiento Alpha/Beta, i18n, temas y 390/428 px,
+sin errores de consola. Evidencias de ambas iteraciones preservadas en Fase 2/pruebas.
 
-Colaboración: PR #2 sigue abierto sobre feature/wellq-base-de-fg-abc. La nueva propuesta reúne
-los mismos avances sobre main; revisar con el equipo la sustitución de la cadena #1/#2 antes
-de fusionar. No se cierran ni modifican esos PRs automáticamente.
+Ngrok instalado; intento real rechazado ERR_NGROK_4018 porque aún falta configurar la cuenta.
+Sin URL pública. Build cloud, red/Atlas, smoke externo, CI de rama publicada y aceptación humana
+pendientes. Los PR anteriores se mantienen; revisar con el equipo cómo sustituir la cadena #1/#2.

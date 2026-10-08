@@ -496,3 +496,15 @@ pruebas/REVISION_DESPLIEGUE_2026-10-08.md. Sin push, PR nuevo ni despliegue púb
 | Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
 |---|---|---|---|---|---|
 | 2026-10-08 | Codex vía Sebastián | Reunir main y MVP, pruebas reales, preparar Vercel y guía temporal ngrok | rama feature/wellq-evaluation-deploy y revisión 2026-10-08 | Pendiente de integrante humano | Local; publicación requiere autorización |
+
+## Ajuste solicitado del 8 de octubre — archivo del paciente y ngrok
+
+Solicitud directa de Sebastián: paciente solo sube examen, destinatario derivado del vínculo
+backend/BD. Implementado en la rama local feature/wellq-evaluation-deploy: PDF/PNG/JPEG,
+recepción automática por clínico, validación backend, JWT/tenant/features, auditoría de carga.
+50 pruebas + 15 subpruebas y navegador aprobados. ST-027 no se declara cerrado: falta
+administración de vínculos. Ngrok instalado, intento ERR_NGROK_4018; pendiente token del usuario.
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-08 | Codex vía Sebastián | Carga de archivo y enrutamiento por vínculo; asistente privado de ngrok | FLUJO_ARCHIVOS_NGROK_2026-10-08.md, uploads-2026-10-08.*, capturas | Pendiente humano | Local; túnel pendiente de autenticación |
