@@ -1,3 +1,9 @@
+> Actualización local del 8 de octubre: el paciente ahora sube PDF/PNG/JPEG y el backend entrega
+> el archivo al clínico vinculado en la BD. La creación/confirmación de valores del recorrido
+> anterior queda como fixture histórico de pruebas, deshabilitada en la evaluación normal.
+> Ver NGROK.md y la evidencia FLUJO_ARCHIVOS_NGROK_2026-10-08.md en documentación/pruebas.
+> No hay URL pública hasta configurar la cuenta ngrok y comprobar el túnel.
+
 # WellQ MVP local con MongoDB
 
 Demostración con datos ficticios del módulo de exámenes. FastAPI sirve una

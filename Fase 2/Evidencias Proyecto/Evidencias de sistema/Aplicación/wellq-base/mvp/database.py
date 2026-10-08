@@ -16,7 +16,7 @@ def connect(settings):
 def initialize(db, password):
     """Only seeds synthetic demo DBs; never imports the supplied document's data."""
     collections = ('tenants', 'patients', 'clinics', 'clinicians', 'cases', 'users',
-                   'care_team_links', 'clinical_tests', 'security_events')
+                   'care_team_links', 'clinical_tests', 'security_events', 'exam_documents')
     for name in collections:
         if name not in db.list_collection_names():
             db.create_collection(name, validator={'$jsonSchema': {
@@ -32,6 +32,8 @@ def initialize(db, password):
     db.clinical_tests.create_index([('client_id', 1), ('patient_id', 1), ('created_at', -1)])
     db.clinical_tests.create_index([('client_id', 1), ('created_by', 1), ('creation_key', 1)], unique=True)
     db.care_team_links.create_index([('client_id', 1), ('clinician_id', 1), ('patient_id', 1)], unique=True)
+    db.exam_documents.create_index([('client_id', 1), ('created_by', 1), ('creation_key', 1)], unique=True)
+    db.exam_documents.create_index([('client_id', 1), ('patient_id', 1), ('created_at', -1)])
     now = now_string()
     def insert(collection, identifier, **fields):
         db[collection].update_one({'_id': identifier}, {'$setOnInsert': {'_id': identifier,

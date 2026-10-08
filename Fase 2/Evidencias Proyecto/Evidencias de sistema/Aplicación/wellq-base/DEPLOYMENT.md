@@ -1,3 +1,8 @@
+> Actualización posterior del 8 de octubre: la evaluación normal usa paciente → carga de archivo
+> → clínico vinculado. No habilitar WELLQ_STRUCTURED_DEMO; ese modo reproduce únicamente
+> fixtures de la API histórica. Carga binaria PDF/PNG/JPEG hasta 4 MiB; verificar también el
+> límite efectivo del hosting. Ver NGROK.md y FLUJO_ARCHIVOS_NGROK_2026-10-08.md.
+
 # Despliegue del MVP sintético para evaluación
 
 Estado 2026-10-08: preparación local; sin despliegue público, push ni PR nuevo.

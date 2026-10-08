@@ -10,7 +10,7 @@ import json
 import jwt
 from fastapi import FastAPI, Depends, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 from pymongo import ReturnDocument
@@ -20,6 +20,8 @@ from .database import connect, initialize, now_string
 from .models import ActionInput, CreateExam, Login
 from .security import PERMISSIONS, check_password, subject_from_token, token_for
 from .settings import Settings
+from .documents import MAX_FILE_BYTES, validate_document
+from urllib.parse import quote
 
 POLICY = {'version': 'demo-review-v1', 'confidence_threshold': 0.9}
 UNITS = {'demo_marker_a': 'demo_unit', 'demo_marker_b': 'demo_unit'}
@@ -153,9 +155,86 @@ def create_app(settings=None):
                  'cases': list(db.cases.find({'client_id': ctx.client_id, 'patient_id': p['patient_id']}, {'_id': 0}))}
                 for p in db.patients.find({'client_id': ctx.client_id, 'patient_id': {'$in': list(ctx.patient_ids)}})]
 
+    def public_document(doc):
+        return {k: doc[k] for k in ('document_id', 'patient_id', 'filename', 'content_type',
+                'size_bytes', 'status', 'created_at', 'audit')}
+
+    def document_scope(ctx, user):
+        scope = {'client_id': ctx.client_id, 'patient_id': {'$in': list(ctx.patient_ids)}}
+        if ctx.role == 'clinician':
+            scope['clinician_ids'] = user['subject']['id']
+        return scope
+
+    @app.post('/api/v1/exam-documents', status_code=201)
+    async def upload_document(request: Request, user=Depends(current_user),
+                              idempotency_key: str | None = Header(default=None),
+                              x_file_name: str | None = Header(default=None)):
+        # Raw binary body: no patient, tenant, clinician or destination fields are accepted.
+        ctx = access(request, user, 'exam:create')
+        key, db = require_key(idempotency_key), request.app.state.db
+        if request.query_params or any(h in request.headers for h in ('x-client-id', 'x-patient-id', 'x-clinician-id')):
+            fail('INVALID_INPUT', 422)
+        patient_id = user['subject']['id']
+        links = list(db.care_team_links.find({'client_id': ctx.client_id,
+                     'patient_id': patient_id, 'state': 'active'}))
+        clinicians = {link['clinician_id'] for link in links if db.clinicians.find_one({
+            'client_id': ctx.client_id, 'clinician_id': link['clinician_id'], 'state': 'active'})}
+        if not clinicians:
+            fail('NO_TREATING_CLINICIAN', 409)
+        data = bytearray()
+        async for chunk in request.stream():
+            if len(data) + len(chunk) > MAX_FILE_BYTES:
+                fail('FILE_TOO_LARGE', 413)
+            data.extend(chunk)
+        content = bytes(data)
+        try:
+            filename, media_type = validate_document(x_file_name, request.headers.get('content-type', ''), content)
+        except ValueError as error:
+            fail(str(error), 422)
+        digest = fingerprint({'filename': filename, 'sha256': sha256(content).hexdigest()})
+        lookup = {'client_id': ctx.client_id, 'created_by': ctx.actor_id, 'creation_key': key}
+        def replay(existing):
+            if existing['creation_hash'] != digest:
+                fail('IDEMPOTENCY_CONFLICT', 409)
+            return public_document(existing)
+        existing = db.exam_documents.find_one(lookup)
+        if existing:
+            return replay(existing)
+        identifier, timestamp = uuid4().hex, now_string()
+        event = {'actor_id': ctx.actor_id, 'action': 'upload_document', 'occurred_at': timestamp,
+                 'origin': ctx.origin, 'result': 'success', 'target_id': identifier}
+        document = {'_id': identifier, 'document_id': identifier, 'client_id': ctx.client_id,
+                    'patient_id': patient_id, 'clinician_ids': sorted(clinicians), 'filename': filename,
+                    'content_type': media_type, 'size_bytes': len(content), 'content': content,
+                    'status': 'received', 'created_at': timestamp, 'created_by': ctx.actor_id,
+                    'creation_key': key, 'creation_hash': digest, 'audit': [event]}
+        try:
+            db.exam_documents.insert_one(document)
+        except DuplicateKeyError:
+            return replay(db.exam_documents.find_one(lookup))
+        return public_document(document)
+
+    @app.get('/api/v1/exam-documents')
+    def documents(request: Request, user=Depends(current_user)):
+        ctx = access(request, user, 'exam:read')
+        return [public_document(doc) for doc in request.app.state.db.exam_documents.find(
+            document_scope(ctx, user), {'content': 0}).sort('created_at', -1)]
+
+    @app.get('/api/v1/exam-documents/{identifier}/file')
+    def document_file(identifier: str, request: Request, user=Depends(current_user)):
+        ctx = access(request, user, 'exam:read')
+        doc = request.app.state.db.exam_documents.find_one({**document_scope(ctx, user), 'document_id': identifier})
+        if not doc:
+            fail('NOT_FOUND', 404)
+        return Response(doc['content'], media_type=doc['content_type'], headers={
+            'Content-Disposition': "attachment; filename*=UTF-8''" + quote(doc['filename'], safe=''),
+            'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'})
+
     @app.post('/api/v1/demo/clinical-tests', status_code=201)
     def create(body: CreateExam, request: Request, user=Depends(current_user), idempotency_key: str | None = Header(default=None)):
-        """Structured synthetic data, not the production file-upload contract."""
+        """Legacy structured synthetic fixture; disabled in the evaluation app."""
+        if not settings.structured_demo_enabled:
+            fail("STRUCTURED_DEMO_DISABLED", 403)
         ctx = access(request, user, 'exam:create')
         key, db = require_key(idempotency_key), request.app.state.db
         if body.patient_id not in ctx.patient_ids or not db.cases.find_one({
@@ -205,6 +284,8 @@ def create_app(settings=None):
 
     @app.patch('/api/v1/clinical-tests/{identifier}/extraction')
     def action(identifier: str, body: ActionInput, request: Request, user=Depends(current_user), idempotency_key: str | None = Header(default=None)):
+        if user['roles'][0] == 'patient' and not settings.structured_demo_enabled:
+            fail('STRUCTURED_DEMO_DISABLED', 403)
         ctx = access(request, user, 'exam:confirm' if body.action in {'confirm', 'discard'} else 'exam:validate')
         key, db = require_key(idempotency_key), request.app.state.db
         ex = scoped_exam(db, ctx, identifier)

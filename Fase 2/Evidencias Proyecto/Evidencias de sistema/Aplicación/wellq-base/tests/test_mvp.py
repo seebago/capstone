@@ -16,7 +16,7 @@ from mvp.security import ISSUER, AUDIENCE
 def setup():
     uri = os.getenv('WELLQ_TEST_MONGO_URI', 'mongodb://127.0.0.1:27018')
     name = 'wellq_test_' + uuid4().hex
-    config = Settings(uri, name, 'test-secret-only-' + uuid4().hex, 'OnlySyntheticTesting!42')
+    config = Settings(uri, name, 'test-secret-only-' + uuid4().hex, 'OnlySyntheticTesting!42', structured_demo_enabled=True)
     mongo = MongoClient(uri, serverSelectionTimeoutMS=3000)
     mongo.admin.command('ping')  # No mock fallback: unavailable MongoDB fails explicitly.
     app = create_app(config)
@@ -212,3 +212,109 @@ def test_explicit_evaluation_host_preserves_access_guards(setup):
     for hosts in [('*',), ('https://evaluation.example',), ('evaluation.example:443',), ()]:
         with pytest.raises(RuntimeError):
             replace(setup[3], allowed_hosts=hosts)
+
+
+def pdf_file(title='Synthetic exam'):
+    from io import BytesIO
+    from pypdf import PdfWriter
+    output = BytesIO(); writer = PdfWriter()
+    writer.add_blank_page(width=300, height=200)
+    writer.add_metadata({'/Title': title}); writer.write(output)
+    return output.getvalue()
+
+
+def upload(setup, role='patient.alpha', data=None, filename='synthetic.pdf', media='application/pdf', key=None, query=''):
+    client, _, headers, _ = setup
+    return client.post('/api/v1/exam-documents'+query, content=pdf_file() if data is None else data,
+        headers={**headers[role], 'Content-Type': media, 'X-File-Name': filename,
+                 'Idempotency-Key': key or uuid4().hex})
+
+
+def test_document_routes_to_database_link_and_persists(setup):
+    client, db, headers, config = setup
+    data = pdf_file(); response = upload(setup, data=data)
+    assert response.status_code == 201
+    doc = response.json()
+    assert 'content' not in doc and 'clinician_ids' not in doc
+    stored = db.exam_documents.find_one({'document_id': doc['document_id']})
+    assert stored['patient_id'] == 'patient_alpha' and stored['client_id'] == 'demo_alpha'
+    assert stored['clinician_ids'] == ['clinician_alpha'] and stored['content'] == data
+    assert all(k in stored['audit'][0] for k in ('actor_id', 'action', 'occurred_at', 'origin', 'result'))
+    route = '/api/v1/exam-documents/'+doc['document_id']+'/file'
+    assert client.get(route, headers=headers['clinician.alpha']).content == data
+    assert client.get(route).status_code == 401
+    for role in ('patient.beta', 'clinician.beta', 'patient.alpha_unlinked'):
+        assert client.get(route, headers=headers[role]).status_code == 404
+        assert doc['document_id'] not in [d['document_id'] for d in client.get('/api/v1/exam-documents', headers=headers[role]).json()]
+    with TestClient(create_app(config)) as restarted:
+        assert restarted.get(route, headers=headers['patient.alpha']).content == data
+    db.care_team_links.update_one({'_id': 'link_alpha'}, {'$set': {'state': 'inactive'}})
+    try:
+        assert client.get(route, headers=headers['clinician.alpha']).status_code == 404
+        assert upload(setup).json()['detail'] == 'NO_TREATING_CLINICIAN'
+    finally:
+        db.care_team_links.update_one({'_id': 'link_alpha'}, {'$set': {'state': 'active'}})
+
+
+def test_document_destination_cannot_be_chosen_and_roles_enforced(setup):
+    assert upload(setup, role='clinician.alpha').status_code == 403
+    assert upload(setup, role='patient.alpha_unlinked').json()['detail'] == 'NO_TREATING_CLINICIAN'
+    assert upload(setup, query='?clinician_id=clinician_beta').status_code == 422
+    client, db, headers, _ = setup
+    db.tenants.update_one({'_id':'demo_beta'}, {'$set': {'features': []}})
+    try:
+        assert upload(setup, role='patient.beta').status_code == 403
+        assert client.get('/api/v1/exam-documents', headers=headers['patient.beta']).status_code == 403
+    finally:
+        db.tenants.update_one({'_id':'demo_beta'}, {'$set': {'features': ['clinical_tests','lab_scoring']}})
+
+
+def test_document_idempotency_and_conflict(setup):
+    key = uuid4().hex; one = upload(setup, key=key)
+    assert one.status_code == 201
+    assert upload(setup, key=key).json()['document_id'] == one.json()['document_id']
+    assert upload(setup, key=key, data=pdf_file('Different synthetic exam')).status_code == 409
+
+
+@pytest.mark.parametrize('name,media,data,code', [
+    ('empty.pdf','application/pdf',b'', 'EMPTY_FILE'),
+    ('bad.pdf','application/pdf',b'%PDF-invalid', 'INVALID_DOCUMENT'),
+    ('bad.pdf','application/pdf',b'<script>bad</script>', 'INVALID_DOCUMENT'),
+    ('bad.html','text/html',b'<html></html>', 'UNSUPPORTED_FILE_TYPE'),
+    ('bad.png','image/png',b'not an image', 'INVALID_DOCUMENT'),
+    ('../fake.pdf','application/pdf',b'bad', 'INVALID_FILE_NAME'),
+])
+def test_invalid_document_not_saved(setup,name,media,data,code):
+    before = setup[1].exam_documents.count_documents({})
+    result = upload(setup, data=data, filename=name, media=media)
+    assert result.status_code == 422 and result.json()['detail'] == code
+    assert setup[1].exam_documents.count_documents({}) == before
+
+
+def test_document_size_limit_and_image_formats(setup):
+    from io import BytesIO
+    from PIL import Image
+    from mvp.documents import MAX_FILE_BYTES
+    assert upload(setup, data=b'x'*(MAX_FILE_BYTES+1)).status_code == 413
+    for fmt, name, media in [('PNG','synthetic.png','image/png'),('JPEG','synthetic.jpg','image/jpeg')]:
+        data = BytesIO(); Image.new('RGB',(10,10),'white').save(data,format=fmt)
+        assert upload(setup,data=data.getvalue(),filename=name,media=media).status_code == 201
+
+
+def test_evaluation_patient_cannot_enter_or_confirm_values(setup):
+    from dataclasses import replace
+    _, _, headers, config = setup; ex = create(setup).json()
+    with TestClient(create_app(replace(config, structured_demo_enabled=False))) as evaluation:
+        assert evaluation.post('/api/v1/demo/clinical-tests',json=payload(),headers={**headers['patient.alpha'],'Idempotency-Key':uuid4().hex}).status_code == 403
+        assert evaluation.patch('/api/v1/clinical-tests/'+ex['clinical_test_id']+'/extraction',json={'action':'confirm','extraction_id':ex['extraction_id'],'expected_revision':ex['revision']},headers={**headers['patient.alpha'],'Idempotency-Key':uuid4().hex}).status_code == 403
+
+
+def test_encrypted_pdf_and_forged_identity_headers_denied(setup):
+    from io import BytesIO
+    from pypdf import PdfWriter
+    writer=PdfWriter(); writer.add_blank_page(width=100,height=100); writer.encrypt('synthetic-test-password')
+    data=BytesIO();writer.write(data)
+    assert upload(setup,data=data.getvalue()).json()['detail'] == 'INVALID_DOCUMENT'
+    client, _, headers, _ = setup
+    for header in ('X-Client-Id','X-Patient-Id','X-Clinician-Id'):
+        assert client.post('/api/v1/exam-documents',content=pdf_file(),headers={**headers['patient.alpha'],'Content-Type':'application/pdf','X-File-Name':'synthetic.pdf','Idempotency-Key':uuid4().hex,header:'forged'}).status_code == 422

@@ -7,3 +7,8 @@ header{min-height:86px;padding:14px max(5%,calc((100vw - 1240px)/2));border-bott
 @media(prefers-reduced-motion:reduce){button{transition:none}}
 
 body:not(.dark) .stats article:nth-child(4) strong{color:#257c32}
+
+#exam-search{margin-bottom:14px}.filters{flex-wrap:wrap}.filters button{flex:1 0 40%}
+@media(min-width:601px){.filters button{flex:1 0 auto}}
+
+.documents-panel{margin-bottom:26px}.document-item{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding:16px 0}.document-item strong{overflow-wrap:anywhere;flex:1 1 220px}.document-item small{flex-basis:100%}#upload-form{max-width:620px;margin-bottom:22px}#upload-form button{margin-top:12px}

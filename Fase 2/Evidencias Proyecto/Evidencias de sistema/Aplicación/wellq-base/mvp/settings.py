@@ -9,6 +9,7 @@ class Settings:
     database: str
     jwt_secret: str
     demo_password: str
+    structured_demo_enabled: bool = False
     allowed_hosts: tuple[str, ...] = ("127.0.0.1", "localhost", "testserver")
 
     def __post_init__(self):
@@ -24,4 +25,5 @@ class Settings:
         return cls(os.getenv('WELLQ_MONGO_URI', 'mongodb://127.0.0.1:27018'),
                      os.getenv('WELLQ_DATABASE', 'wellq_demo'),
                      os.getenv('WELLQ_JWT_SECRET', ''), os.getenv('WELLQ_DEMO_PASSWORD', ''),
-                     tuple(h.strip().lower() for h in os.getenv('WELLQ_ALLOWED_HOSTS', '127.0.0.1,localhost,testserver').split(',')))
+                     allowed_hosts=tuple(h.strip().lower() for h in os.getenv('WELLQ_ALLOWED_HOSTS', '127.0.0.1,localhost,testserver').split(',')),
+                     structured_demo_enabled=os.getenv('WELLQ_STRUCTURED_DEMO', 'false').lower() == 'true')
