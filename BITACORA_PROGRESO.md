@@ -484,3 +484,15 @@ en el registro de aportes antes de integrarse.
 10. Registrar en CoreStream (equipo DEM_57) el avance a medida que se
     complete, no solo en este repositorio — recordar que CoreStream
     tendrá intermitencias hasta el lunes mediodía.
+
+## Aporte local del 8 de octubre — integración y preparación de evaluación
+
+Main verificado en 7e9094f; MVP remoto 5cd26c5, PR #2 abierto sobre la base de dominio.
+La rama local feature/wellq-evaluation-deploy reúne ambas líneas sin modificar main.
+38 pruebas y 15 subpruebas aprobadas contra MongoDB real, incluyendo protección de hosts
+configurable. Evidencia y bloqueos en Fase 2/Evidencias Proyecto/Evidencias de documentación/
+pruebas/REVISION_DESPLIEGUE_2026-10-08.md. Sin push, PR nuevo ni despliegue público.
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-08 | Codex vía Sebastián | Reunir main y MVP, pruebas reales, preparar Vercel y guía temporal ngrok | rama feature/wellq-evaluation-deploy y revisión 2026-10-08 | Pendiente de integrante humano | Local; publicación requiere autorización |

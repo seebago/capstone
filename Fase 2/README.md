@@ -76,10 +76,7 @@ vive por ahora en ramas `feature/*` y `docs/*`, no en `main` — están
 pendientes de revisión e integración (ver `BITACORA_PROGRESO.md`). Este
 índice no asume ese código como entregado hasta que se integre.
 
-## Evidencia histórica de la base de dominio
-
-# Avance WellQ de Fase 2
-# WellQ — avances de Fase 2
+## Implementación reunida para revisión (8 de octubre)
 
 ## MVP actual: MongoDB e interfaz de pruebas
 
@@ -133,3 +130,5 @@ desde `wellq-base`; las 37 del MVP, con `python -m pytest -q` y MongoDB activo.
 
 Los workflows permanecen en `.github/workflows/`, ubicación requerida por
 GitHub. Las ramas y bitácoras generales del equipo no se sobrescriben.
+
+La rama `feature/wellq-evaluation-deploy` reúne el main del 8 de octubre y el MVP, sin integrar todavía a main. Ver [revisión y despliegue](<Evidencias Proyecto/Evidencias de documentación/pruebas/REVISION_DESPLIEGUE_2026-10-08.md>).
