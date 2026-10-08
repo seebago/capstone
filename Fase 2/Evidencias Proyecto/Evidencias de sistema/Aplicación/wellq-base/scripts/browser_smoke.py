@@ -9,9 +9,8 @@ from playwright.sync_api import sync_playwright, expect
 
 APP = Path(__file__).resolve().parents[1]
 BASE_URL = os.getenv('WELLQ_BROWSER_URL', 'http://127.0.0.1:8765').rstrip('/')
-OUT = APP / '.runtime/browser-upload-evidence'
+OUT = APP / '.runtime/browser-profile-evidence'
 OUT.mkdir(exist_ok=True)
-password = json.loads((APP / '.runtime/config.json').read_text())['demo_password']
 filename = 'examen-ficticio-' + datetime.now().strftime('%H%M%S') + '.pdf'
 writer = PdfWriter(); writer.add_blank_page(width=300, height=200)
 writer.add_metadata({'/Title': 'SYNTHETIC TEST ONLY'})
@@ -31,12 +30,14 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT/'login-desktop.png'), full_page=True)
 
     def login(profile):
-        page.locator('#email').select_option(profile+'@wellq.test')
-        page.locator('#password').fill(password)
-        page.locator('#login-form button[type=submit]').click()
+        page.locator('#enter-patient' if profile.startswith('patient') else '#enter-clinician').click()
         expect(page.locator('#workspace')).to_be_visible()
         expect(page.locator('#health')).to_have_text('Base conectada')
 
+    assert page.locator('input[type=password], #email, #login-form').count() == 0
+    expect(page.locator('#enter-patient')).to_be_visible()
+    expect(page.locator('#enter-clinician')).to_be_visible()
+    checks.append('Dos botones de entrada, sin usuario ni contraseña')
     login('patient.alpha')
     expect(page.locator('#upload-form')).to_be_visible()
     expect(page.locator('#structured-workspace')).to_be_hidden()
@@ -71,12 +72,11 @@ with sync_playwright() as p:
         page.set_viewport_size({'width':width,'height':926})
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
     page.screenshot(path=str(OUT/'clinician-mobile.png'),full_page=True)
-    page.locator('#logout').click(); login('clinician.beta')
-    expect(page.locator('#document-list')).not_to_contain_text(filename)
-    page.locator('#logout').click(); login('patient.beta')
-    expect(page.locator('#document-list')).not_to_contain_text(filename)
+    page.locator('#logout').click(); login('patient.alpha')
+    expect(page.locator('#structured-workspace')).to_be_hidden()
+    expect(page.locator('#document-list')).to_contain_text(filename)
     page.screenshot(path=str(OUT/'patient-mobile.png'),full_page=True)
-    checks.append('Aislamiento Alpha/Beta y vistas 390/428 px sin desborde')
+    checks.append('Cambio de perfil y vistas 390/428 px sin desborde')
     page.locator('#logout').click(); page.reload(wait_until='networkidle')
     expect(page.locator('#login-panel')).to_be_visible()
     checks.append('Cierre de sesión y recarga sin credenciales persistidas')

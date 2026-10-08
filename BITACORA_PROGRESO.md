@@ -508,3 +508,14 @@ administración de vínculos. Ngrok instalado, intento ERR_NGROK_4018; pendiente
 | Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
 |---|---|---|---|---|---|
 | 2026-10-08 | Codex vía Sebastián | Carga de archivo y enrutamiento por vínculo; asistente privado de ngrok | FLUJO_ARCHIVOS_NGROK_2026-10-08.md, uploads-2026-10-08.*, capturas | Pendiente humano | Local; túnel pendiente de autenticación |
+
+## Entrada de demo por dos botones — 8 de octubre
+
+Por solicitud directa de Sebastián se reemplazó el formulario de correo/contraseña por
+Entrar como paciente y Entrar como profesional, con personas ficticias Alpha. Sin autenticación
+de identidad real para evaluar; se mantienen contextos/roles y tenant en backend. 52 pruebas
+y 15 subpruebas, navegador de carga/descarga/cambio de perfil, idiomas/temas/móvil aprobados.
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-08 | Codex vía Sebastián | Entrada demo sin clave con perfiles sintéticos fijos | PERFILES_SIN_CLAVE_2026-10-08.md y profiles-2026-10-08.* | Pendiente humano | Local; ngrok pendiente de token |

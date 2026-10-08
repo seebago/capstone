@@ -55,7 +55,8 @@ def test_health_and_ui(setup):
     client, *_ = setup
     assert client.get('/api/health').json()['database'] == 'MongoDB'
     page = client.get('/')
-    assert page.status_code == 200 and 'login-form' in page.text
+    assert page.status_code == 200 and 'enter-patient' in page.text and 'enter-clinician' in page.text
+    assert 'type="password"' not in page.text and 'id="email"' not in page.text
     assert client.get('/static/app.js').status_code == 200
 
 
@@ -318,3 +319,34 @@ def test_encrypted_pdf_and_forged_identity_headers_denied(setup):
     client, _, headers, _ = setup
     for header in ('X-Client-Id','X-Patient-Id','X-Clinician-Id'):
         assert client.post('/api/v1/exam-documents',content=pdf_file(),headers={**headers['patient.alpha'],'Content-Type':'application/pdf','X-File-Name':'synthetic.pdf','Idempotency-Key':uuid4().hex,header:'forged'}).status_code == 422
+
+
+def test_demo_buttons_fixed_profiles_keep_backend_roles(setup):
+    from dataclasses import replace
+    _, db, _, config = setup
+    with TestClient(create_app(replace(config, demo_role_access=True))) as client:
+        for role in ('patient','clinician'):
+            session=client.post('/api/demo/session',json={'role':role})
+            assert session.status_code == 200 and session.json()['synthetic_only']
+            headers={'Authorization':'Bearer '+session.json()['access_token']}
+            user=client.get('/api/me',headers=headers).json()
+            assert user['role']==role and user['client_id']=='demo_alpha'
+            assert all(d['patient_id']=='patient_alpha' for d in client.get('/api/v1/exam-documents',headers=headers).json())
+            if role=='clinician':
+                assert client.post('/api/v1/exam-documents',content=pdf_file(),headers={**headers,'Content-Type':'application/pdf','X-File-Name':'demo.pdf','Idempotency-Key':uuid4().hex}).status_code==403
+        assert client.post('/api/demo/session',json={'role':'admin'}).status_code==422
+        assert client.post('/api/demo/session',json={'role':'patient','client_id':'demo_beta'}).status_code==422
+        assert client.get('/api/v1/exam-documents').status_code==401
+    assert db.security_events.count_documents({'action':'select_demo_profile','client_id':'demo_alpha'})>=2
+
+
+def test_demo_direct_access_disabled_and_revoked_persona(setup):
+    from dataclasses import replace
+    client, db, _, config=setup
+    assert client.post('/api/demo/session',json={'role':'patient'}).status_code==404
+    db.users.update_one({'_id':'user_patient_alpha'},{'$set':{'state':'inactive'}})
+    try:
+        with TestClient(create_app(replace(config,demo_role_access=True))) as demo:
+            assert demo.post('/api/demo/session',json={'role':'patient'}).status_code==403
+    finally:
+        db.users.update_one({'_id':'user_patient_alpha'},{'$set':{'state':'active'}})

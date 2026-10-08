@@ -37,5 +37,5 @@ if (-not $appAvailable) {
     }
 }
 if (-not $appAvailable) { throw 'Demo did not start; inspect .runtime/app-error.log' }
-Get-Content (Join-Path $runtimePath 'access.txt')
+Write-Host 'Open http://127.0.0.1:8765 and choose Patient or Clinician. No password required.'
 Write-Host 'The data is saved locally. Closing the browser does not delete it.'

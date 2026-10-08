@@ -14,12 +14,13 @@ if not config_file.exists():
 config = json.loads(config_file.read_text(encoding='utf-8'))
 os.environ.setdefault('WELLQ_JWT_SECRET', config['jwt_secret'])
 os.environ.setdefault('WELLQ_DEMO_PASSWORD', config['demo_password'])
-(runtime / 'access.txt').write_text('WellQ LOCAL SYNTHETIC DEMO\nhttp://127.0.0.1:8765\n\n'
-    'patient.alpha@wellq.test\nclinician.alpha@wellq.test\npatient.beta@wellq.test\nclinician.beta@wellq.test\n\n'
-    'Password: ' + config['demo_password'] + '\nDo not publish this access file.\n', encoding='utf-8')
+os.environ.setdefault('WELLQ_DEMO_ROLE_ACCESS', 'true')
+(runtime / 'access.txt').write_text('WellQ SYNTHETIC DEMO\nhttp://127.0.0.1:8765\n\n'
+    'Enter using the Patient or Clinician buttons. No evaluation password is required.\n', encoding='utf-8')
+
 
 if __name__ == '__main__':
     import uvicorn
     from mvp.app import create_app
-    print('Open http://127.0.0.1:8765 - local access details in .runtime/access.txt')
+    print('Open http://127.0.0.1:8765 - choose Patient or Clinician; no password required')
     uvicorn.run(create_app(), host='127.0.0.1', port=8765, access_log=False)

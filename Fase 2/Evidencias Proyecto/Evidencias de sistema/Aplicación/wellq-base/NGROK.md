@@ -1,3 +1,7 @@
+> Acceso actualizado: paciente y profesional entran mediante dos botones, sin clave de evaluación.
+> El authtoken de ngrok sí sigue siendo necesario para crear el túnel y pertenece a la cuenta
+> del servicio, no a los usuarios del MVP. Solo documentos ficticios.
+
 # Configurar ngrok sin publicar el token
 
 1. Crear/iniciar sesión en https://dashboard.ngrok.com/get-started/your-authtoken.
@@ -8,9 +12,8 @@
 4. Con la demo saludable en 8765, ejecutar el mismo asistente con `-StartTunnel` o avisar al
    asistente para iniciar y verificar el enlace. Mantener el equipo encendido durante las pruebas.
 
-La cuenta usa su autenticación propia de ngrok. No confundir su token con la clave de los perfiles
- de paciente/médico en .runtime/access.txt. No compartir ninguno de estos archivos públicamente.
-Los evaluadores reciben la URL comprobada y la clave de la demo por un canal privado.
+La cuenta usa su autenticación propia de ngrok. El token no es una clave de paciente/médico: no hay contraseña en la pantalla de demostración.
+No compartir el archivo de configuración de ngrok. Los evaluadores reciben la URL comprobada.
 Para salir del túnel en una terminal interactiva usar Ctrl+C. No se instala un servicio del sistema.
 
 Estado actual: intento bloqueado por ERR_NGROK_4018; sin URL pública verificada.

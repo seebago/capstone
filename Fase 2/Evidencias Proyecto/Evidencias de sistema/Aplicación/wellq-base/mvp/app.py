@@ -17,7 +17,7 @@ from pymongo import ReturnDocument
 from pymongo.errors import DuplicateKeyError, PyMongoError
 from prototype.domain import Context, Extraction, Marker, RuleError, transition, score_eligibility
 from .database import connect, initialize, now_string
-from .models import ActionInput, CreateExam, Login
+from .models import ActionInput, CreateExam, Login, DemoProfile
 from .security import PERMISSIONS, check_password, subject_from_token, token_for
 from .settings import Settings
 from .documents import MAX_FILE_BYTES, validate_document
@@ -140,6 +140,22 @@ def create_app(settings=None):
         if not user or not check_password(body.password, user['password_hash']):
             fail('INVALID_CREDENTIALS', 401)
         return {'access_token': token_for(user, settings.jwt_secret), 'token_type': 'bearer'}
+
+    @app.post('/api/demo/session')
+    def demo_session(body: DemoProfile, request: Request):
+        if not settings.demo_role_access:
+            fail('DEMO_ACCESS_DISABLED', 404)
+        # Two fixed synthetic Alpha personas, never an arbitrary user or tenant selector.
+        user = request.app.state.db.users.find_one({'_id': 'user_' + body.role + '_alpha',
+            'client_id': 'demo_alpha', 'state': 'active', 'roles': [body.role],
+            'subject.kind': body.role, 'subject.id': body.role + '_alpha'})
+        if not user:
+            fail('DEMO_PROFILE_UNAVAILABLE', 403)
+        request.app.state.db.security_events.insert_one({'client_id': 'demo_alpha',
+            'actor_id': user['_id'], 'action': 'select_demo_profile', 'occurred_at': now_string(),
+            'origin': request.client.host, 'result': 'success', 'synthetic_only': True})
+        return {'access_token': token_for(user, settings.jwt_secret), 'token_type': 'bearer',
+                'synthetic_only': True}
 
     @app.get('/api/me')
     def me(request: Request, user=Depends(current_user)):

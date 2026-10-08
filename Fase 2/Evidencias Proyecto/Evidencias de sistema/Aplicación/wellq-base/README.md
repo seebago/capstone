@@ -1,3 +1,8 @@
+> Entrada actual de la demo: dos botones (paciente/profesional), sin correo ni clave.
+> run_local.py habilita WELLQ_DEMO_ROLE_ACCESS=true exclusivamente para personas ficticias Alpha.
+> Para hosting de evaluación activar explícitamente esa variable solo en BD sintética dedicada.
+> Las instrucciones históricas de clave de evaluación siguientes no aplican a la UI actual.
+
 > Actualización local del 8 de octubre: el paciente ahora sube PDF/PNG/JPEG y el backend entrega
 > el archivo al clínico vinculado en la BD. La creación/confirmación de valores del recorrido
 > anterior queda como fixture histórico de pruebas, deshabilitada en la evaluación normal.

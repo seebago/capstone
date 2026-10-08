@@ -1,3 +1,8 @@
+> Entrada actual de la demo: dos botones (paciente/profesional), sin correo ni clave.
+> run_local.py habilita WELLQ_DEMO_ROLE_ACCESS=true exclusivamente para personas ficticias Alpha.
+> Para hosting de evaluación activar explícitamente esa variable solo en BD sintética dedicada.
+> Las instrucciones históricas de clave de evaluación siguientes no aplican a la UI actual.
+
 > Actualización posterior del 8 de octubre: la evaluación normal usa paciente → carga de archivo
 > → clínico vinculado. No habilitar WELLQ_STRUCTURED_DEMO; ese modo reproduce únicamente
 > fixtures de la API histórica. Carga binaria PDF/PNG/JPEG hasta 4 MiB; verificar también el

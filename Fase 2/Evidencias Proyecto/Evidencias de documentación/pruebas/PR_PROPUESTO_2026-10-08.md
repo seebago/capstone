@@ -19,7 +19,11 @@ Prepara entrypoint y hosts exactos para Vercel, y asistente ngrok con captura lo
 authtoken. Sin secretos en Git. No hay administración de vínculos (ST-027), extracción,
 interpretación clínica ni diagnóstico. No se incorpora el pivote móvil.
 
-Validación local 8-oct: 50 pruebas + 15 subpruebas con MongoDB real. Navegador: carga paciente,
+Entrada actual: dos botones paciente/profesional, sin correo ni clave, con personas ficticias
+Alpha fijadas por el backend. Modo directo explícito, deshabilitado por defecto fuera del
+arranque local. RBAC/tenant/vínculos se conservan; no autentica la identidad de un humano.
+
+Validación local 8-oct: 52 pruebas + 15 subpruebas con MongoDB real. Navegador: carga paciente,
 recepción/descarga idéntica por médico vinculado, aislamiento Alpha/Beta, i18n, temas y 390/428 px,
 sin errores de consola. Evidencias de ambas iteraciones preservadas en Fase 2/pruebas.
 

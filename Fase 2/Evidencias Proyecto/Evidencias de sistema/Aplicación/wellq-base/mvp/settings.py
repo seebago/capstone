@@ -10,6 +10,7 @@ class Settings:
     jwt_secret: str
     demo_password: str
     structured_demo_enabled: bool = False
+    demo_role_access: bool = False
     allowed_hosts: tuple[str, ...] = ("127.0.0.1", "localhost", "testserver")
 
     def __post_init__(self):
@@ -26,4 +27,5 @@ class Settings:
                      os.getenv('WELLQ_DATABASE', 'wellq_demo'),
                      os.getenv('WELLQ_JWT_SECRET', ''), os.getenv('WELLQ_DEMO_PASSWORD', ''),
                      allowed_hosts=tuple(h.strip().lower() for h in os.getenv('WELLQ_ALLOWED_HOSTS', '127.0.0.1,localhost,testserver').split(',')),
-                     structured_demo_enabled=os.getenv('WELLQ_STRUCTURED_DEMO', 'false').lower() == 'true')
+                     structured_demo_enabled=os.getenv('WELLQ_STRUCTURED_DEMO', 'false').lower() == 'true',
+                     demo_role_access=os.getenv('WELLQ_DEMO_ROLE_ACCESS', 'false').lower() == 'true')

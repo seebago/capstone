@@ -63,3 +63,7 @@ class ActionInput(StrictModel):
         if len({e.marker_code for e in self.corrections}) != len(self.corrections):
             raise ValueError('Duplicate correction')
         return self
+
+
+class DemoProfile(StrictModel):
+    role: Literal["patient", "clinician"]
