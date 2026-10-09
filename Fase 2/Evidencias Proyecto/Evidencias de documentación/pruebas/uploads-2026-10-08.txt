@@ -1,0 +1,71 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\holaq\.codex\.chatgpt-projects\g-p-6a9603138b9c81918a9d4f5ae17b0fdc\wellq-venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\holaq\.codex\.chatgpt-projects\g-p-6a9603138b9c81918a9d4f5ae17b0fdc\wellq-repo\Fase 2\Evidencias Proyecto\Evidencias de sistema\Aplicaci�n\wellq-base
+plugins: anyio-4.15.1
+collecting ... collected 50 items
+
+tests/test_domain.py::DomainTests::test_audit_has_five_dimensions_without_values PASSED [  2%]
+tests/test_domain.py::DomainTests::test_clinical_rejection_invalidates_scoring PASSED [  4%]
+tests/test_domain.py::DomainTests::test_confirmation_preserves_proposal_and_original PASSED [  6%]
+tests/test_domain.py::DomainTests::test_cross_tenant_confirm_and_score_denied PASSED [  8%]
+tests/test_domain.py::DomainTests::test_discard_never_scores PASSED      [ 10%]
+tests/test_domain.py::DomainTests::test_duplicate_markers_fail_in_initial_single_panel_slice PASSED [ 12%]
+tests/test_domain.py::DomainTests::test_exclusion_reasons_are_explicit
+tests/test_domain.py::DomainTests::test_exclusion_reasons_are_explicit PASSED [ 14%]
+tests/test_domain.py::DomainTests::test_failed_validation_cannot_be_bypassed_by_review PASSED [ 16%]
+tests/test_domain.py::DomainTests::test_identity_mismatch_and_unknown_block_until_reviewed
+tests/test_domain.py::DomainTests::test_identity_mismatch_and_unknown_block_until_reviewed PASSED [ 18%]
+tests/test_domain.py::DomainTests::test_invalid_numeric_inputs_rejected
+tests/test_domain.py::DomainTests::test_invalid_numeric_inputs_rejected PASSED [ 20%]
+tests/test_domain.py::DomainTests::test_low_confidence_requires_explicit_review PASSED [ 22%]
+tests/test_domain.py::DomainTests::test_missing_clinical_relationship_denied PASSED [ 24%]
+tests/test_domain.py::DomainTests::test_naive_time_rejected PASSED       [ 26%]
+tests/test_domain.py::DomainTests::test_other_patient_same_tenant_denied PASSED [ 28%]
+tests/test_domain.py::DomainTests::test_patient_cannot_read_score_even_with_permission PASSED [ 30%]
+tests/test_domain.py::DomainTests::test_patient_confirmation_suffices_for_eligibility PASSED [ 32%]
+tests/test_domain.py::DomainTests::test_permission_and_commercial_gate_are_independent
+tests/test_domain.py::DomainTests::test_permission_and_commercial_gate_are_independent PASSED [ 34%]
+tests/test_domain.py::DomainTests::test_repeated_confirmation_requires_idempotency_adapter PASSED [ 36%]
+tests/test_domain.py::DomainTests::test_stale_extraction_and_revision_fail
+tests/test_domain.py::DomainTests::test_stale_extraction_and_revision_fail PASSED [ 38%]
+tests/test_domain.py::DomainTests::test_unconfirmed_data_never_enters_scoring PASSED [ 40%]
+tests/test_domain.py::DomainTests::test_unknown_resolution_rejected PASSED [ 42%]
+tests/test_domain.py::DomainTests::test_validation_preserves_patient_authorship PASSED [ 44%]
+tests/test_mvp.py::test_health_and_ui PASSED                             [ 46%]
+tests/test_mvp.py::test_auth_required_and_forged_tenant_input PASSED     [ 48%]
+tests/test_mvp.py::test_contract_types_and_case_relationship PASSED      [ 50%]
+tests/test_mvp.py::test_create_idempotency PASSED                        [ 52%]
+tests/test_mvp.py::test_clinician_cannot_create_and_pending_hidden PASSED [ 54%]
+tests/test_mvp.py::test_cross_tenant_and_unlinked_patient_denied PASSED  [ 56%]
+tests/test_mvp.py::test_human_review_corrections_and_atomic_audit PASSED [ 58%]
+tests/test_mvp.py::test_repeat_confirmation_exactly_once_and_conflict PASSED [ 60%]
+tests/test_mvp.py::test_concurrent_confirms_have_single_winner PASSED    [ 62%]
+tests/test_mvp.py::test_clinical_review_preserves_confirmation_and_rejection_excludes PASSED [ 64%]
+tests/test_mvp.py::test_feature_gate_and_live_user_revocation PASSED     [ 66%]
+tests/test_mvp.py::test_expired_and_tampered_tokens PASSED               [ 68%]
+tests/test_mvp.py::test_persists_across_app_restart PASSED               [ 70%]
+tests/test_mvp.py::test_database_requires_tenant_field PASSED            [ 72%]
+tests/test_mvp.py::test_demo_configuration_and_host_guard PASSED         [ 74%]
+tests/test_mvp.py::test_explicit_evaluation_host_preserves_access_guards PASSED [ 76%]
+tests/test_mvp.py::test_document_routes_to_database_link_and_persists PASSED [ 78%]
+tests/test_mvp.py::test_document_destination_cannot_be_chosen_and_roles_enforced PASSED [ 80%]
+tests/test_mvp.py::test_document_idempotency_and_conflict PASSED         [ 82%]
+tests/test_mvp.py::test_invalid_document_not_saved[empty.pdf-application/pdf--EMPTY_FILE] PASSED [ 84%]
+tests/test_mvp.py::test_invalid_document_not_saved[bad.pdf-application/pdf-%PDF-invalid-INVALID_DOCUMENT] PASSED [ 86%]
+tests/test_mvp.py::test_invalid_document_not_saved[bad.pdf-application/pdf-<script>bad</script>-INVALID_DOCUMENT] PASSED [ 88%]
+tests/test_mvp.py::test_invalid_document_not_saved[bad.html-text/html-<html></html>-UNSUPPORTED_FILE_TYPE] PASSED [ 90%]
+tests/test_mvp.py::test_invalid_document_not_saved[bad.png-image/png-not an image-INVALID_DOCUMENT] PASSED [ 92%]
+tests/test_mvp.py::test_invalid_document_not_saved[../fake.pdf-application/pdf-bad-INVALID_FILE_NAME] PASSED [ 94%]
+tests/test_mvp.py::test_document_size_limit_and_image_formats PASSED     [ 96%]
+tests/test_mvp.py::test_evaluation_patient_cannot_enter_or_confirm_values PASSED [ 98%]
+tests/test_mvp.py::test_encrypted_pdf_and_forged_identity_headers_denied PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\..\..\wellq-venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\holaq\.codex\.chatgpt-projects\g-p-6a9603138b9c81918a9d4f5ae17b0fdc\wellq-venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: C:\Users\holaq\.codex\.chatgpt-projects\g-p-6a9603138b9c81918a9d4f5ae17b0fdc\wellq-repo\Fase 2\Evidencias Proyecto\Evidencias de documentaci�n\pruebas\uploads-2026-10-08.xml -
+============== 50 passed, 1 warning, 15 subtests passed in 9.35s ==============

@@ -1,0 +1,6 @@
+.vercel
+.env*
+
+# Required vendored PDF viewer assets
+!mvp/static/vendor/pdfjs/build/
+!mvp/static/vendor/pdfjs/build/**

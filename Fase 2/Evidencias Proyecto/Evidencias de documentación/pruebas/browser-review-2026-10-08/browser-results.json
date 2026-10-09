@@ -1,0 +1,16 @@
+{
+  "base_url": "http://127.0.0.1:8765",
+  "checks": [
+    "Dos botones de entrada, sin usuario ni contraseña",
+    "Paciente: solo archivo, sin destinatario ni edición de valores",
+    "Médico vinculado: recepción automática y descarga idéntica al original",
+    "Profesional: confirmar recepción antes de validar, estado final persistido",
+    "Error exige motivo, conserva archivo original y muestra nueva carga al paciente",
+    "Español/inglés y temas claro/oscuro",
+    "Cambio de perfil y vistas 390/428 px sin desborde",
+    "Cierre de sesión y recarga sin credenciales persistidas"
+  ],
+  "console_errors": [],
+  "filename": "examen-ficticio-161459.pdf",
+  "passed": true
+}

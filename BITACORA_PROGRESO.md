@@ -514,3 +514,114 @@ en el registro de aportes antes de integrarse.
 10. Registrar en CoreStream (equipo DEM_57) el avance a medida que se
     complete, no solo en este repositorio — recordar que CoreStream
     tendrá intermitencias hasta el lunes mediodía.
+
+## Aporte local del 8 de octubre — integración y preparación de evaluación
+
+Main verificado en 7e9094f; MVP remoto 5cd26c5, PR #2 abierto sobre la base de dominio.
+La rama local feature/wellq-evaluation-deploy reúne ambas líneas sin modificar main.
+38 pruebas y 15 subpruebas aprobadas contra MongoDB real, incluyendo protección de hosts
+configurable. Evidencia y bloqueos en Fase 2/Evidencias Proyecto/Evidencias de documentación/
+pruebas/REVISION_DESPLIEGUE_2026-10-08.md. Sin push, PR nuevo ni despliegue público.
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-08 | Codex vía Sebastián | Reunir main y MVP, pruebas reales, preparar Vercel y guía temporal ngrok | rama feature/wellq-evaluation-deploy y revisión 2026-10-08 | Pendiente de integrante humano | Local; publicación requiere autorización |
+
+## Ajuste solicitado del 8 de octubre — archivo del paciente y ngrok
+
+Solicitud directa de Sebastián: paciente solo sube examen, destinatario derivado del vínculo
+backend/BD. Implementado en la rama local feature/wellq-evaluation-deploy: PDF/PNG/JPEG,
+recepción automática por clínico, validación backend, JWT/tenant/features, auditoría de carga.
+50 pruebas + 15 subpruebas y navegador aprobados. ST-027 no se declara cerrado: falta
+administración de vínculos. Ngrok instalado, intento ERR_NGROK_4018; pendiente token del usuario.
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-08 | Codex vía Sebastián | Carga de archivo y enrutamiento por vínculo; asistente privado de ngrok | FLUJO_ARCHIVOS_NGROK_2026-10-08.md, uploads-2026-10-08.*, capturas | Pendiente humano | Local; túnel pendiente de autenticación |
+
+## Entrada de demo por dos botones — 8 de octubre
+
+Por solicitud directa de Sebastián se reemplazó el formulario de correo/contraseña por
+Entrar como paciente y Entrar como profesional, con personas ficticias Alpha. Sin autenticación
+de identidad real para evaluar; se mantienen contextos/roles y tenant en backend. 52 pruebas
+y 15 subpruebas, navegador de carga/descarga/cambio de perfil, idiomas/temas/móvil aprobados.
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-08 | Codex vía Sebastián | Entrada demo sin clave con perfiles sintéticos fijos | PERFILES_SIN_CLAVE_2026-10-08.md y profiles-2026-10-08.* | Pendiente humano | Local; ngrok pendiente de token |
+
+## Revisión profesional de archivos — 8 de octubre
+
+Solicitud de Sebastián: confirmar/validar/marcar con error en archivos recibidos. Implementado
+con transiciones verificadas en backend, revisión atómica, idempotencia, auditoría y motivo
+obligatorio de error visible al paciente. Conserva documentos existentes y originales.
+57 pruebas + 15 subpruebas y ensayo de navegador aprobados. Sin push ni despliegue público.
+
+| Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
+|---|---|---|---|---|---|
+| 2026-10-08 | Codex vía Sebastián | Revisión del profesional con estados e historial | REVISION_PROFESIONAL_ARCHIVOS_2026-10-08.md y review-2026-10-08.* | Pendiente humano | Local |
+
+
+## 8 de octubre — lectura local de rangos en archivos
+
+A petición del usuario se agregó Revisar examen con ventana, fuente/página y comparación aritmética exclusivamente contra referencias escritas en PDF de texto con formato explícito. Incluye PDF kinesiológico ficticio descargable con referencias inventadas para QA. No diagnóstico, OCR, catálogo clínico ni inferencia externa. Conserva vínculo paciente-clínico, tenant, permiso, feature gating, bytes originales, revisión manual e i18n. Última lectura y auditoría persistidas. 61 pruebas y 15 subpruebas aprobadas, recorrido Chromium y capturas en pruebas/ranges-2026-10-08. Local; sin push.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: lectura local conservadora y modal de referencias; PDF de prueba | mvp/range_review.py, tests/test_ranges.py, pruebas/ranges-2026-10-08 | Pendiente integrante humano |
+
+
+## 9 octubre — revisión y archivo original lado a lado
+
+Por solicitud de Sebastián, resultados en tarjetas verticales junto al documento completo con visor PDF.js local, navegación por páginas, descarga y vista móvil apilada. Bytes obtenidos con permisos existentes; no añade inferencia clínica. Chromium muestra contenido real en canvas, recorrido de dos páginas, idiomas/temas/móvil; 62 pruebas + 15 subpruebas aprobadas. Evidencias en pruebas/viewer-2026-10-09. Local, sin push.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: columnas de resultados/archivo, visor local y comprobaciones | mvp/static/app.js, vendor/pdfjs/PROVENANCE.md, pruebas/viewer-2026-10-09 | Pendiente integrante humano |
+
+
+## 9 octubre — plan de reconocimiento y publicación solicitada
+
+Sebastián autoriza subir documento y cambios a GitHub para revisión y compartir demo con ngrok. PLAN_RECONOCIMIENTO_EXAMENES_IA.md registra futuro catálogo, extracción/OCR/IA, fuentes, evaluación y decisión clínica pendiente. Sin integración de IA. Preflight local MongoDB/app OK; ngrok sin configuración de token en rutas estándar y .runtime. No se declara enlace público hasta verificarlo.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: plan de reconocimiento de formatos, IA y evaluación | PLAN_RECONOCIMIENTO_EXAMENES_IA.md | Pendiente integrante humano |
+
+
+## 9 octubre — túnel ngrok real verificado
+
+Tras configurar authtoken por parte del usuario, se abrió https://cloud-stream-thing.ngrok-free.dev hacia app local 8765 con rewrite e inspect=false. Health MongoDB OK y recorrido Chromium público de carga/lectura/PDF dos páginas/idiomas/temas/móvil aprobado, sin errores JS. Evidencias pruebas/ngrok-2026-10-09. Depende de procesos/equipo encendidos; demo sintética sin autenticación humana. Secretos permanecen ignorados. PR documental #4 subida con conexión seebago; push de código rechazado para cuenta local sgonzalezg1229-star, permanece pendiente.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: apertura de túnel autorizado y ensayo público | pruebas/ngrok-2026-10-09/PUBLICACION_VERIFICADA.md | Pendiente integrante humano |
+
+
+## 9 octubre — preparación para alojamiento permanente
+
+Usuario solicita que demo funcione con computador apagado. Verificado: sin sesión CLI Vercel ni Atlas configurados; usuario confirma que necesita crear ambas cuentas. Páginas de registro abiertas para que complete credenciales/términos. Entrypoint FastAPI existente compatible con documentación Vercel/lifespan. .vercelignore excluye runtime/secrets de upload, vercel.json duración 60s, estado actualizado en DEPLOYMENT.md. No URL cloud ni recursos de pago creados. Red Atlas, build real, permisos/arranque/instancias/persistencia requieren verificación cuando existan cuentas.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: preparación de publicación permanente y exclusión de secretos | .vercelignore, vercel.json, DEPLOYMENT.md | Pendiente integrante humano |
+
+## 9 octubre — alojamiento Vercel + Atlas verificado
+
+Por autorización de Sebastián se crearon Vercel wellq-mvp (Hobby) y Atlas wellq-demo (Free, Sao Paulo), usuario readWrite limitado a wellq_demo_evaluation y red universal autorizada para el entorno sintético. URL pública https://wellq-mvp.vercel.app comprobada sin sesión: salud MongoDB, UI y módulo visor 200. Chromium público aprobó carga paciente → recepción profesional vinculado → lectura y PDF dos páginas, ES/EN, temas/móvil sin errores. Evidencias pruebas/vercel-2026-10-09. Dependencias fijadas directas para el parser cloud y excepción build para conservar módulos PDF.js. Sin datos reales, inferencia clínica ni merge a main; enlace cloud independiente del PC. Integración Git automática no configurada.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: publicación autorizada, ajustes empaquetado y QA externo | pruebas/vercel-2026-10-09/PUBLICACION_VERIFICADA.md | Pendiente integrante humano |
+
+## Correcciones T-02/T-03 y publicación T-01 — 9 octubre
+
+Codex toma las tres tareas de ejecución tras autorización directa de Sebastián. Integrado origin/main preservando la resolución de ST-021 de Vicente y el alcance local de ST-004; sin merge remoto a main. Resumen, filtros, búsqueda e historial ahora usan exam-documents. Visibilidad de selección/dashboard centralizada según perfil. El caso reportado de superposición no se reprodujo en las seis alternancias verificadas con esta versión; no se atribuye una causa no demostrada. 62 pruebas + 15 subpruebas backend y Chromium local aprobado: alternancias sin pantallas simultáneamente visibles, contadores exactos respecto del API tras confirmar/validar, historial y filtros, ES/EN y móvil. Evidencias pruebas/dashboard-2026-10-09. Publicación de código y actualización cloud en curso. T-04 sigue a cargo de Vicente/Claude.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: adaptar dashboard a documentos y sincronizar pantallas de perfil | scripts/browser_document_dashboard.py; pruebas/dashboard-2026-10-09 | Pendiente integrante humano |
+
+### Publicación real de T-01 y QA cloud de T-02/T-03
+
+La cuenta seebago autenticada por Git Credential Manager permitió publicar feature/wellq-evaluation-deploy en GitHub con push normal, conservando commits locales y merge de origin/main (sin alterar main remoto). Dashboard nuevo publicado en Vercel dpl_8V6fB8j9gRviZzKpVGzFXb8zkF1Z desde 11737b8. El ensayo scripts/browser_document_dashboard.py se repitió con WELLQ_QA_URL=https://wellq-mvp.vercel.app/: aprobado. public-browser.json y public-professional-dashboard.png registran prueba externa. T-01/T-02/T-03 quedan listas para revisión humana, no cerradas por IA. Sebastián autorizó expresamente publicar las actualizaciones de coordinación y stakeholders tras rechazo inicial de revisión automática; secretos/runtime permanecen excluidos. Integración Git→Vercel automática aún no configurada.
