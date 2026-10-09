@@ -68,9 +68,9 @@ abierta), `Bloqueada` (depende de otra tarea o de una decisión humana),
 
 | ID | Tarea | Para quién | Depende de / bloquea | Estado |
 |---|---|---|---|---|
-| T-01 | Subir la rama `feature/wellq-evaluation-deploy` a GitHub (ST-028) — hoy el código en producción (Vercel/Ngrok) no existe en el repo | Sebastián / Codex | Bloquea que cualquiera revise o continúe ese código | En curso (Sebastián/Codex; feature/wellq-evaluation-deploy) |
-| T-02 | Corregir bug: "Cambiar perfil" deja la pantalla de selección superpuesta sobre el nuevo dashboard (no es problema de backend — ver `BITACORA_PROGRESO.md`, Novedades del 9-10 noche) | Sebastián / Codex | — | En curso (Sebastián/Codex; feature/wellq-evaluation-deploy) |
-| T-03 | Corregir bug: contadores resumen e historial del profesional leen el endpoint viejo `/api/v1/clinical-tests` en vez de `/api/v1/exam-documents` | Sebastián / Codex | — | En curso (Sebastián/Codex; feature/wellq-evaluation-deploy) |
+| T-01 | Subir la rama `feature/wellq-evaluation-deploy` a GitHub (ST-028) — hoy el código en producción (Vercel/Ngrok) no existe en el repo | Sebastián / Codex | Bloquea que cualquiera revise o continúe ese código | Lista para revisión (Sebastián/Codex; rama publicada y QA público aprobado; validación humana pendiente) |
+| T-02 | Corregir bug: "Cambiar perfil" deja la pantalla de selección superpuesta sobre el nuevo dashboard (no es problema de backend — ver `BITACORA_PROGRESO.md`, Novedades del 9-10 noche) | Sebastián / Codex | — | Lista para revisión (Sebastián/Codex; rama publicada y QA público aprobado; validación humana pendiente) |
+| T-03 | Corregir bug: contadores resumen e historial del profesional leen el endpoint viejo `/api/v1/clinical-tests` en vez de `/api/v1/exam-documents` | Sebastián / Codex | — | Lista para revisión (Sebastián/Codex; rama publicada y QA público aprobado; validación humana pendiente) |
 | T-04 | Catálogo de 2-3 tipos de documento candidatos + ejemplos sintéticos representativos (primera entrega de `PLAN_RECONOCIMIENTO_EXAMENES_IA.md`) | Claude / Vicente | Esto desbloquea la Fase 1 del plan de Sebastián para que no tenga que detenerse a definirlo él solo | **En curso** (Claude, 9-10 noche) |
 | T-05 | IEEE 830 / Historias de usuario sobre el flujo real de carga de PDF (no sobre el MVP de marcadores, ya superado) | Claude / Vicente | — | Pendiente |
 | T-06 | Decidir si se actualizan los diagramas de casos de uso/clases y los mockups del 6-7 de octubre (describen el flujo de marcadores) al nuevo flujo de PDF, o se dejan como registro histórico | Propone Claude, decide el equipo | Depende de una decisión del equipo, no solo técnica | Pendiente de decisión |
@@ -115,3 +115,4 @@ asistentes sin supervisión cruzada constante:
 3. Si al cerrarla descubriste que bloquea o desbloquea otra fila,
    actualiza también esa columna — así el otro asistente no tiene que
    deducirlo.
+

@@ -621,3 +621,7 @@ Codex toma las tres tareas de ejecución tras autorización directa de Sebastiá
 | Aporte IA | Evidencia | Validación humana |
 |---|---|---|
 | Codex: adaptar dashboard a documentos y sincronizar pantallas de perfil | scripts/browser_document_dashboard.py; pruebas/dashboard-2026-10-09 | Pendiente integrante humano |
+
+### Publicación real de T-01 y QA cloud de T-02/T-03
+
+La cuenta seebago autenticada por Git Credential Manager permitió publicar feature/wellq-evaluation-deploy en GitHub con push normal, conservando commits locales y merge de origin/main (sin alterar main remoto). Dashboard nuevo publicado en Vercel dpl_8V6fB8j9gRviZzKpVGzFXb8zkF1Z desde 11737b8. El ensayo scripts/browser_document_dashboard.py se repitió con WELLQ_QA_URL=https://wellq-mvp.vercel.app/: aprobado. public-browser.json y public-professional-dashboard.png registran prueba externa. T-01/T-02/T-03 quedan listas para revisión humana, no cerradas por IA. Sebastián autorizó expresamente publicar las actualizaciones de coordinación y stakeholders tras rechazo inicial de revisión automática; secretos/runtime permanecen excluidos. Integración Git→Vercel automática aún no configurada.
