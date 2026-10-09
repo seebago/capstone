@@ -557,3 +557,12 @@ Sebastián autoriza subir documento y cambios a GitHub para revisión y comparti
 | Aporte IA | Evidencia | Validación humana |
 |---|---|---|
 | Codex: plan de reconocimiento de formatos, IA y evaluación | PLAN_RECONOCIMIENTO_EXAMENES_IA.md | Pendiente integrante humano |
+
+
+## 9 octubre — túnel ngrok real verificado
+
+Tras configurar authtoken por parte del usuario, se abrió https://cloud-stream-thing.ngrok-free.dev hacia app local 8765 con rewrite e inspect=false. Health MongoDB OK y recorrido Chromium público de carga/lectura/PDF dos páginas/idiomas/temas/móvil aprobado, sin errores JS. Evidencias pruebas/ngrok-2026-10-09. Depende de procesos/equipo encendidos; demo sintética sin autenticación humana. Secretos permanecen ignorados. PR documental #4 subida con conexión seebago; push de código rechazado para cuenta local sgonzalezg1229-star, permanece pendiente.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: apertura de túnel autorizado y ensayo público | pruebas/ngrok-2026-10-09/PUBLICACION_VERIFICADA.md | Pendiente integrante humano |
