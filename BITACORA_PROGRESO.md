@@ -381,8 +381,91 @@ dice esto mismo con otras palabras ("no acredita el cumplimiento").
   nuevo flujo de carga de PDF. Hay que decidir si se actualizan para reflejar el nuevo rumbo o
   se mantienen como registro del MVP base mientras se valida el pivote.
 
+## Novedades del 9 de octubre (noche) — revisión en vivo del MVP desplegado en Vercel, flujo completo paciente + profesional
+
+Vicente pidió una revisión profunda del MVP ya desplegado en
+`https://wellq-mvp.vercel.app`, simulando el flujo completo como paciente y
+como profesional (no solo navegarlo de forma superficial, sino ejecutar
+las acciones reales). Se hizo con el navegador integrado, sobre la
+aplicación en vivo — sin tocar código ni base de datos directamente.
+
+**Flujo paciente, probado de punta a punta:**
+
+- Se intentó subir primero un PDF sintético inválido (xref roto a propósito)
+  para probar la validación del backend: el servidor lo **rechazó correctamente**
+  con `422` y un mensaje claro ("No se pudo validar el documento..."). Es una
+  validación servidor-side real, no solo de frontend — buena señal.
+- Se descargó el PDF de ejemplo que la propia app ofrece
+  (`GET /api/v1/demo/range-example`, con el botón "Descargar examen ficticio
+  para probar") y se subió como paciente: `POST /api/v1/exam-documents` →
+  `201`. El documento (`prueba-claude-revision.pdf`) apareció de inmediato
+  en la lista con estado "Recibido para revisión".
+
+**Flujo profesional, probado sobre ese mismo documento recién subido:**
+
+- Se entró como profesional (perfil limpio, sin pasar por "Cambiar perfil" —
+  ver Bug #1 más abajo) y el documento apareció listado con el botón
+  "Revisar examen".
+- "Revisar examen" abre un panel de solo lectura ("Lectura de valores del
+  documento") que compara automáticamente los valores extraídos contra las
+  referencias del propio PDF, con el visor del archivo original al lado.
+  Funciona bien, sin errores de consola.
+- Se ejecutó "Confirmar recepción" (`PATCH .../review` → `200`) y luego
+  "Validar examen" (`PATCH .../review` → `200`). El documento terminó en
+  estado **"Validado por profesional"**, con el mensaje "La revisión
+  terminó. El estado y el historial quedan guardados." El ciclo completo
+  paciente → profesional (subir → confirmar → validar) funciona de
+  extremo a extremo tal como está documentado en `casos_de_uso.mmd`
+  (UC-02 a UC-08).
+
+**Dos problemas de frontend encontrados (el backend, en ambos casos, está bien):**
+
+1. **Bug — "Cambiar perfil" deja la pantalla anterior superpuesta.** Al
+   volver a la pantalla de selección de perfil con el botón "Cambiar
+   perfil" y entrar de nuevo (por ejemplo, de paciente a profesional), la
+   sección de "elegir perfil" se queda renderizada encima del nuevo
+   dashboard, en vez de ser reemplazada por él — confirmado inspeccionando
+   el DOM completo (`read_page filter=all`), que muestra ambas secciones
+   presentes a la vez, y viendo el dashboard real más abajo al hacer scroll.
+   Las llamadas de red son correctas (`/api/demo/session`, `/api/me`
+   devuelven 200 con el rol nuevo) — es un problema de estado/render en el
+   frontend, no del backend. **No se reproduce** navegando directamente a
+   `/` y entrando de nuevo desde cero.
+2. **Bug — los contadores resumen y el historial del profesional quedan en
+   0 / vacíos aunque sí hay documentos.** El dashboard del profesional
+   muestra 4 tarjetas ("Exámenes visibles", "Por confirmar", "Confirmados",
+   "Validados") siempre en `0`, y "Historial de exámenes" dice "No hay
+   exámenes visibles todavía", **incluso después de validar un documento
+   nuevo** — mientras la tarjeta del documento, justo arriba, sí muestra
+   correctamente "Validado por profesional". Causa raíz encontrada por
+   inspección de red: esos widgets todavía llaman a
+   `GET /api/v1/clinical-tests` (el endpoint viejo, del MVP de marcadores
+   sintéticos, que siempre devuelve `[]`), mientras que los datos reales
+   viven en el endpoint nuevo `/api/v1/exam-documents`. Es, con alta
+   probabilidad, un resto de la migración de flujo del 9 de octubre que no
+   se actualizó en esos dos widgets. Reproducido dos veces, con dos
+   documentos distintos.
+
+Ninguno de los dos bloquea el flujo principal (subir → confirmar → validar
+funciona), pero sí afectan la demo/evaluación: el profesional ve "0 por
+confirmar" con un documento real esperando confirmación. Vale la pena que
+Sebastián los revise antes de la próxima demo — quedan registrados abajo en
+pendientes para avisarle.
+
+No se tocó la base de datos de Sebastián más allá de lo que generan estas
+acciones normales de la UI (quedan dos documentos de prueba con nombres
+identificables: `prueba-claude-revision.pdf`).
+
 ## Pendiente
 
+- **Avisar a Sebastián de 2 bugs de frontend encontrados el 9-10 en el
+  MVP en vivo (Vercel)**: (1) "Cambiar perfil" deja la pantalla de
+  selección superpuesta sobre el dashboard nuevo (no pasa en una
+  navegación limpia a `/`); (2) los contadores resumen y el historial
+  del profesional siguen consultando el endpoint viejo
+  `/api/v1/clinical-tests` (vacío) en vez de `/api/v1/exam-documents`,
+  por lo que muestran 0/vacío aunque sí hay documentos reales — ver
+  Novedades del 9 de octubre (noche).
 - **Decidir qué se despliega esta semana para testing continuo de
   Alloxentric** (Vercel o Ngrok, ver Novedades del 5-10) — no puede
   esperar a resolver el pivote de Sebastián ni ADR-006.
