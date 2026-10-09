@@ -566,3 +566,12 @@ Tras configurar authtoken por parte del usuario, se abrió https://cloud-stream-
 | Aporte IA | Evidencia | Validación humana |
 |---|---|---|
 | Codex: apertura de túnel autorizado y ensayo público | pruebas/ngrok-2026-10-09/PUBLICACION_VERIFICADA.md | Pendiente integrante humano |
+
+
+## 9 octubre — preparación para alojamiento permanente
+
+Usuario solicita que demo funcione con computador apagado. Verificado: sin sesión CLI Vercel ni Atlas configurados; usuario confirma que necesita crear ambas cuentas. Páginas de registro abiertas para que complete credenciales/términos. Entrypoint FastAPI existente compatible con documentación Vercel/lifespan. .vercelignore excluye runtime/secrets de upload, vercel.json duración 60s, estado actualizado en DEPLOYMENT.md. No URL cloud ni recursos de pago creados. Red Atlas, build real, permisos/arranque/instancias/persistencia requieren verificación cuando existan cuentas.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: preparación de publicación permanente y exclusión de secretos | .vercelignore, vercel.json, DEPLOYMENT.md | Pendiente integrante humano |

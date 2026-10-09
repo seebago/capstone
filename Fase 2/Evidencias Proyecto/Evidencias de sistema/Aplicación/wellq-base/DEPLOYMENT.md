@@ -1,3 +1,16 @@
+> Estado 9 octubre: ngrok real verificado en https://cloud-stream-thing.ngrok-free.dev.
+> Usuario autoriza alojamiento independiente del computador. Cuentas Vercel/Atlas pendientes de crear.
+> No hay despliegue permanente verificado todavía. Registro de usuarios/aceptación de términos a cargo del usuario.
+> `.vercelignore` excluye runtime/secrets/evidencias locales del upload CLI; no ejecutar scripts locales en hosting.
+> `vercel.json` define duración máxima 60s para app.py. Validar el build y lifespan reales.
+> Elegir base sintética nueva, activar WELLQ_DEMO_ROLE_ACCESS=true; el secreto demo_password sigue siendo
+> necesario para siembra histórica aunque la UI no lo pide. No migrar credenciales ni BD local al cloud.
+> Carga 4 MiB (4194304 bytes) por cuerpo binario, por debajo del límite 4.5 MB documentado por Vercel.
+> Si Atlas requiere ampliar acceso de red, evaluar y acordar mecanismo; no abrir 0.0.0.0/0 automáticamente.
+> Controlar conexiones/cold-start y permisos para createCollection/índices/validadores antes de anunciar URL.
+> Aceptación: carga paciente, vínculo profesional, comparación/archivo completo, estado persistente tras
+> nueva instancia, tenant/RBAC/feature/auditoría/i18n y disponibilidad sin túnel local.
+
 > Entrada actual de la demo: dos botones (paciente/profesional), sin correo ni clave.
 > run_local.py habilita WELLQ_DEMO_ROLE_ACCESS=true exclusivamente para personas ficticias Alpha.
 > Para hosting de evaluación activar explícitamente esa variable solo en BD sintética dedicada.
