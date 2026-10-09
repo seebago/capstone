@@ -548,3 +548,12 @@ Por solicitud de Sebastián, resultados en tarjetas verticales junto al document
 | Aporte IA | Evidencia | Validación humana |
 |---|---|---|
 | Codex: columnas de resultados/archivo, visor local y comprobaciones | mvp/static/app.js, vendor/pdfjs/PROVENANCE.md, pruebas/viewer-2026-10-09 | Pendiente integrante humano |
+
+
+## 9 octubre — plan de reconocimiento y publicación solicitada
+
+Sebastián autoriza subir documento y cambios a GitHub para revisión y compartir demo con ngrok. PLAN_RECONOCIMIENTO_EXAMENES_IA.md registra futuro catálogo, extracción/OCR/IA, fuentes, evaluación y decisión clínica pendiente. Sin integración de IA. Preflight local MongoDB/app OK; ngrok sin configuración de token en rutas estándar y .runtime. No se declara enlace público hasta verificarlo.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: plan de reconocimiento de formatos, IA y evaluación | PLAN_RECONOCIMIENTO_EXAMENES_IA.md | Pendiente integrante humano |
