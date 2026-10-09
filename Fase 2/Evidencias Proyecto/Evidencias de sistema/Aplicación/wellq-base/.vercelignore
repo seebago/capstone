@@ -12,3 +12,6 @@ venv/**
 tests/**
 requirements.browser.txt
 scripts/browser_*.py
+
+# Include the locally vendored viewer even though its folder is named build.
+!mvp/static/vendor/pdfjs/build/**

@@ -575,3 +575,11 @@ Usuario solicita que demo funcione con computador apagado. Verificado: sin sesi�
 | Aporte IA | Evidencia | Validación humana |
 |---|---|---|
 | Codex: preparación de publicación permanente y exclusión de secretos | .vercelignore, vercel.json, DEPLOYMENT.md | Pendiente integrante humano |
+
+## 9 octubre — alojamiento Vercel + Atlas verificado
+
+Por autorización de Sebastián se crearon Vercel wellq-mvp (Hobby) y Atlas wellq-demo (Free, Sao Paulo), usuario readWrite limitado a wellq_demo_evaluation y red universal autorizada para el entorno sintético. URL pública https://wellq-mvp.vercel.app comprobada sin sesión: salud MongoDB, UI y módulo visor 200. Chromium público aprobó carga paciente → recepción profesional vinculado → lectura y PDF dos páginas, ES/EN, temas/móvil sin errores. Evidencias pruebas/vercel-2026-10-09. Dependencias fijadas directas para el parser cloud y excepción build para conservar módulos PDF.js. Sin datos reales, inferencia clínica ni merge a main; enlace cloud independiente del PC. Integración Git automática no configurada.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: publicación autorizada, ajustes empaquetado y QA externo | pruebas/vercel-2026-10-09/PUBLICACION_VERIFICADA.md | Pendiente integrante humano |

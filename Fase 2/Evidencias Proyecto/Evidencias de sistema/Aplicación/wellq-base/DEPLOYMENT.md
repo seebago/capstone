@@ -81,3 +81,7 @@ cerrar el túnel al terminar. No es el despliegue permanente.
 - https://vercel.com/docs/functions/runtimes/python
 - https://vercel.com/marketplace/mongodbatlas/atlas
 - https://www.mongodb.com/docs/atlas/security/ip-access-list/
+
+## Publicación real — 9 octubre de 2026
+
+https://wellq-mvp.vercel.app responde sin sesión Vercel y usa MongoDB Atlas. Solo perfiles y documentos sintéticos. Funciona independientemente del PC local. Ver pruebas/vercel-2026-10-09/PUBLICACION_VERIFICADA.md para comprobaciones y límites. Secrets configurados en Vercel fuera del repositorio. requirements.txt contiene versiones fijadas directamente por compatibilidad con el parser Vercel; conservar sincronía con requirements.lock.txt. No hay despliegue automático por Git configurado.
