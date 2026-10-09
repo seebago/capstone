@@ -56,11 +56,11 @@ function clearNotice(){$('notice').hidden=true;}
 async function api(path,options={}){let res;try{res=await fetch(path,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...options.headers}});}catch{throw Error('genericError');}const body=await res.json();if(!res.ok){if(res.status===401&&path!='/api/session')signout();throw Error(body.detail||'genericError');}return body;}
 async function perform(button,fn){clearNotice();button.disabled=true;try{await fn();}catch(e){notify(t(e.message)===e.message?t('genericError'):t(e.message));}finally{button.disabled=false;}}
 function translate(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(e=>e.textContent=t(e.dataset.i18n));$('language').value=lang;$('filters').setAttribute('aria-label',t('filterLabel'));$('exam-search').placeholder=t('searchPlaceholder');updateThemeLabel();if(me)render();}
-function signout(){$('range-dialog').close();clearPreview();filter='all';search='';$('exam-search').value='';token='';me=null;exams=[];documents=[];patients=[];uploadKey='';$('upload-form').reset();$('document-list').replaceChildren();selected=null;pendingActions.clear();$('workspace').hidden=true;$('login-panel').hidden=false;$('logout').hidden=true;$('detail').replaceChildren();$('exam-list').replaceChildren();}
+function signout(){$('range-dialog').close();clearPreview();filter='all';search='';$('exam-search').value='';token='';me=null;exams=[];documents=[];patients=[];uploadKey='';$('upload-form').reset();$('document-list').replaceChildren();selected=null;pendingActions.clear();syncProfileView();$('detail').replaceChildren();$('exam-list').replaceChildren();}
 async function refresh(){
- try{[documents,exams]=await Promise.all([api('/api/v1/exam-documents'),me.role==='clinician'?api('/api/v1/clinical-tests'):Promise.resolve([])]);await api('/api/health');$('health').dataset.state='connected';}
+ try{documents=await api('/api/v1/exam-documents');await api('/api/health');$('health').dataset.state='connected';}
  catch(error){$('health').dataset.state='offline';$('health').textContent=t('offline');throw error;}
- if(selected&&!exams.some(e=>e.clinical_test_id===selected))selected=null;render();
+ if(selected&&!documents.some(e=>e.document_id===selected))selected=null;render();
 }
 function renderDocuments(){
  $('structured-workspace').hidden=me.role==='patient';$('upload-form').hidden=me.role!=='patient';
@@ -86,13 +86,31 @@ function renderDocumentReview(row,doc){
  const details=el('details',undefined,'document-audit');details.append(el('summary',t('documentHistory')));
  const history=el('ol',undefined,'timeline');for(const event of doc.audit){const item=el('li',t(event.action));item.append(el('span',date(event.occurred_at)+' · '+event.actor_id));if(event.reason)item.append(el('span',event.reason));history.append(item);}details.append(history);row.append(details);
 }
+function syncProfileView(){
+ $('login-panel').hidden=Boolean(me);$('workspace').hidden=!me;$('logout').hidden=!me;
+}
 function render(){
+ syncProfileView();if(!me)return;
  $('session-label').textContent=me.client_id.replace('demo_','').toUpperCase()+' / '+t(me.role==='patient'?'patient':'clinician');
- $('role-hint').textContent=t(me.role==='patient'?'patientDelivery':'clinicianHint');renderDocuments();
- $('count-all').textContent=exams.length;$('count-awaiting').textContent=exams.filter(e=>e.status==='awaiting_confirmation').length;$('count-confirmed').textContent=exams.filter(e=>e.status==='confirmed').length;$('count-validated').textContent=exams.filter(e=>e.status==='clinically_validated').length;
- $('health').textContent=t($('health').dataset.state||'connected');document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===filter)));const visible=exams.filter(e=>(filter==='all'||e.status===filter)&&e.title.toLocaleLowerCase(lang).includes(search.toLocaleLowerCase(lang))); const list=$('exam-list');list.replaceChildren();if(!exams.length){list.append(el('div',t('empty')+' '+t(me.role==='patient'?'emptyPatient':'emptyClinician'),'empty'));}
- if(exams.length&&!visible.length)list.append(el('div',t('filterEmpty'),'empty'));
- for(const exam of visible){const b=el('button',undefined,'exam-item'+(exam.clinical_test_id===selected?' selected':''));b.append(el('strong',exam.title));const row=el('div',undefined,'row');row.append(el('small',date(exam.created_at)),el('span',status(exam),'badge '+exam.status));b.append(row);b.onclick=()=>{selected=exam.clinical_test_id;clearNotice();render();if(innerWidth<=1000)$('detail').scrollIntoView({behavior:'auto',block:'start'});};list.append(b);}renderDetail();
+ $('role-hint').textContent=t(me.role==='patient'?'patientDelivery':'clinicianDelivery');renderDocuments();
+ $('count-all').textContent=documents.length;
+ for(const [id,state] of [['count-awaiting','received'],['count-confirmed','confirmed'],['count-validated','validated']])$(id).textContent=documents.filter(d=>d.status===state).length;
+ $('health').textContent=t($('health').dataset.state||'connected');
+ document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===filter)));
+ const visible=documents.filter(d=>(filter==='all'||d.status===filter)&&d.filename.toLocaleLowerCase(lang).includes(search.toLocaleLowerCase(lang)));
+ const list=$('exam-list');list.replaceChildren();
+ if(!documents.length)list.append(el('div',t('noDocuments'),'empty'));
+ else if(!visible.length)list.append(el('div',t('filterEmpty'),'empty'));
+ for(const doc of visible){
+  const b=el('button',undefined,'exam-item'+(doc.document_id===selected?' selected':''));b.append(el('strong',doc.filename));
+  const row=el('div',undefined,'row');row.append(el('small',date(doc.created_at)),el('span',t({received:'received',confirmed:'documentConfirmed',validated:'documentValidated',error:'documentError'}[doc.status]),'badge document-status '+doc.status));b.append(row);
+  b.onclick=()=>{selected=doc.document_id;clearNotice();render();if(innerWidth<=1000)$('detail').scrollIntoView({behavior:'auto',block:'start'});};list.append(b);
+ }
+ const panel=$('detail');panel.replaceChildren();const doc=documents.find(d=>d.document_id===selected);
+ if(!doc){panel.append(el('div',t('selectExam'),'empty'));return;}
+ panel.append(el('h2',doc.filename),el('p',t('revision')+' '+doc.revision+' · '+date(doc.updated_at),'muted'));
+ if(me.role==='clinician'){const read=el('button',t('readExam'),'primary');read.onclick=()=>perform(read,()=>openRangeReview(doc));panel.append(read);}
+ renderDocumentReview(panel,doc);
 }
 function renderDetail(){
  const panel=$('detail');panel.replaceChildren();const exam=exams.find(e=>e.clinical_test_id===selected);if(!exam){panel.append(el('div',t('selectExam'),'empty'));return;}
@@ -112,7 +130,7 @@ async function act(exam,action,low){const body={action,extraction_id:exam.extrac
  const hash=JSON.stringify(body),key=pendingActions.get(hash)||crypto.randomUUID();pendingActions.set(hash,key);await api(`/api/v1/clinical-tests/${exam.clinical_test_id}/extraction`,{method:'PATCH',headers:{'Idempotency-Key':key},body:hash});pendingActions.delete(hash);filter='all';await refresh();notify(t('done'));}
 async function enterDemo(role,button){
  const buttons=[$('enter-patient'),$('enter-clinician')];buttons.forEach(b=>b.disabled=true);
- try{await perform(button,async()=>{const result=await api('/api/demo/session',{method:'POST',body:JSON.stringify({role})});token=result.access_token;me=await api('/api/me');await refresh();$('login-panel').hidden=true;$('workspace').hidden=false;$('logout').hidden=false;});}
+ try{await perform(button,async()=>{const result=await api('/api/demo/session',{method:'POST',body:JSON.stringify({role})});token=result.access_token;me=await api('/api/me');await refresh();syncProfileView();});}
  finally{buttons.forEach(b=>b.disabled=false);}
 }
 $('enter-patient').onclick=e=>enterDemo('patient',e.currentTarget);

@@ -613,3 +613,11 @@ Por autorización de Sebastián se crearon Vercel wellq-mvp (Hobby) y Atlas well
 | Aporte IA | Evidencia | Validación humana |
 |---|---|---|
 | Codex: publicación autorizada, ajustes empaquetado y QA externo | pruebas/vercel-2026-10-09/PUBLICACION_VERIFICADA.md | Pendiente integrante humano |
+
+## Correcciones T-02/T-03 y publicación T-01 — 9 octubre
+
+Codex toma las tres tareas de ejecución tras autorización directa de Sebastián. Integrado origin/main preservando la resolución de ST-021 de Vicente y el alcance local de ST-004; sin merge remoto a main. Resumen, filtros, búsqueda e historial ahora usan exam-documents. Visibilidad de selección/dashboard centralizada según perfil. El caso reportado de superposición no se reprodujo en las seis alternancias verificadas con esta versión; no se atribuye una causa no demostrada. 62 pruebas + 15 subpruebas backend y Chromium local aprobado: alternancias sin pantallas simultáneamente visibles, contadores exactos respecto del API tras confirmar/validar, historial y filtros, ES/EN y móvil. Evidencias pruebas/dashboard-2026-10-09. Publicación de código y actualización cloud en curso. T-04 sigue a cargo de Vicente/Claude.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: adaptar dashboard a documentos y sincronizar pantallas de perfil | scripts/browser_document_dashboard.py; pruebas/dashboard-2026-10-09 | Pendiente integrante humano |
