@@ -7,14 +7,18 @@ Este repositorio lo trabajan varias personas y varios asistentes de IA.
 trabajas con una que busca otro nombre, este archivo sigue siendo la
 fuente: léelo igual.
 
-## Los cuatro pasos obligatorios antes de tocar nada
+## Los cinco pasos obligatorios antes de tocar nada
 
 1. Lee `BITACORA_PROGRESO.md` — estado real, bloqueos y quién hizo qué.
 2. Lee `BITACORA_STAKEHOLDERS.md` — qué está decidido y qué está abierto.
 3. Lee `BITACORA_ARQUITECTURA.md` — decisiones vigentes y contradicciones.
-4. Ejecuta `git log --oneline -15`, `git status` y `git branch -r`.
+4. Lee `COORDINACION_TRABAJO_PARALELO.md` — quién está trabajando en qué
+   ahora mismo (hay más de un asistente de IA en este repositorio) y qué
+   tareas ya están tomadas o adelantadas, para no duplicar ni pisar
+   trabajo.
+5. Ejecuta `git log --oneline -15`, `git status` y `git branch -r`.
 
-No propongas ni implementes nada antes de completar estos cuatro pasos.
+No propongas ni implementes nada antes de completar estos cinco pasos.
 Si no puedes ejecutar comandos, dilo explícitamente y pide que te peguen
 la salida, en vez de suponer el estado del repositorio.
 
@@ -58,6 +62,13 @@ predicción ni recomendación clínica.
 Rama corta desde la integración vigente, commit en Conventional Commits,
 Pull Request. Nada directo a `main`. Nada de `reset --hard`, `clean`
 destructivo ni `push --force` sin autorización explícita.
+
+**No hagas lo que te parezca razonable sin decirlo primero.**
+Con dos asistentes de IA trabajando sin supervisión cruzada constante,
+"parecía el siguiente paso lógico" no es excusa para tomar una decisión
+de arquitectura, elegir un proveedor de IA, o avanzar una tarea que ya
+tiene responsable en `COORDINACION_TRABAJO_PARALELO.md`. Si dudas, se
+registra como pendiente en la bitácora correspondiente, no se decide.
 
 ## Al terminar
 
