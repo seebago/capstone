@@ -7,6 +7,8 @@ from threading import Lock
 from time import monotonic
 from uuid import uuid4
 import json
+import mimetypes
+mimetypes.add_type("text/javascript", ".mjs")
 import jwt
 from fastapi import FastAPI, Depends, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -71,7 +73,7 @@ def create_app(settings=None):
         response = await call_next(request)
         response.headers['Cache-Control'] = 'no-store'
         response.headers['X-Content-Type-Options'] = 'nosniff'
-        response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self'; frame-ancestors 'none'; base-uri 'none'"
+        response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' blob:; frame-src 'none'; worker-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'"
         return response
 
     @app.exception_handler(RequestValidationError)

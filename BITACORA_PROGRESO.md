@@ -539,3 +539,12 @@ A petición del usuario se agregó Revisar examen con ventana, fuente/página y 
 | Aporte IA | Evidencia | Validación humana |
 |---|---|---|
 | Codex: lectura local conservadora y modal de referencias; PDF de prueba | mvp/range_review.py, tests/test_ranges.py, pruebas/ranges-2026-10-08 | Pendiente integrante humano |
+
+
+## 9 octubre — revisión y archivo original lado a lado
+
+Por solicitud de Sebastián, resultados en tarjetas verticales junto al documento completo con visor PDF.js local, navegación por páginas, descarga y vista móvil apilada. Bytes obtenidos con permisos existentes; no añade inferencia clínica. Chromium muestra contenido real en canvas, recorrido de dos páginas, idiomas/temas/móvil; 62 pruebas + 15 subpruebas aprobadas. Evidencias en pruebas/viewer-2026-10-09. Local, sin push.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: columnas de resultados/archivo, visor local y comprobaciones | mvp/static/app.js, vendor/pdfjs/PROVENANCE.md, pruebas/viewer-2026-10-09 | Pendiente integrante humano |

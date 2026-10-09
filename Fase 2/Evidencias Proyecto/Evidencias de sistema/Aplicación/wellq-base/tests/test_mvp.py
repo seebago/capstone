@@ -446,3 +446,12 @@ def test_document_range_reading_security_and_audit(setup):
     try: assert client.post(url,headers=headers['clinician.alpha']).status_code==403
     finally: db.tenants.update_one({'_id':'demo_alpha'},{'$set':{'features':['clinical_tests','lab_scoring']}})
     assert client.get('/api/v1/demo/range-example',headers=headers['patient.alpha']).content==data
+
+
+def test_local_pdf_viewer_assets_and_policy(setup):
+    client,*_=setup
+    for name in ['pdf.mjs','pdf.worker.mjs']:
+        response=client.get('/static/vendor/pdfjs/build/'+name)
+        assert response.status_code==200 and response.headers['content-type'].startswith('text/javascript')
+    policy=client.get('/').headers['content-security-policy']
+    assert "worker-src 'self'" in policy and "object-src 'none'" in policy and "frame-ancestors 'none'" in policy

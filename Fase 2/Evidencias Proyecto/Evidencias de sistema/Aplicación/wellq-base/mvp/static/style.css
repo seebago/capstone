@@ -18,3 +18,13 @@ body:not(.dark) .stats article:nth-child(4) strong{color:#257c32}
 .document-actions,.document-guidance,.document-reason,.document-audit,.document-item>label,.document-item>textarea{flex-basis:100%}.document-item>label{margin-top:4px}.document-item p{margin:6px 0}.document-status.validated{background:var(--soft);color:var(--accent)}.document-status.error{color:var(--danger)}.document-audit summary{cursor:pointer;color:var(--muted);font-size:13px}
 
 #range-dialog{width:min(880px,90vw);max-height:85vh;overflow:auto;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);padding:24px}#range-dialog::backdrop{background:rgba(0,0,0,.65)}#range-dialog td{white-space:normal;min-width:110px}
+
+#range-dialog{width:min(1400px,96vw);max-height:94vh;padding:24px}
+.review-columns{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.5fr);gap:24px;margin:16px 0;align-items:start}
+.review-reading,.review-original{min-width:0}.review-reading{max-height:68vh;overflow:auto;padding-right:8px}
+.review-columns h3{margin:0 0 12px}.review-measurement{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--raised)}
+.review-measurement h4{margin:0 0 12px;font-size:16px}.review-measurement dl{margin:0}.review-measurement dt{font-size:12px;color:var(--muted);margin-top:8px}.review-measurement dd{margin:0;overflow-wrap:anywhere}.review-measurement details{margin-top:12px}
+.review-original iframe{display:block;width:100%;height:68vh;border:1px solid var(--line);border-radius:10px;background:#fff}.review-original img{display:block;max-width:100%;max-height:68vh;object-fit:contain}.review-original a{display:inline-block;color:var(--accent);margin-top:12px}
+@media(max-width:800px){#range-dialog{padding:16px}.review-columns{grid-template-columns:1fr}.review-reading{max-height:none;overflow:visible;padding:0}.review-original iframe{height:65vh}}
+
+.pdf-viewer{max-height:68vh;overflow:auto;background:var(--raised);border:1px solid var(--line);border-radius:10px;padding:12px}.pdf-controls{position:sticky;top:0;background:var(--card);padding:8px;justify-content:space-between}.pdf-viewer canvas{display:block;width:100%;height:auto;background:white;margin-top:12px}
