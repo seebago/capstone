@@ -1,6 +1,6 @@
 # Bitácora de progreso — WellQ
 
-Última actualización: 6 de octubre de 2026.
+Última actualización: 9 de octubre de 2026.
 Estado verificado contra `origin/main` (`ccc3893` remoto; `4e70dda`
 en local, pendiente de push — commits `d4a9508` y `4e70dda`), `origin/develop` (`fb4db39`, sin contenido relevante),
 `origin/feature/wellq-base-de-fg-abc` (`38830fa`) y
@@ -350,6 +350,36 @@ dice esto mismo con otras palabras ("no acredita el cumplimiento").
 - Explícitamente no se incorporó la propuesta de pivote a app móvil +
   prediagnóstico a estos diagramas — el equipo aún no la ha conversado
   (confirmado por Vicente).
+
+## Novedades del 9 de octubre — Sebastian publico Vercel+Atlas (permanente) y Ngrok, pero con un giro de producto y un riesgo nuevo
+
+- **Sebastian retomo el trabajo** tras 6 dias sin actividad en GitHub (ultimo commit visible: 3-oct).
+  Abrio la PR #4 (`docs/exam-recognition-ai-2026-10-09`), puramente documental.
+- **El producto cambio de flujo**: ya no es el MVP de marcadores sinteticos
+  (`demo_marker_a/b`, confirmar/validar) que documentamos el 6-7 de octubre. Ahora es
+  "subir examen en PDF -> el backend deriva el clinico vinculado por `care_team_links` ->
+  lectura deterministica local del PDF (sin OCR/IA todavia) -> comparacion con referencias ->
+  confirmacion/validacion profesional", con visor PDF.js mostrando el original junto a la
+  lectura extraida. Consistente con la direccion de pivote que propuso el 3-10
+  (`PLAN_RECONOCIMIENTO_EXAMENES_IA.md`), pero *sin* OCR ni IA activados aun — ST-004 sigue
+  respetado explicitamente en su propio documento.
+- **Buena noticia grande**: ademas del tunel Ngrok temporal
+  (`https://cloud-stream-thing.ngrok-free.dev`), Sebastian dejo un **despliegue permanente**
+  en Vercel + MongoDB Atlas (`https://wellq-mvp.vercel.app`, cluster `wellq-demo` free tier en
+  Sao Paulo), verificado con `/api/health` respondiendo OK y un recorrido completo por Chromium
+  (ES/EN, claro/oscuro, movil 390px, sin errores). Esto resuelve de facto ST-021/022 — ya no
+  depende de que su computador este prendido.
+- **Riesgo nuevo y urgente (ST-028)**: el codigo que corre en Vercel y Ngrok **no esta en
+  GitHub** — se desplego desde una rama local (`feature/wellq-evaluation-deploy`) que nunca se
+  publico al repositorio remoto. Solo la documentacion (PR #4) es revisable desde aqui. Hay que
+  pedirle que suba esa rama cuanto antes.
+- **Nota de seguridad menor**: la red de MongoDB Atlas quedo abierta a `0.0.0.0/0` — aceptable
+  para una base 100% sintetica de demo, pero no debe repetirse si alguna vez se maneja un dato
+  real.
+- **Pendiente de decidir con el equipo**: nuestros diagramas de casos de uso/actividad/clases y
+  los mockups del 6-7 de octubre describen el flujo anterior (marcadores sinteticos), no este
+  nuevo flujo de carga de PDF. Hay que decidir si se actualizan para reflejar el nuevo rumbo o
+  se mantienen como registro del MVP base mientras se valida el pivote.
 
 ## Pendiente
 
