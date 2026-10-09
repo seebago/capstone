@@ -530,3 +530,12 @@ obligatorio de error visible al paciente. Conserva documentos existentes y origi
 | Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
 |---|---|---|---|---|---|
 | 2026-10-08 | Codex vía Sebastián | Revisión del profesional con estados e historial | REVISION_PROFESIONAL_ARCHIVOS_2026-10-08.md y review-2026-10-08.* | Pendiente humano | Local |
+
+
+## 8 de octubre — lectura local de rangos en archivos
+
+A petición del usuario se agregó Revisar examen con ventana, fuente/página y comparación aritmética exclusivamente contra referencias escritas en PDF de texto con formato explícito. Incluye PDF kinesiológico ficticio descargable con referencias inventadas para QA. No diagnóstico, OCR, catálogo clínico ni inferencia externa. Conserva vínculo paciente-clínico, tenant, permiso, feature gating, bytes originales, revisión manual e i18n. Última lectura y auditoría persistidas. 61 pruebas y 15 subpruebas aprobadas, recorrido Chromium y capturas en pruebas/ranges-2026-10-08. Local; sin push.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Codex: lectura local conservadora y modal de referencias; PDF de prueba | mvp/range_review.py, tests/test_ranges.py, pruebas/ranges-2026-10-08 | Pendiente integrante humano |

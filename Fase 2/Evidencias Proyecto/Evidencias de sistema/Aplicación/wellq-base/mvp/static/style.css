@@ -16,3 +16,5 @@ body:not(.dark) .stats article:nth-child(4) strong{color:#257c32}
 .profile-entry button{width:100%;margin-top:14px}.profile-entry h2{margin-bottom:10px}.profile-entry .small{margin:10px 0 18px}
 
 .document-actions,.document-guidance,.document-reason,.document-audit,.document-item>label,.document-item>textarea{flex-basis:100%}.document-item>label{margin-top:4px}.document-item p{margin:6px 0}.document-status.validated{background:var(--soft);color:var(--accent)}.document-status.error{color:var(--danger)}.document-audit summary{cursor:pointer;color:var(--muted);font-size:13px}
+
+#range-dialog{width:min(880px,90vw);max-height:85vh;overflow:auto;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);padding:24px}#range-dialog::backdrop{background:rgba(0,0,0,.65)}#range-dialog td{white-space:normal;min-width:110px}

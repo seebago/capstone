@@ -421,3 +421,28 @@ def test_existing_document_without_revision_can_be_reviewed(setup):
     db.exam_documents.update_one({'document_id':doc['document_id']},{'$unset':{'revision':''}})
     assert review_file(setup,doc,'confirm').status_code==200
     assert db.exam_documents.find_one({'document_id':doc['document_id']})['revision']==2
+
+
+def test_document_range_reading_security_and_audit(setup):
+    from mvp.range_review import synthetic_pdf
+    client, db, headers, _ = setup
+    data=synthetic_pdf();doc=upload(setup,data=data).json()
+    url='/api/v1/exam-documents/'+doc['document_id']+'/range-review'
+    assert client.post(url).status_code==401
+    assert client.post(url,headers=headers['patient.alpha']).status_code==403
+    assert client.post(url,headers=headers['clinician.beta']).status_code==404
+    response=client.post(url,headers=headers['clinician.alpha'])
+    assert response.status_code==200 and response.json()['measurements'][0]['comparison']=='within'
+    stored=db.exam_documents.find_one({'document_id':doc['document_id']})
+    assert stored['content']==data and stored['status']=='received' and stored['revision']==1
+    assert stored['range_review']==response.json()
+    event=stored['audit'][-1]
+    assert event['action']=='document_range_review' and all(k in event for k in ['actor_id','occurred_at','origin','result'])
+    assert client.post(url+'?client_id=demo_beta',headers=headers['clinician.alpha']).status_code==422
+    db.care_team_links.update_one({'_id':'link_alpha'},{'$set':{'state':'inactive'}})
+    try: assert client.post(url,headers=headers['clinician.alpha']).status_code==404
+    finally: db.care_team_links.update_one({'_id':'link_alpha'},{'$set':{'state':'active'}})
+    db.tenants.update_one({'_id':'demo_alpha'},{'$set':{'features':[]}})
+    try: assert client.post(url,headers=headers['clinician.alpha']).status_code==403
+    finally: db.tenants.update_one({'_id':'demo_alpha'},{'$set':{'features':['clinical_tests','lab_scoring']}})
+    assert client.get('/api/v1/demo/range-example',headers=headers['patient.alpha']).content==data

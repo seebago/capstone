@@ -126,3 +126,8 @@ Una respuesta sin criterio de aceptación observable no está cerrada.
 | ST-020 | Prioridad: cronograma de DuocUC, no el de Alloxentric | Profesor (en clase) | 2026-10-03 | El equipo avanza al ritmo de Duoc; cumple con Alloxentric sin apuro | Comunicación verbal en clase; reemplaza la resolución anterior (30-09) |
 | ST-024 | Entrega final del MVP: semana 12 a 15 de Duoc (aprox. 9-nov a 6-dic-2026) | Karina | 2026-10-05 | Fecha formal para el formulario de Alloxentric | Acordado en reunión; falta confirmar fecha exacta y enviar el formulario si no se hizo en la reunión |
 | ST-021 | Despliegue continuo para testing; Ngrok autorizado si Vercel no resulta viable | Karina | 2026-10-05 | El equipo debe tener algo testeable por Alloxentric ya, no solo al final | Acordado en reunión; falta el despliegue real |
+
+
+## Alcance solicitado por usuario — 8 de octubre
+
+Usuario solicita lectura de archivos y prediagnóstico para contexto kinesiológico, pero no dispone de referencias. Se implementa lectura aritmética local y un ejemplo enteramente ficticio, sin emitir prediagnóstico. ST-004 no se cierra: falta definir/ratificar tipo de examen, formato real, referencias clínicas, finalidad interpretativa y criterios de evaluación profesional antes de inferencia clínica. No se solicitó ni obtuvo aprobación de Karina/Max/equipo en este chat.

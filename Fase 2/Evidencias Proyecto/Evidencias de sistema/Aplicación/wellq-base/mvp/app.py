@@ -21,6 +21,7 @@ from .models import ActionInput, CreateExam, Login, DemoProfile, DocumentReview
 from .security import PERMISSIONS, check_password, subject_from_token, token_for
 from .settings import Settings
 from .documents import MAX_FILE_BYTES, validate_document
+from .range_review import read_ranges, synthetic_pdf
 from urllib.parse import quote
 
 POLICY = {'version': 'demo-review-v1', 'confidence_threshold': 0.9}
@@ -284,6 +285,30 @@ def create_app(settings=None):
             if previous:
                 return previous
             fail('REVISION_CONFLICT', 409)
+        return result
+
+    @app.get('/api/v1/demo/range-example')
+    def range_example(request: Request, user=Depends(current_user)):
+        access(request, user, 'exam:read')
+        return Response(synthetic_pdf(), media_type='application/pdf', headers={
+            'Content-Disposition': 'attachment; filename="evaluacion-kinesiologica-FICTICIA.pdf"'})
+
+    @app.post('/api/v1/exam-documents/{identifier}/range-review')
+    def range_review(identifier: str, request: Request, user=Depends(current_user)):
+        ctx = access(request, user, 'exam:validate')
+        if request.query_params or any(request.headers.get(h) for h in ('X-Client-Id', 'X-Patient-Id', 'X-Clinician-Id')):
+            fail('INVALID_INPUT', 422)
+        db = request.app.state.db
+        scope = {**document_scope(ctx, user), 'document_id': identifier}
+        doc = db.exam_documents.find_one(scope)
+        if not doc:
+            fail('NOT_FOUND', 404)
+        result = read_ranges(doc['content'], doc['content_type'])
+        event = {'actor_id': ctx.actor_id, 'action': 'document_range_review', 'occurred_at': now_string(),
+                 'origin': ctx.origin, 'result': result['outcome'], 'target_id': identifier,
+                 'algorithm_version': result['version']}
+        # Immutable uploaded bytes; automatic reading does not validate or change the review revision.
+        db.exam_documents.update_one(scope, {'$set': {'range_review': result}, '$push': {'audit': event}})
         return result
 
     @app.get('/api/v1/exam-documents/{identifier}/file')
