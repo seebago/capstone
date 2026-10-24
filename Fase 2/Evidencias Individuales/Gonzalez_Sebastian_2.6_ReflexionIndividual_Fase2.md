@@ -20,7 +20,7 @@ WellQ allowed me to apply software engineering knowledge to a project with real-
 - Despliegue Vercel+Atlas documentado en `pruebas/vercel-2026-10-09/PUBLICACION_VERIFICADA.md` dentro del commit indicado. Se usaron exclusivamente datos sintéticos. Disponibilidad actual del despliegue no verificada aquí.
 - PR #6, commit `f3285df6a51d20d894bd1df3c2edb96176ce93ba`: evidencia 2.1 y documento 2.4. Sus archivos están presentes en `main` con los mismos SHA de contenido que los archivos del PR; por ello no se requiere duplicarlos.
 - El código descrito no implementa IA clínica, OCR general, diagnóstico o prediagnóstico; esos elementos permanecen como posibles fases posteriores sujetas a decisiones de alcance y validación.
-- La carrera debe figurar como **Ingeniería en Informática** en las evidencias. **No se ha acreditado una corrección del texto interno del DOCX 2.1 ni 2.4**; revisarlos antes de entrega.
+- La carrera debe figurar como **Ingeniería en Informática** en las evidencias. Se revisaron las dos páginas renderizadas del diario 2.1 y el texto/páginas de la guía 2.4; **no se encontró una denominación incorrecta de carrera en el contenido visible**. No se alteraron los Word originales.
 - El archivo grupal `BORRADOR_2.6_InformeFinal_WellQ.md` y la rama indicada por Vicente no estaban disponibles en la revisión del repositorio. Este documento no sustituye el informe de grupo ni valida afirmaciones que no se hayan contrastado con evidencia.
 
 ## Referencias
