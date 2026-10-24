@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css"></head>
+<body>
+  <div class="disclaimer">Paleta provisional — pendiente kit de marca real (Max)</div>
+  <div class="topbar">
+    <span class="back">‹ Pacientes</span>
+    <h1 style="font-size:15px;">Validación clínica</h1>
+    <span></span>
+  </div>
+  <div class="content">
+    <div class="card">
+      <h3>Demo Patient Alpha</h3>
+      <p>Confirmado por el paciente · revisión 2</p>
+      <div class="marker-row">
+        <div class="code">demo_marker_a</div>
+        <div>5.0 demo_unit</div>
+      </div>
+      <div class="marker-row">
+        <div class="code">demo_marker_b</div>
+        <div>7.6 demo_unit (revisado)</div>
+      </div>
+    </div>
+    <div class="note">
+      Elegibilidad de scoring: <b>CLINICAL_CATALOG_PENDING</b> — el catálogo clínico real todavía
+      no existe; esta vista nunca calcula un puntaje automático (UC-08, ningún dato médico
+      inventado).
+    </div>
+    <button class="btn primary">Validar clínicamente</button>
+    <button class="btn danger">Rechazar</button>
+    <p style="font-size:11px;color:#94A3B8;margin-top:6px;">PATCH .../extraction action=validate|reject · GET .../eligibility</p>
+  </div>
+</body></html>
