@@ -1,0 +1,17 @@
+# Never upload local credentials, Mongo files or QA downloads.
+.runtime/**
+.env
+.env.*
+!.env.example
+__pycache__/**
+**/__pycache__/**
+.pytest_cache/**
+*.pyc
+.venv/**
+venv/**
+tests/**
+requirements.browser.txt
+scripts/browser_*.py
+
+# Include the locally vendored viewer even though its folder is named build.
+!mvp/static/vendor/pdfjs/build/**

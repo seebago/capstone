@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Paciente: creación, cotejo, corrección y confirmación persistida",
+    "Profesional: validación y elegibilidad sin puntaje inventado",
+    "Filtros, idioma inglés/español y temas claro/oscuro",
+    "Vista móvil 428/390 px y aislamiento Alpha/Beta",
+    "Cierre de sesión y recarga sin conservar credenciales en navegador"
+  ],
+  "console_errors": [],
+  "exam_title": "Demo de revisión 13:06:22",
+  "passed": true
+}

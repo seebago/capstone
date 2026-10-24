@@ -1,0 +1,13 @@
+{
+  "base_url": "http://127.0.0.1:8765",
+  "checks": [
+    "Paciente: solo archivo, sin destinatario ni edición de valores",
+    "Médico vinculado: recepción automática y descarga idéntica al original",
+    "Español/inglés y temas claro/oscuro",
+    "Aislamiento Alpha/Beta y vistas 390/428 px sin desborde",
+    "Cierre de sesión y recarga sin credenciales persistidas"
+  ],
+  "console_errors": [],
+  "filename": "examen-ficticio-131718.pdf",
+  "passed": true
+}

@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "url": "http://127.0.0.1:8765/",
+  "errors": [],
+  "checks": [
+    "repeated patient-professional switching; exclusive visible screen",
+    "summary matches uploaded document statuses",
+    "confirm-validate counters update",
+    "document history",
+    "filter and filename search",
+    "Spanish-English",
+    "390px no overflow",
+    "no legacy clinical-tests request"
+  ]
+}

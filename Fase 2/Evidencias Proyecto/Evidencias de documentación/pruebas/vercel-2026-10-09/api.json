@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "url": "https://wellq-mvp.vercel.app",
+  "document_id": "05bb1366c0d94a63b2a76b9187707b86",
+  "original_sha256": "d9812b7b54e066a21a8dd1361bfba150413fea1b3e22a8c9f6910f0474db0d40",
+  "checks": [
+    "MongoDB health",
+    "anonymous list denied",
+    "uploaded PDF and reading audit persisted after new Vercel deployment",
+    "patient review denied",
+    "professional confirm and validate",
+    "idempotency replay",
+    "patient sees validated state",
+    "original bytes preserved"
+  ]
+}

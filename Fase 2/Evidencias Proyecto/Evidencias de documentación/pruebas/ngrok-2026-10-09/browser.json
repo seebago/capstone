@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    "upload to linked clinician",
+    "4 result types",
+    "patient has no reading button",
+    "Spanish and English",
+    "dark and light",
+    "390px no page overflow"
+  ]
+}

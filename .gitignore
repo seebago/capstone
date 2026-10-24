@@ -44,3 +44,12 @@ venv/
 
 # Salidas temporales del asistente
 Claude outputs/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.runtime/
+.env
+.env.*
+!.env.example
+node_modules/
