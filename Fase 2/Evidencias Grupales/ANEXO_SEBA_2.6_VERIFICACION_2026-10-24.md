@@ -16,7 +16,7 @@ El código histórico del PR #5 fue recuperado en PR #8, **fusionado a `main` el
 | Carga de documentos PDF/PNG/JPEG y flujo de revisión | `mvp/app.py`, `mvp/documents.py`, frontend en `mvp/static` | Código de aplicación en PR #8 | No administra todos los vínculos pacientes/profesionales (ST-027) |
 | Evidencias de pruebas automatizadas | [GitHub Actions del PR #8](https://github.com/seebago/capstone/pull/8/checks) | Workflows `domain` e `integration` en estado `success` | Resultados específicos de 62 tests + 15 subpruebas corresponden a reporte histórico del 9-10 |
 | Despliegue Vercel+Atlas | `pruebas/vercel-2026-10-09/PUBLICACION_VERIFICADA.md` | Acta y capturas del 9-10-2026 | Disponibilidad del servicio el 24-10 **no verificada** |
-| Diario 2.1 y guía grupal 2.4 en `main` | Archivos `.docx` bajo `Fase 2/Evidencias Individuales/` y `Evidencias Grupales/` | SHA de blob de PR #6 igual a `main` | Corrección interna de encabezado del diario 2.1 sin acreditar |
+| Diario 2.1 y guía grupal 2.4 en `main` | Archivos `.docx` bajo `Fase 2/Evidencias Individuales/` y `Evidencias Grupales/` | SHA de blob de PR #6 igual a `main` | El 2.1 se inspeccionó visualmente (2 páginas) y no mostró carrera incorrecta; no se modificó |
 | Reflexión individual 2.6 de Sebastián | [PR #7](https://github.com/seebago/capstone/pull/7), merge `1f5ecce` | GitHub | Opiniones personales requieren ratificación de Sebastián |
 | Guía 2.4 grupal | `Fase 2/Evidencias Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyectoAPT.docx` | Lectura de `word/document.xml` del DOCX | Describe corte al 10-10; conservarla como documento histórico, no como estado al 24-10 |
 
@@ -36,7 +36,7 @@ El código histórico del PR #5 fue recuperado en PR #8, **fusionado a `main` el
 **Seguridad y privacidad:** solo datos sintéticos. El acceso por botones de paciente/profesional **no autentica la identidad humana**. La configuración de red Atlas usada para la demo debe endurecerse antes de escenarios reales. Nunca cargar documentos médicos reales para la exposición.
 
 ## 5. Informe 2.4 y denominación de carrera
-La guía grupal 2.4 se redactó con corte declarado 10-10-2026 y menciona funciones entonces pendientes de fusión. No reescribirla retroactivamente como si representara el corte del 24-10. Este anexo actualiza los hechos posteriores. La denominación académica que corresponde a Sebastián es **Ingeniería en Informática**. En el cuerpo visible del 2.4 no se detectó una denominación explícita de carrera distinta; **el contenido interno del diario 2.1 no pudo verificarse completamente** con el acceso disponible y requiere control final de encabezado.
+La guía grupal 2.4 se redactó con corte declarado 10-10-2026 y menciona funciones entonces pendientes de fusión. No reescribirla retroactivamente como si representara el corte del 24-10. Este anexo actualiza los hechos posteriores. La denominación académica que corresponde a Sebastián es **Ingeniería en Informática**. En el cuerpo visible del 2.4 no se detectó una denominación explícita de carrera distinta; **el texto indexado y las dos páginas renderizadas del diario 2.1 se revisaron**, sin hallar una carrera distinta en el encabezado visible. Los originales se conservaron sin alteración.
 
 ## 6. Aporte personal y reflexión
 La versión en español y la traducción al inglés de Sebastián están en `Fase 2/Evidencias Individuales/Gonzalez_Sebastian_2.6_ReflexionIndividual_Fase2.md`. Integrar esas respuestas en el apartado individual del informe final, sin atribuir a Vicente o Aron afirmaciones que no hayan ratificado.
@@ -47,7 +47,7 @@ Decir **"desarrollamos y desplegamos una demo académica de carga y revisión de
 ## 8. Revisión final indispensable del equipo
 - Confirmar y trasladar estas afirmaciones al informe de Vicente cuando el borrador 2.6 esté disponible.
 - Ratificar las reflexiones auténticas de cada integrante (Vicente, Sebastián y Aron); no inventar texto personal.
-- Revisar encabezado y carrera en el Word original de diario 2.1.
+- Reconfirmar únicamente que la versión del diario 2.1 elegida para entrega coincida con el original revisado: 1.288.671 bytes y encabezado sin carrera incorrecta.
 - Usar solo capturas y métricas de pruebas cuya fuente esté adjunta.
 - Ejecutar un ensayo de navegación de la URL antes de presentarla en vivo; contar con capturas de respaldo si Vercel no responde.
 
