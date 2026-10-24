@@ -1,0 +1,17 @@
+name: Synthetic domain checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  domain:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "Fase 2/Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -p test_domain.py -v
+      - run: python -m prototype.demo
