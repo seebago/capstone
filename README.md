@@ -3,9 +3,7 @@
 Plataforma SaaS para la gestión de procesos y exámenes médicos.
 Proyecto Capstone — Duoc UC · Cliente: Alloxentric.
 
-> **Estado: fase de definición y documentación.**
-> A la fecha no existe código de aplicación en este repositorio.
-> El estado real y verificable está en `BITACORA_PROGRESO.md`.
+**Estado al 24-10-2026:** MVP académico **sintético** de evaluación incorporado en `main` mediante [PR #8](https://github.com/seebago/capstone/pull/8). Backend FastAPI, MongoDB y frontend web de pruebas para carga y revisión de documentos. No equivale al módulo productivo de WellQ ni incorpora OCR general o IA clínica. Informes anteriores describen hitos históricos y deben leerse en su fecha.
 
 > **¿Eres un asistente de IA?** Lee `AGENTS.md` antes de tocar nada.
 
@@ -14,7 +12,7 @@ Proyecto Capstone — Duoc UC · Cliente: Alloxentric.
 | Integrante | Responsabilidad |
 |---|---|
 | Vicente López | **Líder de equipo** · metodología de bitácoras y trazabilidad de IA |
-| Sebastián González Garrido | Por acordar |
+| Sebastián González Garrido | Implementación y pruebas del MVP académico de evaluación (PR #8); contribución técnica atribuible y documentada |
 | Aron Germain Navarro | Por acordar |
 
 Contraparte: Karina Álvarez (docente a cargo y representante de
@@ -40,12 +38,9 @@ La información con Alloxentric se canaliza por el líder de equipo.
 
 ## Requisitos arquitectónicos no negociables
 
-Multi-tenancy por `client_id` con RLS, RBAC con permisos granulares,
-feature gating validado en backend, auditoría de cinco dimensiones,
-API-First, i18n y light/dark mode.
+Requerimientos: multi-tenancy por `client_id`, RBAC con permisos, feature gating en backend, auditoría de cinco dimensiones, API-First, i18n y temas claro/oscuro. **La demo utiliza MongoDB**, por lo que no cuenta con RLS nativo de PostgreSQL; aplica filtros por tenant en código y pruebas. Auditoría de aplicación no equivale a WORM/inalterabilidad frente al administrador.
 
-**Atención:** el stack de backend y frontend está en contradicción entre
-documentos. Ver AD-01 en `BITACORA_ARQUITECTURA.md` antes de programar.
+**Atención:** la ratificación del stack definitivo y de la integración con el producto WellQ existente sigue siendo una decisión del equipo/Alloxentric (ADR-006). La elección operativa de FastAPI/MongoDB para la demo no la cierra.
 
 ## Cómo trabajamos
 
