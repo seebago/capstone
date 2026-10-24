@@ -1,0 +1,1459 @@
+/* Global Theme Variables */
+:root {
+  --bg-app: #0b1120;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --header-bg: #182234;
+  --bottom-bg: #182234;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --brand-purple: #c084fc;
+  --brand-purple-bg: #e9d5ff;
+  --accent-green: #10b981;
+  --accent-yellow: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-blue: #38bdf8;
+  --border-radius: 10px;
+}
+
+.light {
+  --bg-app: #f1f5f9;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --header-bg: #ffffff;
+  --bottom-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --brand-purple: #9333ea;
+  --brand-purple-bg: #fae8ff;
+}
+
+/* Base Wrapper */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.portal-app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+}
+
+/* =========================================================
+   1. TOP HEADER (Logo left, Notification Bell + 3-lines right)
+   ========================================================= */
+.top-header {
+  height: 64px;
+  background-color: var(--header-bg);
+  border-bottom: 1.5px solid var(--card-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+}
+
+/* Logo Box (Purple square accent as in wireframe) */
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo-box {
+  width: 44px;
+  height: 44px;
+  background-color: var(--brand-purple-bg);
+  border: 2px solid var(--brand-purple);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(168, 85, 247, 0.25);
+}
+
+.header-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Header Right Buttons */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.header-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+.header-icon-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Notification Bell */
+.btn-bell .icon-svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--text-main);
+}
+
+.notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: var(--accent-red);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.35rem;
+  border-radius: 999px;
+  min-width: 14px;
+  text-align: center;
+  border: 1.5px solid var(--header-bg);
+}
+
+/* Square Rounded Hamburger Button (3 lines) */
+.btn-hamburger {
+  border: 2px solid var(--text-main) !important;
+  border-radius: 8px !important;
+  width: 42px;
+  height: 42px;
+  background-color: var(--card-bg) !important;
+  padding: 6px !important;
+  box-sizing: border-box;
+}
+
+.hamburger-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 22px;
+  height: 18px;
+}
+
+.hamburger-line {
+  display: block;
+  width: 100%;
+  height: 2.5px;
+  background-color: var(--text-main);
+  border-radius: 2px;
+}
+
+/* Notice Banner */
+.system-notice-banner {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.88rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 64px;
+  z-index: 75;
+}
+
+.system-notice-banner button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* =========================================================
+   2. MAIN VIEWPORT
+   ========================================================= */
+.portal-main-viewport {
+  flex: 1;
+  padding: 1.5rem 1.25rem 90px 1.25rem; /* bottom padding for fixed nav */
+  overflow-y: auto;
+}
+
+.tab-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tab-title-row h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+}
+
+.tab-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  max-width: 650px;
+  line-height: 1.4;
+}
+
+.tab-actions-cluster {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* =========================================================
+   3. FIXED BOTTOM NAVIGATION BAR (Wireframe layout)
+   ========================================================= */
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1100px;
+  height: 70px;
+  background-color: var(--bottom-bg);
+  border-top: 1.5px solid var(--card-border);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  z-index: 90;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.bottom-nav-item {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  height: 100%;
+}
+
+.bottom-nav-svg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.15s ease;
+}
+
+.nav-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.bottom-nav-item:hover {
+  color: var(--text-main);
+}
+
+.bottom-nav-item.active {
+  color: var(--primary);
+}
+
+.bottom-nav-item.active .bottom-nav-svg {
+  transform: scale(1.12);
+  stroke: var(--primary);
+}
+
+.bottom-nav-item.active .nav-label {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* =========================================================
+   4. SIDEBAR DRAWER (Right Slide - Wireframe 2)
+   ========================================================= */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+}
+
+.sidebar-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 330px;
+  max-width: 85vw;
+  background-color: var(--card-bg);
+  border-left: 2px solid var(--card-border);
+  z-index: 105;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.sidebar-header {
+  padding: 1.25rem 1.25rem 1rem 1.25rem;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-user-brief {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-purple), var(--primary));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.sidebar-user-name {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.sidebar-user-rut {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.btn-close-sidebar {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.sidebar-menu-list {
+  flex: 1;
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-menu-item {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  padding: 1.15rem 1.25rem;
+  gap: 1rem;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-main);
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-menu-item:hover {
+  background-color: rgba(2, 132, 199, 0.1);
+}
+
+.sidebar-item-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+}
+
+.sidebar-item-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.sidebar-item-text {
+  flex: 1;
+}
+
+.sidebar-item-text strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.15rem;
+}
+
+.sidebar-item-text small {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.sidebar-arrow {
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  font-weight: 300;
+}
+
+/* Switch Toggle for Dark Mode */
+.toggle-item {
+  cursor: pointer;
+}
+
+.switch-toggle {
+  width: 44px;
+  height: 24px;
+  background: #475569;
+  border-radius: 999px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.switch-toggle.checked {
+  background: var(--primary);
+}
+
+.switch-handle {
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s;
+}
+
+.switch-toggle.checked .switch-handle {
+  transform: translateX(20px);
+}
+
+.sidebar-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--card-border);
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+/* =========================================================
+   5. TAB 1: CITAS MÉDICAS
+   ========================================================= */
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.appointment-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  padding: 1.15rem;
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appt-date-badge {
+  background: rgba(2, 132, 199, 0.12);
+  border: 1.5px solid var(--primary);
+  border-radius: 8px;
+  padding: 0.5rem 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.appt-month {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.appt-day {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.appt-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.appt-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.appt-specialty {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.appt-doctor {
+  margin: 0 0 0.2rem 0;
+  font-size: 0.92rem;
+}
+
+.appt-location {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.appt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-action {
+  border: none;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-reschedule {
+  background: rgba(2, 132, 199, 0.15);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-cancel {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accent-red);
+  border: 1px solid var(--accent-red);
+}
+
+/* =========================================================
+   6. TAB 2: EXÁMENES (Table with Collapsible Preview as requested)
+   ========================================================= */
+.exams-table-wrapper {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.exams-table-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-bottom: 1.5px solid var(--card-border);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.exams-table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.exam-row-container {
+  border-bottom: 1px solid var(--card-border);
+  transition: background 0.15s;
+}
+
+.exam-row-container:last-child {
+  border-bottom: none;
+}
+
+.exam-row-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.15rem 1.25rem;
+  gap: 1rem;
+}
+
+.exam-row-main.clickable {
+  cursor: pointer;
+}
+
+.exam-row-main.clickable:hover {
+  background-color: rgba(2, 132, 199, 0.05);
+}
+
+.exam-col-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.exam-icon-type {
+  font-size: 1.4rem;
+}
+
+.exam-name-text {
+  font-size: 0.98rem;
+  display: block;
+}
+
+.exam-meta-sub {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin-top: 0.2rem;
+}
+
+.exam-col-right {
+  display: flex;
+  align-items: center;
+}
+
+.status-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.pending-cluster, .not-done-cluster {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.wait-time-tag {
+  font-size: 0.78rem;
+  color: var(--accent-yellow);
+  font-weight: 600;
+}
+
+.pending-sample-tag {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.exam-status-badge {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-ready {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid var(--accent-green);
+}
+
+.badge-pending {
+  background: rgba(2, 132, 199, 0.2);
+  color: #38bdf8;
+  border: 1px solid var(--primary);
+}
+
+.badge-not-done {
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+  border: 1px solid #475569;
+}
+
+/* Expand Arrow Button */
+.btn-expand-arrow {
+  background: transparent;
+  border: 1.5px solid var(--card-border);
+  color: var(--text-main);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-expand-arrow svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn-expand-arrow.open svg {
+  transform: rotate(180deg);
+}
+
+.btn-expand-arrow:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Expanded Preview Frame */
+.exam-expanded-preview {
+  background-color: var(--bg-app);
+  padding: 1.25rem;
+  border-top: 1px solid var(--card-border);
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.preview-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.preview-file-meta {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.preview-embed-frame {
+  background: #111827;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.preview-fallback-box {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.preview-footer-note {
+  margin-top: 0.85rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* =========================================================
+   7. TAB 3: RECETAS (Prescriptions Table)
+   ========================================================= */
+.prescriptions-table-wrapper {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.prescriptions-table-header {
+  display: grid;
+  grid-template-columns: 140px 1fr 60px;
+  padding: 0.85rem 1.25rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-bottom: 1.5px solid var(--card-border);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.prescription-row-container {
+  border-bottom: 1px solid var(--card-border);
+}
+
+.prescription-row-container:last-child {
+  border-bottom: none;
+}
+
+.prescription-row-main {
+  display: grid;
+  grid-template-columns: 140px 1fr 60px;
+  align-items: center;
+  padding: 1.15rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.prescription-row-main:hover {
+  background-color: rgba(2, 132, 199, 0.05);
+}
+
+.date-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.presc-title-text {
+  font-size: 0.98rem;
+  display: block;
+}
+
+.presc-meta-sub {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin-top: 0.2rem;
+}
+
+.presc-col-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.prescription-expanded-preview {
+  background-color: var(--bg-app);
+  padding: 1.25rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.prescription-card-sheet {
+  background-color: var(--card-bg);
+  border: 1.5px solid var(--primary);
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sheet-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.folio-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.sheet-title {
+  margin: 0.4rem 0 0.2rem 0;
+  font-size: 1.1rem;
+}
+
+.sheet-doctor {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.medications-block h5, .indications-block h5 {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.92rem;
+}
+
+.meds-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.medication-card {
+  background: var(--bg-app);
+  border-left: 3px solid var(--primary);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+}
+
+.med-name {
+  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.med-dosage {
+  margin: 0 0 0.2rem 0;
+  font-size: 0.85rem;
+}
+
+.med-duration {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.indications-block {
+  margin-top: 1rem;
+}
+
+.indications-text {
+  background: var(--bg-app);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.sheet-footer {
+  margin-top: 1rem;
+  border-top: 1px dashed var(--card-border);
+  padding-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #34d399;
+}
+
+/* =========================================================
+   8. TAB 4: AGENDAR (Booking Tab)
+   ========================================================= */
+.booking-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.mode-btn {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  color: var(--text-main);
+  padding: 0.85rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn.active {
+  background: rgba(2, 132, 199, 0.15);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.booking-card-form {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.input-control {
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  background-color: var(--bg-app);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.hours-section {
+  margin-bottom: 1.25rem;
+}
+
+.section-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.hours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 0.6rem;
+}
+
+.hour-chip {
+  padding: 0.55rem;
+  border-radius: 6px;
+  background: var(--bg-app);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.hour-chip.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.booking-summary-box {
+  background: rgba(2, 132, 199, 0.1);
+  border-left: 3px solid var(--primary);
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.booking-summary-box p {
+  margin: 0;
+}
+
+.booking-alert-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--accent-green);
+  color: #34d399;
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+}
+
+.form-actions-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.75rem;
+  font-size: 1rem;
+}
+
+/* =========================================================
+   9. MODALS (Notifications, Profile, Locations, Upload)
+   ========================================================= */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  max-width: 520px;
+  width: 100%;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.15rem;
+}
+
+.modal-header h4 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+/* Notifications List */
+.notifications-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--card-border);
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+.notification-card {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  background: var(--bg-app);
+  border: 1px solid var(--card-border);
+  position: relative;
+  align-items: flex-start;
+}
+
+.notification-card.unread {
+  border-left: 3px solid var(--primary);
+}
+
+.notification-icon {
+  font-size: 1.3rem;
+}
+
+.notification-body {
+  flex: 1;
+}
+
+.notification-body strong {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.notification-body p {
+  margin: 0 0 0.35rem 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.notif-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-top: 0.4rem;
+}
+
+/* Profile Modal Details */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  font-size: 0.9rem;
+  overflow-y: auto;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5rem;
+}
+
+.field-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.badge-tag {
+  display: inline-block;
+  background: rgba(2, 132, 199, 0.15);
+  color: var(--primary);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+/* Locations List */
+.locations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.location-card {
+  background: var(--bg-app);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.location-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.commune-tag {
+  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.loc-address, .loc-hours, .loc-phone {
+  margin: 0.2rem 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.loc-services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.service-chip {
+  font-size: 0.72rem;
+  background: rgba(2, 132, 199, 0.12);
+  color: var(--primary);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+/* Contact Options */
+.contact-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.contact-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: var(--bg-app);
+  border: 1px solid var(--card-border);
+}
+
+.contact-icon {
+  font-size: 1.8rem;
+}
+
+.contact-box p {
+  margin: 0.2rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.contact-box small {
+  color: var(--text-muted);
+}
+
+/* Dropzone */
+.dropzone-area {
+  border: 2px dashed var(--primary);
+  border-radius: 10px;
+  padding: 2.25rem 1.25rem;
+  text-align: center;
+  background: rgba(2, 132, 199, 0.05);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropzone-icon {
+  font-size: 2.5rem;
+}
+
+.badge-synthetic {
+  display: inline-block;
+  margin-top: 0.4rem;
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* Common Buttons & Utils */
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.55rem 1.15rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--card-border);
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-text {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-text:hover {
+  color: var(--text-main);
+}
+
+.btn-danger {
+  background-color: var(--accent-red);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.modal-footer {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.empty-state-box {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+/* =========================================================
+   10. RESPONSIVE DESIGN (Mobile First Adaptations)
+   ========================================================= */
+@media (max-width: 768px) {
+  .portal-main-viewport {
+    padding: 1rem 0.85rem 85px 0.85rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .appointment-card {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+
+  .appt-date-badge {
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    width: fit-content;
+  }
+
+  .appt-actions {
+    flex-direction: row;
+  }
+
+  .prescriptions-table-header {
+    grid-template-columns: 100px 1fr 40px;
+  }
+
+  .prescription-row-main {
+    grid-template-columns: 100px 1fr 40px;
+  }
+
+  .booking-mode-selector {
+    grid-template-columns: 1fr;
+  }
+}
