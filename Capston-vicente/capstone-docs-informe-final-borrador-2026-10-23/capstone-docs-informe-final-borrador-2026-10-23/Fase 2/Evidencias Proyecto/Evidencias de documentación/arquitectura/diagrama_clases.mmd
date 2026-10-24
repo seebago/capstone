@@ -1,0 +1,153 @@
+classDiagram
+    class Tenant {
+        +string client_id
+        +string name
+        +string[] features
+    }
+
+    class Clinic {
+        +string clinic_id
+        +string client_id
+        +string name
+        +string address
+        +string state
+        +object metadata
+    }
+
+    class Clinician {
+        +string clinician_id
+        +string client_id
+        +string first_name
+        +string last_name
+        +string clinic_id
+        +string[] clinic_ids
+        +object contact
+        +string[] specialties
+        +string state
+        +bool validated
+    }
+
+    class Patient {
+        +string patient_id
+        +string client_id
+        +string first_name
+        +string last_name
+        +object contact
+        +object ids
+        +object metadata
+        +string state
+        +string status
+    }
+
+    class CaseRecord {
+        +string case_id
+        +string client_id
+        +string patient_id
+        +string title
+        +string status
+        +string start_date
+        +string[] diagnosis_codes
+        +string[] treatment_goals
+    }
+
+    class CareTeamLink {
+        +string client_id
+        +string clinic_id
+        +string clinician_id
+        +string patient_id
+        +string state
+    }
+
+    class User {
+        +string _id
+        +string client_id
+        +string email
+        +string email_norm
+        +string password_hash
+        +string[] roles
+        +string state
+        +object subject
+    }
+
+    class ClinicalTest {
+        +string clinical_test_id
+        +string client_id
+        +string extraction_id
+        +string patient_id
+        +string case_id
+        +string title
+        +string document_type
+        +string identity_match
+        +string status
+        +int revision
+        +string confirmed_by
+        +string confirmed_at
+        +string validated_by
+        +string validated_at
+        +string score_status
+        +string creation_key
+        +string creation_hash
+    }
+
+    class Marker {
+        +string marker_code
+        +float value_canonical
+        +string unit_canonical
+        +float reference_low
+        +float reference_high
+        +float confidence
+        +string mapping_status
+        +bool validation_passed
+        +string value_type
+    }
+
+    class AuditEvent {
+        +string actor_id
+        +string client_id
+        +string action
+        +string occurred_at
+        +string origin
+        +string result
+        +int revision
+    }
+
+    class Review {
+        +string actor_id
+        +string at
+        +string reason
+        +bool identity_override
+    }
+
+    class SecurityEvent {
+        +string client_id
+        +string actor_id
+        +string action
+        +string occurred_at
+        +string origin
+        +string result
+        +string code
+    }
+
+    Tenant "1" --> "*" Clinic : opera
+    Tenant "1" --> "*" Clinician : emplea
+    Tenant "1" --> "*" Patient : atiende
+    Tenant "1" --> "*" User : tiene
+    Tenant "1" --> "*" ClinicalTest : aisla por client_id
+    Tenant "1" --> "*" SecurityEvent : aisla por client_id
+
+    Clinic "1" --> "*" Clinician : asigna
+
+    Patient "1" --> "*" CaseRecord : tiene
+    Patient "1" --> "*" ClinicalTest : es titular de
+    CaseRecord "1" --> "*" ClinicalTest : agrupa
+
+    Clinician "1" --> "*" CareTeamLink : participa en
+    Patient "1" --> "*" CareTeamLink : participa en
+
+    User "1" --> "1" Patient : subject (kind=patient)
+    User "1" --> "1" Clinician : subject (kind=clinician)
+
+    ClinicalTest "1" *-- "1..2" Marker : proposal
+    ClinicalTest "1" o-- "0..2" Marker : confirmed
+    ClinicalTest "1" *-- "*" AuditEvent : audit
+    ClinicalTest "1" *-- "*" Review : reviews

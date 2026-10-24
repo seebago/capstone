@@ -1,0 +1,83 @@
+erDiagram
+    TENANTS ||--o{ CLINICS : opera
+    TENANTS ||--o{ CLINICIANS : emplea
+    TENANTS ||--o{ PATIENTS : atiende
+    TENANTS ||--o{ USERS : tiene
+    TENANTS ||--o{ CLINICAL_TESTS : aisla
+    TENANTS ||--o{ SECURITY_EVENTS : aisla
+    CLINICS ||--o{ CLINICIANS : asigna
+    PATIENTS ||--o{ CASES : tiene
+    PATIENTS ||--o{ CLINICAL_TESTS : es_titular
+    CASES ||--o{ CLINICAL_TESTS : agrupa
+    CLINICIANS ||--o{ CARE_TEAM_LINKS : participa
+    PATIENTS ||--o{ CARE_TEAM_LINKS : participa
+    USERS }o--|| PATIENTS : subject
+    USERS }o--|| CLINICIANS : subject
+
+    TENANTS {
+        string client_id PK
+        string name
+        array features
+    }
+    CLINICS {
+        string clinic_id PK
+        string client_id FK
+        string name
+        string state
+    }
+    CLINICIANS {
+        string clinician_id PK
+        string client_id FK
+        string clinic_id FK
+        string state
+        bool validated
+    }
+    PATIENTS {
+        string patient_id PK
+        string client_id FK
+        string state
+        string status
+    }
+    CASES {
+        string case_id PK
+        string client_id FK
+        string patient_id FK
+        string status
+    }
+    CARE_TEAM_LINKS {
+        string client_id FK
+        string clinic_id FK
+        string clinician_id FK
+        string patient_id FK
+        string state
+    }
+    USERS {
+        string _id PK
+        string client_id FK
+        string email_norm UK
+        string password_hash
+        array roles
+        string state
+    }
+    CLINICAL_TESTS {
+        string clinical_test_id PK
+        string client_id FK
+        string patient_id FK
+        string case_id FK
+        string created_by FK
+        string creation_key
+        string status
+        int revision
+        array proposal
+        array confirmed
+        array audit
+        array reviews
+        array receipts
+    }
+    SECURITY_EVENTS {
+        string client_id FK
+        string actor_id FK
+        string action
+        string result
+        string code
+    }
