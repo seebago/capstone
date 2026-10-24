@@ -1,0 +1,44 @@
+flowchart LR
+    subgraph Actores
+        PAC["🧑 Paciente"]
+        CLI["🩺 Clínico"]
+        SYS["⚙️ Sistema<br/>(automático)"]
+    end
+
+    subgraph "Casos de uso — MVP WellQ (lo implementado y probado)"
+        UC01(("UC-01<br/>Iniciar sesión"))
+        UC02(("UC-02<br/>Consultar mis exámenes<br/>/ pacientes asignados"))
+        UC03(("UC-03<br/>Crear examen clínico<br/>sintético (demo)"))
+        UC04(("UC-04<br/>Confirmar extracción<br/>de datos"))
+        UC05(("UC-05<br/>Descartar extracción"))
+        UC06(("UC-06<br/>Validar clínicamente<br/>una extracción"))
+        UC07(("UC-07<br/>Rechazar validación<br/>clínica"))
+        UC08(("UC-08<br/>Consultar elegibilidad<br/>de scoring"))
+        UC09(("UC-09<br/>Registrar evento<br/>de auditoría"))
+    end
+
+    PAC --> UC01
+    PAC --> UC02
+    PAC --> UC03
+    PAC --> UC04
+    PAC --> UC05
+
+    CLI --> UC01
+    CLI --> UC02
+    CLI --> UC06
+    CLI --> UC07
+    CLI --> UC08
+
+    UC04 -.->|incluye| UC09
+    UC05 -.->|incluye| UC09
+    UC06 -.->|incluye| UC09
+    UC07 -.->|incluye| UC09
+
+    SYS --> UC09
+
+    classDef actor fill:#1e293b,stroke:#0f172a,color:#fff,font-weight:bold;
+    classDef usecase fill:#e0f2fe,stroke:#0369a1,color:#0c4a6e;
+    classDef sysuc fill:#f1f5f9,stroke:#64748b,color:#334155,stroke-dasharray: 4 2;
+    class PAC,CLI,SYS actor;
+    class UC01,UC02,UC03,UC04,UC05,UC06,UC07,UC08 usecase;
+    class UC09 sysuc;
