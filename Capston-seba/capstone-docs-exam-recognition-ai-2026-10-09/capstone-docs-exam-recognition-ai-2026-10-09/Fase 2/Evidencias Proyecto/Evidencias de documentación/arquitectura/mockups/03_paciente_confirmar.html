@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css"></head>
+<body>
+  <div class="disclaimer">Paleta provisional — pendiente kit de marca real (Max)</div>
+  <div class="topbar">
+    <span class="back">‹ Mis exámenes</span>
+    <h1 style="font-size:15px;">Confirmar extracción</h1>
+    <span></span>
+  </div>
+  <div class="content">
+    <div class="card">
+      <h3>Synthetic examination follow-up</h3>
+      <p>Revisión UC-04 · identity_match: match</p>
+      <div class="marker-row">
+        <div><div class="code">demo_marker_a</div><div class="range">ref. 1.0 – 10.0 demo_unit</div></div>
+        <div style="text-align:right;">
+          <div>5.0 demo_unit</div>
+          <div class="conf ok">confianza 0.99 ✓</div>
+        </div>
+      </div>
+      <div class="marker-row">
+        <div><div class="code">demo_marker_b</div><div class="range">ref. 2.0 – 8.0 demo_unit</div></div>
+        <div style="text-align:right;">
+          <div>7.6 demo_unit</div>
+          <div class="conf low">confianza 0.62 ⚠</div>
+        </div>
+      </div>
+      <div class="note">demo_marker_b tiene confianza bajo 0.9 — debes marcarlo como revisado manualmente para poder confirmar (CONFIDENCE_UNRESOLVED si no).</div>
+    </div>
+    <button class="btn primary">Confirmar extracción</button>
+    <button class="btn danger">Descartar</button>
+    <p style="font-size:11px;color:#94A3B8;margin-top:6px;">PATCH /api/v1/clinical-tests/{id}/extraction · action=confirm</p>
+  </div>
+</body></html>
