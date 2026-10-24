@@ -17,7 +17,7 @@ Fase 2/
     │   ├── pruebas/              ← plan de pruebas, casos de prueba, resultados
     │   └── metodologia/          ← actas de reunión, backlog, plan del proyecto
     └── Evidencias de sistema/
-        ├── Aplicación/           ← código (llega cuando una rama feature/* se integre)
+        ├── Aplicación/           ← MVP sintético integrado en main (PR #8)
         └── Base de datos/        ← modelo/scripts de BD cuando ADR-006 esté ratificado
 ```
 
@@ -60,8 +60,8 @@ Apellido_Nombre_2.X_APT122_<descripción>.docx
 
 ### Evidencias individuales → `Evidencias Individuales/`
 
-- [ ] Vicente López
-- [ ] Sebastián González
+- [x] Vicente López — diario 2.1 publicado
+- [x] Sebastián González — diario 2.1 y reflexión 2.6 auxiliar registrados
 - [ ] Aron Germain
 
 ### Evidencias grupales → `Evidencias Grupales/`
@@ -71,10 +71,7 @@ Apellido_Nombre_2.X_APT122_<descripción>.docx
 
 ## Nota sobre el código
 
-El código real (MVP de Sebastián y la propuesta de pivote a app móvil)
-vive por ahora en ramas `feature/*` y `docs/*`, no en `main` — están
-pendientes de revisión e integración (ver `BITACORA_PROGRESO.md`). Este
-índice no asume ese código como entregado hasta que se integre.
+El MVP sintético de Sebastián **ya está en `main`** desde el 24-10-2026 por [PR #8](https://github.com/seebago/capstone/pull/8), con pruebas CI de dominio y MongoDB aprobadas para el commit de la PR. La app móvil es un rumbo/propuesta distinta, no una funcionalidad implementada en esta entrega. Cualquier afirmación del informe final debe separar prototipo, propuesta y pendiente; no hay IA clínica ni diagnóstico. La revisión académica del material sigue siendo responsabilidad del equipo.
 
 ## Implementación reunida para revisión (8 de octubre)
 
@@ -131,4 +128,4 @@ desde `wellq-base`; las 37 del MVP, con `python -m pytest -q` y MongoDB activo.
 Los workflows permanecen en `.github/workflows/`, ubicación requerida por
 GitHub. Las ramas y bitácoras generales del equipo no se sobrescriben.
 
-La rama `feature/wellq-evaluation-deploy` reúne el main del 8 de octubre y el MVP, sin integrar todavía a main. Ver [revisión y despliegue](<Evidencias Proyecto/Evidencias de documentación/pruebas/REVISION_DESPLIEGUE_2026-10-08.md>).
+La rama histórica `feature/wellq-evaluation-deploy` fue recuperada mediante PR #8 y fusionada a `main` el 24-10-2026 (merge `1934056bc4a4feddcd6f284306ec773012097b1d`). Ver [revisión y despliegue](<Evidencias Proyecto/Evidencias de documentación/pruebas/REVISION_DESPLIEGUE_2026-10-08.md>).
