@@ -53,6 +53,43 @@ ratificación** de Karina (y, si es posible, de Max) antes de programar,
 no una decisión cerrada unilateralmente — ver ADR-006. Detalle completo
 y consecuencias en `PLAN_FASES_COMPONENTES.md` §1.
 
+**Actualización 05-11-2026 — nuevo desarrollo de Aron en `develop`, contradice
+la dirección ya propuesta de AD-01.** Al revisar el estado real del repositorio
+se encontró que la rama `origin/develop` tiene 37 commits del 24-10-2026
+(subidos vía la interfaz web de GitHub, no vía flujo de rama normal) con 813
+archivos nuevos, sin registrar en ninguna bitácora hasta ahora:
+
+- `Wellq/Front-end/`: una aplicación web completa en **React + TypeScript +
+  Vite** (tabs de exámenes, citas, recetas, reserva de horas, visor de PDF,
+  tema claro/oscuro).
+- `Wellq/Back-end/python-fastapi/`: una **copia completa** del MVP FastAPI de
+  Sebastián.
+- `Wellq/Back-end/dist/`: un **backend Node/Express compilado**, con su
+  propio modelo de datos para exámenes en MongoDB (`models/Exam.js`,
+  `routes/exams.routes.js`).
+
+Vicente confirmó (5-11) que **sí conocía y autorizó** este trabajo de Aron —
+la intención es "pasarlo a aplicación directamente en la plataforma que
+tenemos subida en Vercel" — pero **no está confirmado si el backend Node
+es parte definitiva del plan o solo exploración**: Vicente indicó que falta
+preguntarle directamente a Aron. Mientras no se confirme:
+
+- Esto **no se trata como una decisión tomada**. Si el backend queda en
+  FastAPI (como ya estaba encaminado, ver actualización del 25-09 arriba) y
+  solo cambia el frontend a React, eso **no contradice** la dirección ya
+  propuesta de AD-01 — contradiría el *Flutter/Drift* del lado del frontend,
+  pero no el backend. Si en cambio el Node/Express reemplaza a FastAPI, es
+  un **cambio de tecnología fundamental del backend** (regla del proyecto:
+  no cambiar tecnologías fundamentales sin justificarlo) y debería registrarse
+  como una ratificación nueva de AD-01, no una desviación silenciosa.
+- La copia completa de FastAPI dentro de `develop` no debe tratarse como la
+  fuente de verdad del backend — la fuente de verdad sigue siendo
+  `Fase 2/Evidencias Proyecto/Evidencias de sistema/Aplicación/wellq-base`
+  en `main`, para no terminar con dos copias divergiendo en silencio.
+
+**Pendiente de confirmar con Aron antes de fusionar `develop` a `main` o de
+tomar cualquiera de sus partes como vigente.**
+
 ## Requisitos no negociables
 
 Multi-tenancy por `client_id`, RBAC granular, feature gating validado en
@@ -145,3 +182,4 @@ Ubicación: `docs/adr/`.
 | 2026-09-07 | Incorporación de Vercel (A-13) y NVIDIA (A-14) | Vicente, con Claude |
 | 2026-09-10 | Detección de AD-01 y registro de A-15 | Vicente, con Claude |
 | 2026-09-25 | Evidencia de Max (modelo de datos + documentos técnicos) apunta AD-01 hacia FastAPI+MongoDB+Flutter/Drift; registro de A-16, tensión A-04 vs A-16 y ADR-006 | Vicente, con Claude |
+| 2026-11-05 | Hallazgo de desarrollo no documentado en `develop` (frontend React/Vite y backend Node/Express de Aron, 813 archivos); confirmado con Vicente que es un trabajo autorizado, pero el alcance del backend queda pendiente de confirmar con Aron | Vicente, con Claude |

@@ -640,3 +640,14 @@ La cuenta seebago autenticada por Git Credential Manager permitió publicar feat
 | Fecha | Herramienta | Aporte | Evidencia | Validado por | Estado |
 |---|---|---|---|---|---|
 | 2026-10-24 | ChatGPT vía Sebastián | Auditoría de PR #5/#6, recuperación PR #8, reflexión PR #7, anexo de evidencia 2.6, guía de presentación y control de carrera | PR #7, PR #8, `ANEXO_SEBA_2.6_VERIFICACION_2026-10-24.md`, `GUION_EXPOSICION_20_MIN_FASE2_2026-10-24.md` | Pendiente integrante humano / equipo | Código y respuestas integrados, documentación complementaria en revisión |
+
+## 5 de noviembre de 2026 — chequeo de estado: nada nuevo de Sebastián en Git, hallazgo de desarrollo no documentado de Aron
+
+- Vicente pidió un chequeo de qué se ha avanzado en la semana. Verificado contra Git (no contra lo dicho de palabra): **`main` no se ha movido desde el 30-10** (sigue en `9ea1ab5`). Los últimos commits de `origin/Seba`, `origin/Aron`, `origin/Vicente` y `origin/develop` son todos del 23/24-10. No hay evidencia en el repositorio de trabajo nuevo de Sebastián esta semana.
+- Las dos ramas de remediación de seguridad (`fix/sec-04-dependencias-vulnerables-2026-10-30`, `docs/plan-remediacion-seguridad-2026-10-30`) siguen pusheadas y sin fusionar — nadie corrió el `pytest` pedido todavía.
+- **SEC-01 (crítico, acceso anónimo en Vercel) no se pudo confirmar como resuelto ni como pendiente**: el endpoint `/api/health` de `wellq-mvp.vercel.app` sigue respondiendo con normalidad, pero no expone el estado de `WELLQ_DEMO_ROLE_ACCESS`. Sin acceso al dashboard de Vercel, hay que preguntarle directamente a Sebastián si ya lo corrigió.
+- **Hallazgo nuevo, no documentado hasta ahora**: la rama `origin/develop` tiene 37 commits del 24-10 (813 archivos) con un frontend React/Vite completo y un backend Node/Express de Aron, además de una copia completa del FastAPI de Sebastián — ver detalle y estado de la decisión en `BITACORA_ARQUITECTURA.md` (actualización AD-01 del 5-11). Vicente confirmó que conocía y autorizó este trabajo (pasar WellQ "a aplicación" sobre la misma plataforma de Vercel), pero el alcance exacto del backend Node queda pendiente de confirmar con Aron antes de tratarlo como decisión tomada.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Claude (esta sesión): auditoría de estado real de Git, limpieza de locks del repositorio, hallazgo y documentación del desarrollo no registrado en `develop` | `BITACORA_ARQUITECTURA.md` (actualización AD-01 05-11), este archivo | Confirmado por Vicente en el chat: el trabajo de Aron es conocido y autorizado; alcance del backend pendiente de que Aron responda |
