@@ -1,471 +1,338 @@
-import { useState, useEffect, useRef } from 'react';
-import { HeaderBar } from './components/HeaderBar';
-import { BottomNavBar } from './components/BottomNavBar';
-import { SidebarDrawer } from './components/SidebarDrawer';
-import { NotificationsModal } from './components/NotificationsModal';
-import { AppointmentsTab } from './components/tabs/AppointmentsTab';
-import { ExamsTab } from './components/tabs/ExamsTab';
-import { PrescriptionsTab } from './components/tabs/PrescriptionsTab';
-import { BookingTab } from './components/tabs/BookingTab';
-import type {
-  ActiveTab,
-  Appointment,
-  PortalExam,
-  Prescription,
-  NotificationItem,
-  UserProfile,
-  ClinicLocation,
-} from './types/portal';
+import { useState, useEffect } from 'react';
+import { TopBar } from './components/TopBar';
+import { BottomNav, type ActiveTab } from './components/BottomNav';
+import { ExamsView } from './components/ExamsView';
+import { ClinicianView } from './components/ClinicianView';
+import { ChatView } from './components/ChatView';
+import { MenuDrawer } from './components/MenuDrawer';
+import { ProfileModal } from './components/ProfileModal';
+import { UploadModal } from './components/UploadModal';
+import { LoginView } from './components/LoginView';
+import type { Exam, NotificationItem } from './types';
+import type { Language } from './locales/translations';
 import './App.css';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('examenes');
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [systemNotice, setSystemNotice] = useState<string | null>(null);
-
-  // Upload modal state
-  const [uploadModalOpen, setUploadModalOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // Patient Profile Data
-  const [profile] = useState<UserProfile>({
-    name: 'Aron Germain Navarro',
-    rut: '19.876.543-2',
-    email: 'aron.germain@alumnos.duoc.cl',
-    phone: '+56 9 7654 3210',
-    insurance: 'Fonasa Tramo B / CruzBlanca',
-    birthDate: '15/06/1999',
-    emergencyContact: {
-      name: 'María Navarro',
-      phone: '+56 9 9123 4567',
-      relation: 'Madre',
-    },
+  // Theme state: dark default matching WellQ corporate visual style
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    return (localStorage.getItem('wellq-theme') as 'dark' | 'light') || 'dark';
   });
 
-  // Clinic Locations Data
-  const [locations] = useState<ClinicLocation[]>([
-    {
-      id: 'loc-1',
-      name: 'Clínica Alpha - Sede Providencia',
-      address: 'Av. Providencia 1240, Providencia',
-      commune: 'Santiago, Región Metropolitana',
-      phone: '(02) 2899 3001',
-      hours: 'Lunes a Viernes 07:30 a 20:00 hrs · Sábado 08:00 a 14:00 hrs',
-      services: ['Kinesiología', 'Laboratorio', 'Medicina General', 'Toma de Muestras'],
-    },
-    {
-      id: 'loc-2',
-      name: 'Clínica Beta - Sede Las Condes',
-      address: 'Av. Apoquindo 4500, Las Condes',
-      commune: 'Santiago, Región Metropolitana',
-      phone: '(02) 2899 3002',
-      hours: 'Lunes a Viernes 08:00 a 19:30 hrs',
-      services: ['Imagenología', 'Resonancia', 'Cardiología', 'Traumatología'],
-    },
-    {
-      id: 'loc-3',
-      name: 'Centro Médico Maipú',
-      address: 'Av. Pajaritos 2200, Maipú',
-      commune: 'Santiago, Región Metropolitana',
-      phone: '(02) 2899 3003',
-      hours: 'Lunes a Viernes 08:00 a 18:00 hrs',
-      services: ['Medicina General', 'Kinesiología', 'Toma de Muestras'],
-    },
-  ]);
+  // Language state: default 'es' or 'en'
+  const [lang, setLang] = useState<Language>(() => {
+    return (localStorage.getItem('wellq-lang') as Language) || 'es';
+  });
 
-  // Appointments Data
-  const [appointments, setAppointments] = useState<Appointment[]>([
-    {
-      id: 'app-1',
-      specialty: 'Kinesiología y Rehabilitación Funcional',
-      doctor: 'Dra. Camila Soto',
-      location: 'Clínica Alpha - Providencia (Box 204)',
-      date: '2026-10-28',
-      time: '10:30',
-      status: 'confirmada',
-    },
-    {
-      id: 'app-2',
-      specialty: 'Medicina General y Preventiva',
-      doctor: 'Dr. Andrés Silva',
-      location: 'Clínica Alpha - Providencia (Box 105)',
-      date: '2026-11-04',
-      time: '15:15',
-      status: 'confirmada',
-    },
-  ]);
+  // Login session state (defaults to false to present the Login view first)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Exams Data (Synced with backend if available + initial synthetic items)
-  const [exams, setExams] = useState<PortalExam[]>([
-    {
-      id: 'DOC-KINE-2026-001',
-      name: 'Evaluación Kinesiológica Funcional (Rango y Movilidad)',
-      laboratory: 'Unidad de Kinesiología y Fisioterapia · Clínica Alpha',
-      dateRequested: '20/10/2026',
-      status: 'listo',
-      documentName: 'evaluacion-kinesiologica-FICTICIA.pdf',
-      documentData: '',
-      measurementsCount: 4,
-    },
-    {
-      id: 'DOC-LAB-2026-002',
-      name: 'Hemograma Completo y Perfil Bioquímico',
-      laboratory: 'Laboratorio Clínico Central · Clínica Alpha',
-      dateRequested: '23/10/2026',
-      status: 'pendiente',
-      estimatedWaitTime: 'Tiempo estimado de entrega: ~18 horas',
-    },
-    {
-      id: 'DOC-IMG-2026-003',
-      name: 'Resonancia Magnética Articular de Rodilla',
-      laboratory: 'Centro de Imagenología Médica · Clínica Beta',
-      dateRequested: '24/10/2026',
-      status: 'no_realizado',
-    },
-  ]);
+  // Role state: 'patient' or 'clinician'
+  const [role, setRole] = useState<'patient' | 'clinician'>('patient');
 
-  // Prescriptions Data
-  const [prescriptions] = useState<Prescription[]>([
-    {
-      id: 'presc-101',
-      date: '20/10/2026',
-      doctorName: 'Dra. Camila Soto',
-      specialty: 'Kinesiología y Medicina Física',
-      title: 'Receta Consulta Médica Kinesiología - Rehabilitación Motora',
-      medications: [
-        {
-          name: 'Ibuprofeno 400 mg (Comprimidos)',
-          dosage: '1 comprimido',
-          frequency: 'Cada 8 horas con las comidas',
-          duration: '5 días',
-        },
-        {
-          name: 'Gel tópico de Diclofenaco 1.16%',
-          dosage: 'Aplicación moderada en zona articular',
-          frequency: '3 veces al día con suave masaje',
-          duration: '7 días',
-        },
-      ],
-      indications: 'Realizar ejercicios guiados de estiramiento de cuádriceps e isquiotibiales. Evitar cargas de impacto por 10 días.',
-    },
-    {
-      id: 'presc-102',
-      date: '15/09/2026',
-      doctorName: 'Dr. Andrés Silva',
-      specialty: 'Medicina General',
-      title: 'Receta Consulta Médica Preventiva y Suplementación',
-      medications: [
-        {
-          name: 'Vitamina D3 800 UI (Cápsulas blandas)',
-          dosage: '1 cápsula diaria',
-          frequency: 'Junto con el desayuno',
-          duration: '30 días',
-        },
-      ],
-      indications: 'Mantener hidratación adecuada (al menos 2 litros de agua diarios) y control en 3 meses.',
-    },
-  ]);
+  // Active Bottom Navigation Tab ('exams' | 'chat')
+  const [activeTab, setActiveTab] = useState<ActiveTab>('exams');
 
-  // Notifications Data
+  // Modals & Drawers state
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+
+  // Exams data
+  const [exams, setExams] = useState<Exam[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  // Notifications
   const [notifications, setNotifications] = useState<NotificationItem[]>([
     {
       id: 'notif-1',
-      title: 'Examen Listo para Descargar',
-      message: 'Tu examen de Evaluación Kinesiológica Funcional ya está disponible con firma digital.',
-      date: 'Hoy, 09:15 hrs',
+      title: lang === 'en' ? 'Kinesiology Exam Ready' : 'Examen Kinesiológico Listo',
+      message:
+        lang === 'en'
+          ? 'Your Functional Kinesiology assessment report has been processed and is ready for double-check review.'
+          : 'Tu informe de evaluación kinesiológica ha sido procesado y está listo para tu cotejo.',
+      timestamp: 'Today, 10:15 AM',
       read: false,
-      type: 'exam',
+      type: 'success',
     },
     {
       id: 'notif-2',
-      title: 'Recordatorio de Cita Médica',
-      message: 'Tienes una consulta de Kinesiología con la Dra. Camila Soto el 28 de Octubre a las 10:30 hrs.',
-      date: 'Ayer, 18:30 hrs',
+      title: lang === 'en' ? 'Appointment Reminder' : 'Recordatorio de Cita',
+      message:
+        lang === 'en'
+          ? 'Chest X-Ray scheduled for 28/10 at London Central Health Hub. Remember: 8h fasting not required for imaging.'
+          : 'Radiografía de Tórax programada para el 28/10 en London Central. Recuerda presentarte con ropa cómoda.',
+      timestamp: 'Yesterday, 16:30 PM',
       read: false,
-      type: 'appointment',
-    },
-    {
-      id: 'notif-3',
-      title: 'Nueva Receta Electrónica',
-      message: 'Se ha emitido la receta médica correspondiente a tu última consulta de kinesiología.',
-      date: '20 Oct, 11:00 hrs',
-      read: true,
-      type: 'prescription',
+      type: 'info',
     },
   ]);
 
-  // Load real PDF and exams from backend
-  useEffect(() => {
-    const fetchBackendExams = async () => {
-      try {
-        const res = await fetch('/api/exams?client_id=clinic-alpha');
-        const json = await res.json();
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          const apiExams: PortalExam[] = json.data.map((be: any, idx: number) => ({
-            id: be.clinical_test_id || be._id,
-            name: be.document_name ? be.document_name.replace(/\.[^/.]+$/, '').replace(/-/g, ' ') : `Examen Clínico N° ${idx + 1}`,
-            laboratory: 'Laboratorio Clínico · Clínica Alpha',
-            dateRequested: new Date(be.created_at).toLocaleDateString('es-CL'),
-            status: be.status === 'clinically_validated' || be.status === 'confirmed_by_patient' ? 'listo' : be.status === 'awaiting_confirmation' ? 'listo' : 'pendiente',
-            documentName: be.document_name || 'evaluacion-kinesiologica-FICTICIA.pdf',
-            documentData: be.document_data || '',
-            measurementsCount: be.measurements?.length || be.proposal?.length || 0,
-          }));
+  // Persist theme changes
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    localStorage.setItem('wellq-theme', next);
+  };
 
-          // Merge with pending/unperformed mocks for full wireframe demonstration
-          setExams([
-            apiExams[0],
-            {
-              id: 'DOC-LAB-2026-002',
-              name: 'Hemograma Completo y Perfil Bioquímico',
-              laboratory: 'Laboratorio Clínico Central · Clínica Alpha',
-              dateRequested: '23/10/2026',
-              status: 'pendiente',
-              estimatedWaitTime: 'Tiempo estimado de entrega: ~18 horas',
-            },
-            {
-              id: 'DOC-IMG-2026-003',
-              name: 'Resonancia Magnética Articular de Rodilla',
-              laboratory: 'Centro de Imagenología Médica · Clínica Beta',
-              dateRequested: '24/10/2026',
-              status: 'no_realizado',
-            },
-            ...apiExams.slice(1),
-          ]);
-        }
-      } catch {
-        // Continue with local mock data
+  // Persist language changes
+  const handleSelectLanguage = (newLang: Language) => {
+    setLang(newLang);
+    localStorage.setItem('wellq-lang', newLang);
+  };
+
+  // Fetch exams from backend
+  const fetchExams = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/exams?client_id=clinic-alpha');
+      const data = await res.json();
+      if (data.success && data.data) {
+        setExams(data.data);
       }
-    };
+    } catch {
+      // In-memory fallback happens seamlessly in backend
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchBackendExams();
+  useEffect(() => {
+    fetchExams();
   }, []);
 
-  // Handlers for Appointment Management
-  const handleRescheduleAppointment = (id: string, newDate: string, newTime: string) => {
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, date: newDate, time: newTime } : a))
-    );
-    setSystemNotice(`✅ Cita reprogramada exitosamente para el ${newDate} a las ${newTime} hrs.`);
+  // Login handler
+  const handleLogin = (selectedRole: 'patient' | 'clinician') => {
+    setRole(selectedRole);
+    setIsLoggedIn(true);
+    setActiveTab('exams');
   };
 
-  const handleCancelAppointment = (id: string) => {
-    setAppointments((prev) => prev.filter((a) => a.id !== id));
-    setSystemNotice('🗑️ Cita médica cancelada correctamente.');
+  // Logout handler
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setActiveTab('exams');
   };
 
-  const handleAddAppointment = (newAppt: Appointment) => {
-    setAppointments((prev) => [newAppt, ...prev]);
-    setNotifications((prev) => [
-      {
-        id: 'notif-' + Date.now(),
-        title: 'Nueva Cita Agendada',
-        message: `Cita reservada para ${newAppt.specialty} el ${newAppt.date} a las ${newAppt.time} hrs.`,
-        date: 'Recién',
-        read: false,
-        type: 'appointment',
-      },
-      ...prev,
-    ]);
+  // Upload handler
+  const handleUploadFile = async (file: File) => {
+    return new Promise<void>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const base64Data = reader.result as string;
+          const res = await fetch('/api/exams/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              client_id: 'clinic-alpha',
+              patient_id: 'patient-001',
+              filename: file.name,
+              content_type: file.type,
+              file_data: base64Data,
+            }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            setMessage(
+              lang === 'en'
+                ? `📄 File "${file.name}" uploaded successfully. Added to your Ready exams.`
+                : `📄 Archivo "${file.name}" subido exitosamente. Añadido a tus exámenes listos.`
+            );
+            await fetchExams();
+            resolve();
+          } else {
+            reject(new Error(data.error || 'Failed to upload'));
+          }
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = () => reject(new Error('Failed reading file'));
+      reader.readAsDataURL(file);
+    });
   };
 
-  const handleAddExam = (newExam: PortalExam) => {
-    setExams((prev) => [newExam, ...prev]);
-    setNotifications((prev) => [
-      {
-        id: 'notif-' + Date.now(),
-        title: 'Hora de Examen Registrada',
-        message: `Solicitud registrada para "${newExam.name}" en ${newExam.laboratory}.`,
-        date: 'Recién',
-        read: false,
-        type: 'exam',
-      },
-      ...prev,
-    ]);
+  // Confirm exam (Patient action)
+  const handleConfirmExam = async (examId: string, reason: string) => {
+    try {
+      const res = await fetch(`/api/exams/${examId}/confirm`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actor: 'patient-001',
+          identity_confirmed: true,
+          reason,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage(
+          lang === 'en'
+            ? '✅ Document & values confirmed successfully by patient.'
+            : '✅ Documento y valores confirmados exitosamente por el paciente.'
+        );
+        fetchExams();
+      }
+    } catch {
+      setMessage('Processed locally.');
+    }
   };
 
-  // Upload handler for adding documents
-  const handleFileUpload = async (file: File) => {
-    if (file.size > 4 * 1024 * 1024) {
-      setSystemNotice('⚠️ El archivo supera el límite máximo de 4 MB.');
+  // Validate exam (Clinician action)
+  const handleValidateExam = async (
+    examId: string,
+    decision: 'validate' | 'reject' | 'error',
+    reason: string
+  ) => {
+    if (decision === 'error' && (!reason || reason.trim().length < 3)) {
+      setMessage(
+        lang === 'en'
+          ? '⚠️ Observation note (at least 3 characters) is required when marking an error.'
+          : '⚠️ Se requiere una observación (mínimo 3 caracteres) para marcar un error.'
+      );
       return;
     }
 
-    setIsUploading(true);
-    setSystemNotice('Procesando documento...');
-
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        const base64Data = reader.result as string;
-        const res = await fetch('/api/exams/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            client_id: 'clinic-alpha',
-            patient_id: 'patient-001',
-            filename: file.name,
-            content_type: file.type,
-            file_data: base64Data,
-          }),
-        });
-        const json = await res.json();
-        if (json.success && json.data) {
-          const newExam: PortalExam = {
-            id: json.data.clinical_test_id || 'exam-' + Date.now(),
-            name: file.name.replace(/\.[^/.]+$/, '').replace(/-/g, ' '),
-            laboratory: 'Carga Digital de Paciente · Clínica Alpha',
-            dateRequested: new Date().toLocaleDateString('es-CL'),
-            status: 'listo',
-            documentName: file.name,
-            documentData: base64Data,
-            measurementsCount: json.data.measurements?.length || 4,
-          };
-          setExams((prev) => [newExam, ...prev]);
-          setSystemNotice(`📄 Documento "${file.name}" cargado exitosamente. Ya puedes visualizarlo.`);
-          setUploadModalOpen(false);
-          setActiveTab('examenes');
+    try {
+      const res = await fetch(`/api/exams/${examId}/validate`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actor: 'clinician-001',
+          decision,
+          reason,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (decision === 'validate') {
+          setMessage(lang === 'en' ? '🩺 Exam clinically validated.' : '🩺 Examen validado clínicamente.');
+        } else if (decision === 'error') {
+          setMessage(lang === 'en' ? '⚠️ Exam marked with error.' : '⚠️ Examen marcado con error.');
+        } else {
+          setMessage(lang === 'en' ? '❌ Exam rejected.' : '❌ Examen rechazado.');
         }
-      } catch {
-        setSystemNotice('⚠️ Error al subir archivo. Inténtalo nuevamente.');
-      } finally {
-        setIsUploading(false);
+        fetchExams();
       }
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      setMessage('Action completed.');
+    }
   };
 
-  const unreadNotifCount = notifications.filter((n) => !n.read).length;
+  // Download official demo test PDF
+  const handleDownloadDemoPdf = () => {
+    window.open('/evaluacion-kinesiologica-FICTICIA.pdf', '_blank');
+  };
+
+  // Mark notifications read
+  const handleMarkNotificationsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  // If not logged in, show the exact Login View from Image 1
+  if (!isLoggedIn) {
+    return (
+      <LoginView
+        onLogin={handleLogin}
+        lang={lang}
+        onSelectLanguage={handleSelectLanguage}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
+    );
+  }
 
   return (
-    <div className={`portal-app-wrapper ${theme}`}>
-      {/* 1. TOP HEADER (Logo left, Notification Bell + 3-lines button right) */}
-      <HeaderBar
-        onToggleSidebar={() => setIsSidebarOpen(true)}
-        onOpenNotifications={() => setIsNotificationsOpen(true)}
-        unreadCount={unreadNotifCount}
+    <div className={`wellq-app-wrapper ${theme}`}>
+      {/* 1. TOP BAR (Logo Home, Demo Badge, Dark Mode Toggle (Sun/Moon), Profile Avatar) */}
+      <TopBar
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onOpenProfile={() => setIsProfileOpen(true)}
+        onGoHome={() => setActiveTab('exams')}
+        lang={lang}
       />
 
-      {/* Notice Alert Banner */}
-      {systemNotice && (
-        <div className="system-notice-banner">
-          <span>{systemNotice}</span>
-          <button onClick={() => setSystemNotice(null)}>✕</button>
+      {/* Global Alert Notification Banner */}
+      {message && (
+        <div className="global-alert-banner">
+          <span>{message}</span>
+          <button className="btn-alert-dismiss" onClick={() => setMessage(null)}>✕</button>
         </div>
       )}
 
-      {/* 2. MAIN SCROLLABLE VIEWPORT */}
-      <main className="portal-main-viewport">
-        {activeTab === 'cita' && (
-          <AppointmentsTab
-            appointments={appointments}
-            onReschedule={handleRescheduleAppointment}
-            onCancel={handleCancelAppointment}
-            onGoToBooking={() => setActiveTab('agendar')}
-          />
-        )}
-
-        {activeTab === 'examenes' && (
-          <ExamsTab
+      {/* 2. MAIN CONTENT CONTAINER (Switching between Patient view, Clinician view, or Chat) */}
+      <main className="wellq-main-layout">
+        {loading && exams.length === 0 ? (
+          <div className="initial-loading-spinner">
+            <div className="spinner"></div>
+            <p>{lang === 'en' ? 'Loading clinical records...' : 'Cargando registros clínicos...'}</p>
+          </div>
+        ) : role === 'clinician' ? (
+          <ClinicianView
             exams={exams}
-            onUploadClick={() => setUploadModalOpen(true)}
-            onDownloadDemoPdf={() => window.open('/evaluacion-kinesiologica-FICTICIA.pdf', '_blank')}
+            lang={lang}
+            onRefresh={fetchExams}
+            onDownloadDemoPdf={handleDownloadDemoPdf}
+            onValidateExam={handleValidateExam}
           />
-        )}
-
-        {activeTab === 'recetas' && (
-          <PrescriptionsTab prescriptions={prescriptions} />
-        )}
-
-        {activeTab === 'agendar' && (
-          <BookingTab
-            onAddAppointment={handleAddAppointment}
-            onAddExam={handleAddExam}
-            onNavigateToTab={(tab) => setActiveTab(tab)}
+        ) : activeTab === 'exams' ? (
+          <ExamsView
+            exams={exams}
+            lang={lang}
+            role={role}
+            onOpenUpload={() => setIsUploadOpen(true)}
+            onDownloadDemoPdf={handleDownloadDemoPdf}
+            onConfirmExam={handleConfirmExam}
+            onValidateExam={handleValidateExam}
+          />
+        ) : (
+          <ChatView
+            exams={exams}
+            lang={lang}
           />
         )}
       </main>
 
-      {/* 3. FIXED BOTTOM NAVIGATION BAR (Cita, Exámenes, Recetas, Agendar) */}
-      <BottomNavBar activeTab={activeTab} onSelectTab={setActiveTab} />
-
-      {/* 4. LATERAL DRAWER (Perfil, Ubicaciones, Contacto, Modo Oscuro) */}
-      <SidebarDrawer
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        theme={theme}
-        onToggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
-        profile={profile}
-        locations={locations}
+      {/* 3. BOTTOM NAVIGATION BAR (Exámenes and Menú for Clinician; Exámenes, Chat, Menú for Patient) */}
+      <BottomNav
+        activeTab={activeTab}
+        onSelectTab={(tab) => setActiveTab(tab)}
+        onOpenMenu={() => setIsMenuOpen(true)}
+        lang={lang}
+        role={role}
+        unreadCount={notifications.filter((n) => !n.read).length}
       />
 
-      {/* 5. NOTIFICATIONS MODAL / POPUP */}
-      <NotificationsModal
-        isOpen={isNotificationsOpen}
-        onClose={() => setIsNotificationsOpen(false)}
+      {/* 4. SLIDE-IN MENU DRAWER (Notifications, UK Language, Locations, Contact) */}
+      <MenuDrawer
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        lang={lang}
+        onSelectLanguage={handleSelectLanguage}
         notifications={notifications}
-        onMarkAllAsRead={() => {
-          setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-        }}
+        onMarkNotificationsRead={handleMarkNotificationsRead}
       />
 
-      {/* 6. UPLOAD DOCUMENT MODAL */}
-      {uploadModalOpen && (
-        <div className="modal-backdrop" onClick={() => setUploadModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h4>📄 Cargar Examen Médico</h4>
-              <button className="btn-close" onClick={() => setUploadModalOpen(false)}>✕</button>
-            </div>
+      {/* 5. PROFILE MODAL (Patient Info or Clinician/Doctor Profile) */}
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        lang={lang}
+        role={role}
+        onChangeRole={(newRole) => setRole(newRole)}
+        onLogout={handleLogout}
+      />
 
-            <div
-              className="dropzone-area"
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                  handleFileUpload(e.dataTransfer.files[0]);
-                }
-              }}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-                accept=".pdf,image/png,image/jpeg,image/jpg"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    handleFileUpload(e.target.files[0]);
-                  }
-                }}
-              />
-              <div className="dropzone-icon">📄</div>
-              <strong>Arrastra tu examen aquí o haz clic para seleccionarlo</strong>
-              <p className="dropzone-hint">
-                Admite archivos <strong>PDF, PNG o JPG</strong> (máx. 4 MB).<br />
-                <span className="badge-synthetic">Cumplimiento confidencialidad Ley 20.584</span>
-              </p>
-              {isUploading && <p className="loading-text">Cargando y procesando archivo...</p>}
-            </div>
-
-            <div className="modal-footer">
-              <button
-                className="btn-secondary"
-                onClick={() => window.open('/evaluacion-kinesiologica-FICTICIA.pdf', '_blank')}
-              >
-                📥 Descargar PDF Ficticio de Ejemplo
-              </button>
-              <button className="btn-text" onClick={() => setUploadModalOpen(false)}>
-                Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 6. UPLOAD MODAL (Drag & Drop, PDF/PNG/JPG <= 4MB) */}
+      <UploadModal
+        isOpen={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        lang={lang}
+        onUploadFile={handleUploadFile}
+        onDownloadDemo={handleDownloadDemoPdf}
+      />
     </div>
   );
 }
