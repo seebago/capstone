@@ -82,6 +82,7 @@ troubleshooting). Registrado también en `PLAN_FASES_COMPONENTES.md`.
 | ID | Asunto | Por qué bloquea | Estado |
 |---|---|---|---|
 | ST-004 | Qué hará exactamente la IA en WellQ | La guía 1.5 ya sitúa la extracción con LLM en el objetivo general (A-15) | **Abierto — prioritario** |
+| ST-032 | Pantalla `ChatView.tsx` en `Wellq/Front-end` (rama `develop`, Aron, 2026-11-14) se presenta como "WellQ AI Clinical Assistant" y responde sobre síntomas/resultados simulando interpretación clínica | Colisiona directamente con ST-004, aún abierto; implementación ya existe en código aunque no fue solicitada ni aprobada por Alloxentric/Karina/Max | **Abierto — crítico, decidir antes del sábado 21-11 (práctica) y el 12-12 (defensa real)** |
 | ST-002 | Quién paga la infraestructura, y dónde vive la base de datos si el despliegue es en Vercel | Cierra la decisión sobre Supabase | Parcial |
 | ST-012 | Residencia de datos: Vercel y NVIDIA procesan fuera de Chile | Con datos sintéticos no hay problema; con datos reales abre la cadena UK/Chile | Abierto |
 | ST-003 | Datos permitidos en desarrollo y demostraciones | Diseño de BD y demostraciones | Abierto |
