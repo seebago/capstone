@@ -8,7 +8,9 @@ import { ChatView } from './ChatView';
  * Chat como burbuja flotante (FAB) arrastrable.
  *
  * - Se puede arrastrar con mouse o dedo a cualquier punto de la pantalla;
- *   la posición se recuerda en este navegador (solo preferencia visual).
+ *   la posición se recuerda en este navegador, por separado para móvil y
+ *   escritorio (solo preferencia visual). Al cambiar de layout se usa la
+ *   posición de ese layout o la esquina inferior derecha del contenido.
  * - Un clic (sin arrastre) abre la ventana de chat; cerrar vuelve al ícono.
  * - La conversación se mantiene montada mientras dure la sesión, así no se
  *   pierde al cerrar y volver a abrir.
@@ -23,35 +25,65 @@ interface ChatBubbleProps {
 const FAB_SIZE = 60;
 const MARGIN = 12;
 const DRAG_THRESHOLD = 6; // px: menos que esto cuenta como clic
-const STORAGE_KEY = 'wellq-chat-fab-pos';
+const STORAGE_PREFIX = 'wellq-chat-fab-pos:'; // + 'mobile' | 'desktop'
+const DESKTOP_QUERY = '(min-width: 1025px)'; // mismo breakpoint que App.css
+const MOBILE_NAV_H = 68; // alto de .bottom-nav-container en móvil
 
 type Pos = { x: number; y: number };
+type Breakpoint = 'mobile' | 'desktop';
 
-function clamp(pos: Pos): Pos {
-  const maxX = Math.max(MARGIN, window.innerWidth - FAB_SIZE - MARGIN);
-  const maxY = Math.max(MARGIN, window.innerHeight - FAB_SIZE - MARGIN);
+const currentBreakpoint = (): Breakpoint => (window.matchMedia(DESKTOP_QUERY).matches ? 'desktop' : 'mobile');
+
+/** Lee una variable CSS en px definida en App.css (--sidebar-w, --topbar-h). */
+function cssPx(name: string, fallback: number): number {
+  const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+  return Number.isFinite(v) ? v : fallback;
+}
+
+/**
+ * Zona permitida según el layout: en escritorio no puede quedar sobre la barra
+ * lateral; en móvil no puede quedar sobre la barra inferior. Nunca sobre la barra superior.
+ */
+function clamp(pos: Pos, bp: Breakpoint): Pos {
+  const topbar = cssPx('--topbar-h', 70);
+  const minX = bp === 'desktop' ? cssPx('--sidebar-w', 220) + MARGIN : MARGIN;
+  const minY = topbar + MARGIN;
+  const maxX = Math.max(minX, window.innerWidth - FAB_SIZE - MARGIN);
+  const bottomReserved = bp === 'mobile' ? MOBILE_NAV_H : 0;
+  const maxY = Math.max(minY, window.innerHeight - FAB_SIZE - MARGIN - bottomReserved);
   return {
-    x: Math.min(Math.max(MARGIN, pos.x), maxX),
-    y: Math.min(Math.max(MARGIN, pos.y), maxY),
+    x: Math.min(Math.max(minX, pos.x), maxX),
+    y: Math.min(Math.max(minY, pos.y), maxY),
   };
 }
 
-function defaultPos(): Pos {
-  // Esquina inferior derecha, por encima de la barra inferior en móvil (68px).
-  return clamp({ x: window.innerWidth - FAB_SIZE - 20, y: window.innerHeight - FAB_SIZE - 96 });
+/** Esquina inferior derecha del área de contenido de cada layout. */
+function defaultPos(bp: Breakpoint): Pos {
+  const gap = bp === 'desktop' ? 24 : 16;
+  const bottomReserved = bp === 'mobile' ? MOBILE_NAV_H : 0;
+  return clamp({ x: window.innerWidth - FAB_SIZE - gap, y: window.innerHeight - FAB_SIZE - gap - bottomReserved }, bp);
 }
 
-function loadPos(): Pos {
+/** Posición guardada por breakpoint (cada layout recuerda la suya). */
+function loadPos(bp: Breakpoint): Pos {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_PREFIX + bp);
     if (raw) {
       const p = JSON.parse(raw);
-      if (typeof p?.x === 'number' && typeof p?.y === 'number') return clamp(p);
+      if (typeof p?.x === 'number' && typeof p?.y === 'number') return clamp(p, bp);
     }
   } catch {
     // almacenamiento no disponible: se usa la posición por defecto
   }
-  return defaultPos();
+  return defaultPos(bp);
+}
+
+function savePos(pos: Pos, bp: Breakpoint) {
+  try {
+    localStorage.setItem(STORAGE_PREFIX + bp, JSON.stringify(pos));
+  } catch {
+    // ignorar
+  }
 }
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({ exams, lang }) => {
@@ -63,13 +95,27 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({ exams, lang }) => {
   useEffect(() => {
     if (isOpen) setHasOpened(true);
   }, [isOpen]);
-  const [pos, setPos] = useState<Pos>(loadPos);
+  const [bp, setBp] = useState<Breakpoint>(currentBreakpoint);
+  const [pos, setPos] = useState<Pos>(() => loadPos(currentBreakpoint()));
   const [dragging, setDragging] = useState(false);
   const drag = useRef<{ startX: number; startY: number; origin: Pos; moved: boolean } | null>(null);
 
-  // Si cambia el tamaño de la ventana, la burbuja no puede quedar fuera de pantalla.
+  // Cambio de breakpoint (redimensionar, rotar): usar la posición propia de ese
+  // layout (o la por defecto), no las coordenadas crudas del otro.
   useEffect(() => {
-    const onResize = () => setPos((p) => clamp(p));
+    const mq = window.matchMedia(DESKTOP_QUERY);
+    const onChange = () => {
+      const next = currentBreakpoint();
+      setBp(next);
+      setPos(loadPos(next));
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  // Dentro del mismo breakpoint, si cambia el tamaño la burbuja no puede quedar fuera de su zona.
+  useEffect(() => {
+    const onResize = () => setPos((p) => clamp(p, currentBreakpoint()));
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
@@ -98,7 +144,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({ exams, lang }) => {
     if (!d.moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
     d.moved = true;
     setDragging(true);
-    setPos(clamp({ x: d.origin.x + dx, y: d.origin.y + dy }));
+    setPos(clamp({ x: d.origin.x + dx, y: d.origin.y + dy }, bp));
   };
 
   const onPointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
@@ -109,11 +155,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({ exams, lang }) => {
     if (!d) return;
     if (d.moved) {
       setPos((p) => {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
-        } catch {
-          // ignorar
-        }
+        savePos(p, bp);
         return p;
       });
     } else {
