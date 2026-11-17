@@ -22,6 +22,17 @@ export const examsRouter = Router();
 // Todas las rutas de /api/exams exigen JWT válido (401 si falta o es inválido).
 examsRouter.use(requireAuth);
 
+// La auditoría autoritativa va a audit_events (src/audit/auditLog.ts).
+// Estas marcas solo le dan nombre a la acción y al recurso de cada entrada.
+examsRouter.param('id', (_req, res, next, id) => {
+  res.locals.auditResourceId = String(id);
+  next();
+});
+const act = (name: string) => (_req: Request, res: Response, next: () => void) => {
+  res.locals.auditAction = name;
+  next();
+};
+
 // Locate the evaluation synthetic PDF fixture
 const DEMO_PDF_PATH = path.resolve(
   __dirname,
@@ -266,7 +277,7 @@ export function __memoryExamsForTests(): readonly any[] {
 }
 
 // GET /api/exams/demo-pdf: Download the evaluation synthetic PDF directly
-examsRouter.get('/demo-pdf', (_req: Request, res: Response) => {
+examsRouter.get('/demo-pdf', act('demo_pdf_download'), (_req: Request, res: Response) => {
   if (fs.existsSync(DEMO_PDF_PATH)) {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="evaluacion-kinesiologica-FICTICIA.pdf"');
@@ -278,7 +289,7 @@ examsRouter.get('/demo-pdf', (_req: Request, res: Response) => {
 // GET /api/exams
 // client_id sale del JWT verificado; cualquier ?client_id= del cliente se ignora.
 // Un paciente solo ve sus propios exámenes; un clínico, todos los de su tenant.
-examsRouter.get('/', async (req: Request, res: Response) => {
+examsRouter.get('/', act('exam_list'), async (req: Request, res: Response) => {
   const { client_id: clientId, role, user_id } = req.auth!;
   const belongs = (e: any) => e.client_id === clientId && (role !== 'patient' || e.patient_id === user_id);
   if (isMongoActive()) {
@@ -298,14 +309,14 @@ examsRouter.get('/', async (req: Request, res: Response) => {
 });
 
 // GET /api/exams/:id (filtrado por tenant y dueño)
-examsRouter.get('/:id', async (req: Request, res: Response) => {
+examsRouter.get('/:id', act('exam_read'), async (req: Request, res: Response) => {
   const found = await loadExamForCaller(req, res);
   if (!found) return;
   return res.json({ success: true, data: found.exam });
 });
 
 // GET /api/exams/:id/file (Download or stream raw document; filtrado por tenant y dueño)
-examsRouter.get('/:id/file', async (req: Request, res: Response) => {
+examsRouter.get('/:id/file', act('exam_file_read'), async (req: Request, res: Response) => {
   const found = await loadExamForCaller(req, res);
   if (!found) return;
   const examData = found.exam;
@@ -331,7 +342,7 @@ examsRouter.get('/:id/file', async (req: Request, res: Response) => {
 });
 
 // POST /api/exams/upload (Subir documento real PDF o Imagen con límites seguros)
-examsRouter.post('/upload', requireRole('patient'), async (req: Request, res: Response) => {
+examsRouter.post('/upload', act('upload_document'), requireRole('patient'), async (req: Request, res: Response) => {
   // Identidad y tenant salen del JWT verificado; se ignora lo que mande el cliente.
   const { client_id, user_id: patient_id } = req.auth!;
   const {
@@ -456,6 +467,7 @@ examsRouter.post('/upload', requireRole('patient'), async (req: Request, res: Re
   if (isMongoActive()) {
     try {
       const created = await Exam.create(newExam);
+      res.locals.auditResourceId = String(created._id);
       return res.status(201).json({ success: true, data: created });
     } catch {
       // fallback
@@ -463,12 +475,13 @@ examsRouter.post('/upload', requireRole('patient'), async (req: Request, res: Re
   }
 
   const mem = { _id: `mem-${Date.now()}`, ...newExam };
+  res.locals.auditResourceId = mem._id;
   memoryExams.unshift(mem);
   return res.status(201).json({ success: true, data: mem, note: 'stored in local memory' });
 });
 
 // POST /api/exams/:id/range-review (Ejecutar revisión aritmética de rangos; solo clínico del mismo tenant)
-examsRouter.post('/:id/range-review', requireRole('clinician'), async (req: Request, res: Response) => {
+examsRouter.post('/:id/range-review', act('document_range_review'), requireRole('clinician'), async (req: Request, res: Response) => {
   const actor = req.auth!.user_id;
   const { raw_text } = req.body;
 
@@ -508,7 +521,7 @@ examsRouter.post('/:id/range-review', requireRole('clinician'), async (req: Requ
 });
 
 // PATCH /api/exams/:id/confirm (Paciente confirma recepción y cotejo de identidad; solo SU examen)
-examsRouter.patch('/:id/confirm', requireRole('patient'), async (req: Request, res: Response) => {
+examsRouter.patch('/:id/confirm', act('document_confirm'), requireRole('patient'), async (req: Request, res: Response) => {
   const actor = req.auth!.user_id;
   const { identity_confirmed = true, reason = '' } = req.body;
 
@@ -537,7 +550,7 @@ examsRouter.patch('/:id/confirm', requireRole('patient'), async (req: Request, r
 });
 
 // PATCH /api/exams/:id/validate (Profesional valida, rechaza o marca con error; solo clínico del mismo tenant)
-examsRouter.patch('/:id/validate', requireRole('clinician'), async (req: Request, res: Response) => {
+examsRouter.patch('/:id/validate', act('document_validate'), requireRole('clinician'), async (req: Request, res: Response) => {
   const actor = req.auth!.user_id;
   const { decision = 'validate', reason = '' } = req.body;
 
@@ -559,6 +572,7 @@ examsRouter.patch('/:id/validate', requireRole('clinician'), async (req: Request
     actionName = 'document_reject';
   }
 
+  res.locals.auditAction = actionName;
   const found = await loadExamForCaller(req, res);
   if (!found) return;
   const exam = found.exam;

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { examsRouter } from './routes/exams.routes.js';
 import { authRouter } from './routes/auth.routes.js';
+import { auditRequests } from './audit/auditLog.js';
 
 /**
  * Construye la app Express sin conectar a la BD ni escuchar puerto,
@@ -26,6 +27,9 @@ export function createApp() {
       timestamp: new Date().toISOString(),
     });
   });
+
+  // Auditoría separada (colección audit_events) de cada request, incluidos rechazos.
+  app.use(['/api/auth', '/api/exams'], auditRequests);
 
   // Routes
   app.use('/api/auth', authRouter);

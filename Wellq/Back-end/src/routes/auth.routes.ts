@@ -8,9 +8,14 @@ export const authRouter = Router();
 authRouter.post('/login', (req: Request, res: Response) => {
   const { username, password } = req.body || {};
   const user = authenticateDemoUser(username, password);
+  res.locals.auditAction = 'auth_login';
   if (!user) {
+    // Se registra el usuario intentado (acotado), nunca la contraseña.
+    res.locals.auditActor = `attempt:${String(username ?? '').slice(0, 64)}`;
     return res.status(401).json({ success: false, error: 'INVALID_CREDENTIALS' });
   }
+  res.locals.auditActor = user.user_id;
+  res.locals.auditClientId = user.client_id;
   const token = signToken(user);
   return res.json({
     success: true,
