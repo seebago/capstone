@@ -176,3 +176,34 @@ describe('RBAC', () => {
     assert.equal(val.json.data.validated_by, 'clinician-001');
   });
 });
+
+describe('auditoría separada (audit_events)', () => {
+  test('un intento cruzado queda registrado con las cinco dimensiones y resultado denied', async () => {
+    const { readMemoryAudit } = await import('../src/audit/auditLog.js');
+    const token = await login('clinico.beta');
+    await call('GET', `/api/exams/${ALPHA_EXAM}`, token);
+    // La entrada se escribe al terminar la respuesta: esperar un tick.
+    await new Promise((r) => setTimeout(r, 20));
+    const entry = readMemoryAudit()
+      .filter((e) => e.action === 'exam_read' && e.resource_id === ALPHA_EXAM && e.actor_id === 'clinician-101')
+      .at(-1);
+    assert.ok(entry, 'debe existir la entrada');
+    assert.equal(entry.actor_role, 'clinician'); // quién
+    assert.equal(entry.client_id, 'clinic-beta'); // desde dónde (tenant)
+    assert.ok(entry.ip); // desde dónde (red)
+    assert.ok(!Number.isNaN(Date.parse(entry.timestamp))); // cuándo
+    assert.equal(entry.outcome, 'denied'); // resultado
+    assert.equal(entry.status_code, 404);
+    assert.ok(Object.isFrozen(entry), 'la entrada no se puede modificar');
+  });
+
+  test('login fallido se audita sin guardar la contraseña', async () => {
+    const { readMemoryAudit } = await import('../src/audit/auditLog.js');
+    await call('POST', '/api/auth/login', undefined, { username: 'nadie', password: 'secreto-xyz' });
+    await new Promise((r) => setTimeout(r, 20));
+    const entry = readMemoryAudit().filter((e) => e.action === 'auth_login').at(-1)!;
+    assert.equal(entry.outcome, 'denied');
+    assert.equal(entry.actor_id, 'attempt:nadie');
+    assert.ok(!JSON.stringify(readMemoryAudit()).includes('secreto-xyz'));
+  });
+});

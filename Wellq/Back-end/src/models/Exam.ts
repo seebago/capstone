@@ -48,6 +48,11 @@ export interface IExam extends Document {
   confirmed_at?: string;
   validated_by?: string;
   validated_at?: string;
+  /**
+   * Historial visible para la interfaz (línea de tiempo). NO es el registro
+   * de auditoría: este array vive en un documento mutable. La auditoría
+   * append-only está en la colección audit_events (src/audit/auditLog.ts).
+   */
   audit_trail: IAuditEntry[];
   created_at: Date;
   updated_at: Date;
