@@ -1,0 +1,11 @@
+# Wellq/ (prototipo React+Vite / Express de Aron)
+# Nota: el .gitignore de la raíz ya ignora node_modules/ y dist/. Los 217
+# archivos de dist/ entraron vía "Add files via upload" de la web de GitHub,
+# que NO respeta .gitignore. Este archivo no evita eso: subir por terminal
+# (git add/commit/push) o revisar la lista antes de confirmar la subida web.
+node_modules/
+dist/
+*.log
+.env
+.env.*
+!.env.example
