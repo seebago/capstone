@@ -1,0 +1,381 @@
+export type Language = 'en' | 'es';
+
+export const translations = {
+  en: {
+    appTitle: 'WellQ Medical',
+    appSubtitle: 'Clinical Exam Review & Health Portal (UK)',
+    tagline: 'Track, review and understand your medical exams.',
+
+    // Navigation & Common
+    navExams: 'Exams',
+    navChat: 'Chat',
+    navMenu: 'Menu',
+    navProfile: 'Profile',
+    darkMode: 'Dark Mode',
+    lightMode: 'Light Mode',
+    demoBadge: 'Demo · synthetic data',
+    connectedDatabase: 'Database connected',
+    switchProfile: 'Switch profile',
+    btnLogout: 'Log Out',
+    refresh: 'Refresh',
+
+    // Login View (Image 1)
+    eyebrowCapstone: 'WELLQ / CAPSTONE',
+    loginHeadline: 'Upload your exam. Your clinician receives it.',
+    loginSubhead: 'Attach a fictional exam document. The system automatically links it to the registered treating clinician.',
+    loginStep1: 'Choose a PDF or exam image',
+    loginStep2: 'Upload the file with your patient profile',
+    loginStep3: 'Your treating clinician receives it for review',
+    loginCardTitle: 'Choose how to enter',
+    loginCardSubtitle: 'Explore the demonstration with one of these profiles.',
+    btnEnterPatient: 'Enter as patient',
+    patientEntryHint: 'Upload an exam and view your submitted files.',
+    btnEnterClinician: 'Enter as clinician',
+    clinicianEntryHint: 'Review files from the linked patient.',
+    loginSyntheticWarning: 'Fictional demo data only. Do not enter real patient data.',
+    footerNotice: 'WellQ · Testing MVP · Human confirmation and clinical review',
+
+    // Patient Exams view
+    examsTitle: 'Medical Exams',
+    examsSubtitle: 'Uploaded and scheduled clinical test results linked to your NHS / patient profile.',
+    uploadButton: '+ Upload Exam File',
+    downloadDemo: '📥 Download Sample Test PDF',
+    filterAll: 'All',
+    filterReady: 'Ready',
+    filterPending: 'Pending',
+    filterNotPerformed: 'Not Performed',
+
+    // Table headers
+    colDate: 'Date',
+    colExamName: 'Exam Name',
+    colStatus: 'Status',
+
+    // Statuses
+    statusReady: 'Ready',
+    statusPending: 'Pending',
+    statusNotPerformed: 'Not Performed',
+    statusConfirmed: 'Confirmed by patient',
+    statusValidated: 'Clinician validated',
+    statusAwaiting: 'Awaiting confirmation',
+
+    // Status details
+    estimatedTimeLabel: 'Estimated time remaining:',
+    labProcessing: 'Sample received · Laboratory analysis in progress',
+    notPerformedNotice: 'Appointment scheduled. Sample or session has not been conducted yet.',
+    prepNotes: 'Preparation instructions:',
+    locationNotice: 'Assigned diagnostic centre:',
+
+    // Ready exam details
+    biomarkersTitle: 'Extracted Values & Reference Ranges',
+    comparisonWithin: 'Within normal range',
+    comparisonBelow: 'Below reference range',
+    comparisonAbove: 'Above reference range',
+    comparisonNoRef: 'No reference available',
+    comparisonUnitMismatch: 'Unit mismatch: review',
+    comparisonInvalidRef: 'Invalid reference',
+    sourceText: 'Source line in document',
+    downloadOriginal: '⬇ Download Original Document',
+    documentPreview: 'Original Document Preview',
+    clinicalDisclaimer: 'Automatic arithmetic comparison against ranges stated in this file. Please cross-check with the original document. This is not a final clinical diagnosis.',
+
+    // Confirm & Validate
+    patientConfirmTitle: 'Patient Double-Check Confirmation',
+    patientIdentityCheck: 'I have verified my identity and confirm that this document matches my details.',
+    patientNotesPlaceholder: 'Optional patient notes or discrepancies...',
+    btnConfirmPatient: 'Confirm Document & Values',
+    clinicianValidateTitle: 'Clinician Validation',
+    clinicianPrompt: 'Review the document against the extracted values before validating:',
+    btnValidate: '🩺 Clinically Validate',
+    btnMarkError: '⚠️ Mark with Error',
+    btnReject: '❌ Reject Exam',
+    clinicianNotesPlaceholder: 'Clinical observation (required when marking an error)...',
+    validatedBadge: 'Clinically Validated Exam',
+    validatedDescription: 'Both patient identity check and treating clinician validation have been completed.',
+    errorBadge: 'Marked with Discrepancy / Error',
+
+    // Clinician View (Images 2-5)
+    clinicianEyebrow: 'ALPHA / Clinician',
+    clinicianExamsTitle: 'Exams',
+    clinicianExamsSubtitle: 'Files from your linked patients. Review PDF values and references before validation.',
+    examFilesSection: 'Exam files',
+    examFilesDescription: 'Files from your linked patients. Review PDF values and references before validation.',
+    btnReviewExam: 'Review exam',
+    btnDownloadFile: 'Download file',
+    reviewFinishedNotice: 'The review is complete. The status and history are saved.',
+    reviewHistorySummary: 'Review history',
+    auditFileReceived: 'File received',
+    auditAutoRanges: 'Automatic reference check',
+    auditReceiptConfirmed: 'Receipt confirmed',
+    auditDocValidated: 'Document validated',
+    statVisibleExams: 'Visible exams',
+    statAwaitingPatient: 'Awaiting confirmation',
+    statConfirmedByPatient: 'Confirmed (for validation)',
+    statClinicallyValidated: 'Clinically validated',
+    examHistorySectionTitle: 'Exam history',
+    savedInDb: 'Saved in database',
+    searchExamsLabel: 'Search exams',
+    searchExamsPlaceholder: 'Type exam name...',
+    selectExamPrompt: 'Select an exam to review its values and history.',
+    modalReviewTitle: 'Document Range Review & Clinical Validation',
+
+    // Audit
+    auditHistory: 'Audit Trail & Revision History',
+
+    // Upload Modal
+    modalUploadTitle: 'Upload Medical Exam Document',
+    dropzoneText: 'Drag and drop your file here, or click to browse',
+    fileLimits: 'Supports PDF, PNG or JPG (Max 4 MB).',
+    syntheticNotice: 'Synthetic testing mode · Data protection & clinical ethics compliance.',
+    uploadingFile: 'Uploading and processing document...',
+    btnCancel: 'Cancel',
+
+    // Chat view
+    chatTitle: 'WellQ AI Health Assistant',
+    chatSubtitle: 'Ask questions regarding your exams, reference ranges and get orientative guidance.',
+    chatDisclaimer: 'AI guidance is for informational purposes and does not replace a registered medical practitioner.',
+    chatPlaceholder: 'Type your question about an exam (e.g. What does my glucose level mean?)...',
+    chatSend: 'Send',
+    attachExam: 'Attach Exam',
+    attachedBadge: 'Attached for review:',
+    removeAttachment: 'Remove',
+    chatQuickPromptsTitle: 'Suggested inquiries:',
+    quickPrompt1: 'Explain my kinesiology test results in simple terms',
+    quickPrompt2: 'What does it mean if my force test is below the normal range?',
+    quickPrompt3: 'When will my pending blood test be ready?',
+    selectExamModalTitle: 'Select an exam to attach to chat',
+
+    // Menu Drawer
+    menuTitle: 'Settings & Information',
+    menuNotifications: 'Notifications',
+    menuLanguage: 'Language',
+    menuLocations: 'NHS & Clinic Locations (UK)',
+    menuContact: 'Support & Contact',
+
+    // Notifications
+    notificationsEmpty: 'No new notifications.',
+    markAllRead: 'Mark all as read',
+
+    // Locations
+    locationsTitle: 'United Kingdom Diagnostic Centres',
+    openHours: 'Hours:',
+    phone: 'Phone:',
+
+    // Contact
+    contactTitle: 'Patient Help & Support (UK)',
+    contactHelpline: 'WellQ UK 24/7 Helpline:',
+    contactNhsInfo: 'For non-urgent health advice, you may also call NHS 111.',
+    contactEmail: 'Email Support:',
+    contactEmergency: 'In an acute emergency, please call 999 immediately.',
+
+    // Profile Modal
+    patientProfileTitle: 'Patient Profile',
+    clinicianProfileTitle: 'Treating Clinician Profile',
+    nhsNumber: 'NHS Number:',
+    dob: 'Date of Birth:',
+    gmcNumber: 'GMC Reference Number:',
+    specialty: 'Speciality:',
+    doctorName: 'Dr. Sarah Jenkins, MRCP',
+    doctorRole: 'Consultant in Physical Medicine & Rehabilitation',
+    assignedPatientsLabel: 'Linked Patients:',
+    validatedCountLabel: 'Validated Exams:',
+    dutyStationLabel: 'Location:',
+    dutyStationValue: 'London Central Health Hub · NHS Trust',
+    streakTitle: 'Commitment & Health Goals',
+    dayStreak: 'Day Streak',
+    streakDesc: 'Your health check-in consistency',
+    goalExercise: 'Exercise: 4 ex/week',
+    goalSleep: 'Sleep: 8.0 hrs/night',
+    goalStress: 'Stress: Low target level',
+    btnClose: 'Close',
+    btnSwitchRole: 'Switch Role / Profile',
+  },
+
+  es: {
+    appTitle: 'WellQ Medical',
+    appSubtitle: 'Portal de Exámenes y Doble Cotejo Clínico (UK)',
+    tagline: 'Supervisa, revisa y comprende tus exámenes médicos.',
+
+    // Navegación y Comunes
+    navExams: 'Exámenes',
+    navChat: 'Chat',
+    navMenu: 'Menú',
+    navProfile: 'Perfil',
+    darkMode: 'Modo Oscuro',
+    lightMode: 'Tema claro',
+    demoBadge: 'Demo · datos ficticios',
+    connectedDatabase: 'Base conectada',
+    switchProfile: 'Cambiar perfil',
+    btnLogout: 'Cerrar sesión',
+    refresh: 'Actualizar',
+
+    // Vista de Login (Imagen 1)
+    eyebrowCapstone: 'WELLQ / CAPSTONE',
+    loginHeadline: 'Sube tu examen. Tu médico lo recibe.',
+    loginSubhead: 'Adjunta un documento de examen ficticio. El sistema lo vincula automáticamente con el profesional tratante registrado.',
+    loginStep1: 'Selecciona un PDF o una imagen de examen',
+    loginStep2: 'Sube el archivo con tu perfil de paciente',
+    loginStep3: 'Tu médico tratante lo recibe para revisión',
+    loginCardTitle: 'Elige cómo entrar',
+    loginCardSubtitle: 'Explora la demostración con uno de estos perfiles.',
+    btnEnterPatient: 'Entrar como paciente',
+    patientEntryHint: 'Sube un examen y consulta tus archivos enviados.',
+    btnEnterClinician: 'Entrar como profesional',
+    clinicianEntryHint: 'Revisa los archivos del paciente vinculado.',
+    loginSyntheticWarning: 'Solo información inventada. No ingreses datos de pacientes reales.',
+    footerNotice: 'WellQ · MVP de pruebas · Confirmación y revisión humana',
+
+    // Vista de Exámenes del Paciente
+    examsTitle: 'Exámenes Médicos',
+    examsSubtitle: 'Resultados clínicos cargados y programados vinculados a tu perfil de paciente.',
+    uploadButton: '+ Subir Archivo de Examen',
+    downloadDemo: '📥 Descargar Examen Ficticio para Probar',
+    filterAll: 'Todos',
+    filterReady: 'Listos',
+    filterPending: 'Pendientes',
+    filterNotPerformed: 'No Realizados',
+
+    // Columnas
+    colDate: 'Fecha',
+    colExamName: 'Nombre del Examen',
+    colStatus: 'Estado',
+
+    // Estados
+    statusReady: 'Listo',
+    statusPending: 'Pendiente',
+    statusNotPerformed: 'No Realizado',
+    statusConfirmed: 'Confirmado por paciente',
+    statusValidated: 'Validado por profesional',
+    statusAwaiting: 'Por confirmar',
+
+    // Detalles del estado
+    estimatedTimeLabel: 'Tiempo estimado restante:',
+    labProcessing: 'Muestra recepcionada · Análisis de laboratorio en proceso',
+    notPerformedNotice: 'Cita programada. La muestra o sesión aún no ha sido realizada.',
+    prepNotes: 'Instrucciones de preparación:',
+    locationNotice: 'Centro diagnóstico asignado:',
+
+    // Detalles del examen listo
+    biomarkersTitle: 'Valores Extraídos y Rangos de Referencia',
+    comparisonWithin: 'Dentro del rango normal',
+    comparisonBelow: 'Por debajo del rango',
+    comparisonAbove: 'Por encima del rango',
+    comparisonNoRef: 'Sin referencia disponible',
+    comparisonUnitMismatch: 'Discrepancia de unidad: revisar',
+    comparisonInvalidRef: 'Referencia inválida',
+    sourceText: 'Línea de origen en el documento',
+    downloadOriginal: '⬇ Descargar Documento Original',
+    documentPreview: 'Previsualización del Documento Original',
+    clinicalDisclaimer: 'Comparación automática con los rangos declarados en este archivo. Coteja siempre con el documento original. No constituye diagnóstico definitivo.',
+
+    // Confirmar y Validar
+    patientConfirmTitle: 'Doble Cotejo del Paciente',
+    patientIdentityCheck: 'Cotejé la identidad y confirmo que el documento corresponde a mis datos.',
+    patientNotesPlaceholder: 'Observaciones opcionales del paciente...',
+    btnConfirmPatient: 'Confirmar Documento y Valores',
+    clinicianValidateTitle: 'Validación del Profesional',
+    clinicianPrompt: 'Revisa el documento frente a los valores antes de validar:',
+    btnValidate: '🩺 Validar Clínicamente',
+    btnMarkError: '⚠️ Marcar con Error',
+    btnReject: '❌ Rechazar Examen',
+    clinicianNotesPlaceholder: 'Observación clínica (obligatoria para marcar un error)...',
+    validatedBadge: 'Examen Clínicamente Validado',
+    validatedDescription: 'El cotejo de identidad del paciente y la validación del médico tratante han finalizado satisfactoriamente.',
+    errorBadge: 'Marcado con Discrepancia / Error',
+
+    // Vista de Profesional (Imágenes 2 a 5)
+    clinicianEyebrow: 'ALPHA / Profesional',
+    clinicianExamsTitle: 'Exámenes',
+    clinicianExamsSubtitle: 'Archivos de tus pacientes vinculados. Revisa los valores y referencias del PDF antes de validar.',
+    examFilesSection: 'Archivos de examen',
+    examFilesDescription: 'Archivos de tus pacientes vinculados. Revisa los valores y referencias del PDF antes de validar.',
+    btnReviewExam: 'Revisar examen',
+    btnDownloadFile: 'Descargar archivo',
+    reviewFinishedNotice: 'La revisión terminó. El estado y el historial quedan guardados.',
+    reviewHistorySummary: 'Historial de revisión',
+    auditFileReceived: 'Archivo recibido',
+    auditAutoRanges: 'Lectura automática de referencias',
+    auditReceiptConfirmed: 'Recepción confirmada',
+    auditDocValidated: 'Documento validado',
+    statVisibleExams: 'Exámenes visibles',
+    statAwaitingPatient: 'Por confirmar',
+    statConfirmedByPatient: 'Confirmados',
+    statClinicallyValidated: 'Validados',
+    examHistorySectionTitle: 'Historial de exámenes',
+    savedInDb: 'Guardado en la base de datos',
+    searchExamsLabel: 'Buscar exámenes',
+    searchExamsPlaceholder: 'Escribe el nombre del examen',
+    selectExamPrompt: 'Selecciona un examen para revisar sus valores y su historial.',
+    modalReviewTitle: 'Lectura de Valores del Documento y Validación Clínica',
+
+    // Auditoría
+    auditHistory: 'Historial de Revisión y Auditoría',
+
+    // Modal de Subida
+    modalUploadTitle: 'Cargar Documento de Examen',
+    dropzoneText: 'Arrastra y suelta tu archivo aquí, o haz clic para buscarlo',
+    fileLimits: 'Admite PDF, PNG o JPG (Máximo 4 MB).',
+    syntheticNotice: 'Modo de pruebas sintéticas · Cumplimiento de protección de datos y ética médica.',
+    uploadingFile: 'Subiendo y procesando documento...',
+    btnCancel: 'Cancelar',
+
+    // Vista de Chat
+    chatTitle: 'Asistente IA WellQ',
+    chatSubtitle: 'Realiza preguntas sobre tus exámenes, rangos de referencia y recibe orientación preliminar.',
+    chatDisclaimer: 'La orientación de la IA es estrictamente informativa y no reemplaza a un médico colegiado.',
+    chatPlaceholder: 'Escribe tu pregunta sobre un examen (ej: ¿Qué significa mi nivel de glucosa?)...',
+    chatSend: 'Enviar',
+    attachExam: 'Adjuntar Examen',
+    attachedBadge: 'Adjunto para consulta:',
+    removeAttachment: 'Quitar',
+    chatQuickPromptsTitle: 'Consultas sugeridas:',
+    quickPrompt1: 'Explícame mi examen de kinesiología en palabras sencillas',
+    quickPrompt2: '¿Qué significa que mi prueba de fuerza esté bajo el rango?',
+    quickPrompt3: '¿Cuándo estarán listos mis exámenes pendientes?',
+    selectExamModalTitle: 'Selecciona un examen para adjuntar al chat',
+
+    // Menú Lateral
+    menuTitle: 'Configuración e Información',
+    menuNotifications: 'Notificaciones',
+    menuLanguage: 'Idioma',
+    menuLocations: 'Centros NHS y Clínicas (UK)',
+    menuContact: 'Soporte y Contacto',
+
+    // Notificaciones
+    notificationsEmpty: 'No hay notificaciones nuevas.',
+    markAllRead: 'Marcar todas como leídas',
+
+    // Ubicaciones
+    locationsTitle: 'Centros de Diagnóstico en Reino Unido',
+    openHours: 'Horario:',
+    phone: 'Teléfono:',
+
+    // Contacto
+    contactTitle: 'Atención y Soporte al Paciente (UK)',
+    contactHelpline: 'Línea WellQ UK 24/7:',
+    contactNhsInfo: 'Para orientación médica no urgente, también puedes marcar NHS 111.',
+    contactEmail: 'Correo de soporte:',
+    contactEmergency: 'En caso de emergencia con riesgo vital, llama al 999 de inmediato.',
+
+    // Modal de Perfil
+    patientProfileTitle: 'Perfil del Paciente',
+    clinicianProfileTitle: 'Perfil del Profesional Médico',
+    nhsNumber: 'Número NHS:',
+    dob: 'Fecha de Nacimiento:',
+    gmcNumber: 'Registro Médico / GMC:',
+    specialty: 'Especialidad:',
+    doctorName: 'Dra. Sarah Jenkins, MRCP',
+    doctorRole: 'Médico Especialista Tratante · Consultor Clínico NHS',
+    assignedPatientsLabel: 'Pacientes vinculados:',
+    validatedCountLabel: 'Exámenes validados:',
+    dutyStationLabel: 'Centro Asignado:',
+    dutyStationValue: 'London Central Health Hub · NHS Trust',
+    streakTitle: 'Compromiso y Hábitos de Salud',
+    dayStreak: 'Días de Racha',
+    streakDesc: 'Constancia en tus chequeos de salud',
+    goalExercise: 'Ejercicio: 4 veces/semana',
+    goalSleep: 'Sueño: 8.0 hrs/noche',
+    goalStress: 'Estrés: Nivel bajo objetivo',
+    btnClose: 'Cerrar',
+    btnSwitchRole: 'Cambiar de Perfil / Rol',
+  },
+};
