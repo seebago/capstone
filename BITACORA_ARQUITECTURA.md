@@ -53,6 +53,16 @@ ratificación** de Karina (y, si es posible, de Max) antes de programar,
 no una decisión cerrada unilateralmente — ver ADR-006. Detalle completo
 y consecuencias en `PLAN_FASES_COMPONENTES.md` §1.
 
+**Actualización 17-11-2026 — auditoría de código de `Wellq/` en `develop`: el aislamiento multi-tenant es decorativo, no real.**
+Se revisó directamente el código (no documentación) de `Wellq/Front-end` y `Wellq/Back-end` (prototipo de Aron, independiente de `wellq-base`). Hallazgos verificados:
+- El frontend manda siempre `client_id=clinic-alpha` fijo en código (`App.tsx`).
+- El backend (`exams.routes.ts`) sí filtra `GET /api/exams` por ese `client_id`, pero viene de un query param sin ningún JWT/sesión que lo certifique — cualquiera puede cambiarlo.
+- `GET /api/exams/:id` y `GET /api/exams/:id/file` **no filtran por `client_id` en absoluto**: un id de otro tenant es accesible igual.
+- `jsonwebtoken` está en `package.json` pero no se usa en ningún archivo del backend (verificado por búsqueda en todo `src/`) — no hay RBAC ni autenticación real, el login es solo un selector de rol sin verificación de servidor.
+- `audit_trail` existe como campo dentro del mismo documento mutable de Mongo, no como registro separado e inalterable.
+
+Esto contradice directamente los requisitos no negociables de Multi-Tenancy (aislamiento por `client_id` a nivel de API) y RBAC/JWT. Documentado para que el equipo no presente este prototipo como si ya cumpliera esos requisitos ante la comisión. Detalle completo y sugerencia de cómo explicarlo en la defensa: `Fase 3/Evidencias Individuales/ANALISIS_APP_ARON_DEVELOP_2026-11-17.md`.
+
 ## Requisitos no negociables
 
 Multi-tenancy por `client_id`, RBAC granular, feature gating validado en
