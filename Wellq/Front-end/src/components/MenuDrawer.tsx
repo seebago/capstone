@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { useHorizontalSwipe } from '../hooks/useHorizontalSwipe';
 import type { Language } from '../locales/translations';
 import { translations } from '../locales/translations';
 import type { ClinicLocation, NotificationItem } from '../types';
@@ -54,10 +55,15 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   const t = translations[lang];
   const [activeSection, setActiveSection] = useState<'notifications' | 'language' | 'locations' | 'contact'>('notifications');
 
+  // Gesto inverso al de apertura: el panel entra desde la derecha, así que
+  // deslizar hacia la derecha (sobre el panel o el fondo oscuro) lo cierra.
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  useHorizontalSwipe({ enabled: isOpen, direction: 'right', onSwipe: onClose, target: overlayRef, ignoreSelector: '.drawer-nav-tabs' });
+
   if (!isOpen) return null;
 
   return (
-    <div className="drawer-overlay" onClick={onClose}>
+    <div className="drawer-overlay" ref={overlayRef} onClick={onClose}>
       <aside className="drawer-content" onClick={(e) => e.stopPropagation()}>
         {/* Drawer Header */}
         <div className="drawer-header">

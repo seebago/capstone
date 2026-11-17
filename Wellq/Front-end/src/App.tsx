@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useHorizontalSwipe } from './hooks/useHorizontalSwipe';
 import { TopBar } from './components/TopBar';
 import { BottomNav, type ActiveTab } from './components/BottomNav';
 import { ExamsView } from './components/ExamsView';
@@ -79,6 +80,24 @@ export function App() {
       type: 'info',
     },
   ]);
+
+  // Móvil: deslizar desde el borde derecho hacia la izquierda abre el menú
+  // (el panel entra por la derecha). El cierre está en MenuDrawer (gesto inverso).
+  // No aplica en escritorio, donde la navegación es la barra lateral.
+  const [isMobileLayout, setIsMobileLayout] = useState(() => window.matchMedia('(max-width: 1024px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1024px)');
+    const onChange = () => setIsMobileLayout(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  useHorizontalSwipe({
+    enabled: isLoggedIn && isMobileLayout && !isMenuOpen,
+    direction: 'left',
+    edge: 'right',
+    onSwipe: () => setIsMenuOpen(true),
+    ignoreSelector: '.chat-fab, .chat-floating-panel, .modal-backdrop',
+  });
 
   // Persist theme changes
   const toggleTheme = () => {
