@@ -130,6 +130,13 @@ export const ChatView: React.FC<ChatViewProps> = ({ exams, lang }) => {
         </div>
       </div>
 
+      {/* Aviso obligatorio: simulación con datos sintéticos fijos. IA clínica no aprobada (ST-004 / ST-032). */}
+      <div className="chat-demo-banner" role="note">
+        {lang === 'en'
+          ? 'DEMO — simulated replies with fixed synthetic data. No real clinical validation; not medical advice.'
+          : 'DEMO — respuestas simuladas con datos sintéticos fijos. Sin validación clínica real; no es consejo médico.'}
+      </div>
+
       {/* Suggested Quick Inquiries */}
       <div className="quick-prompts-bar">
         <span className="quick-label">{t.chatQuickPromptsTitle}</span>
