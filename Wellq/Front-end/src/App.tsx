@@ -12,6 +12,15 @@ import type { Exam, NotificationItem } from './types';
 import type { Language } from './locales/translations';
 import './App.css';
 
+// Entrada demo por dos botones (decisión vigente): cada botón inicia sesión en el
+// backend con un usuario sintético de clinic-alpha y recibe un JWT firmado.
+// El rol y el tenant que valen son los del token, verificados por el servidor.
+const DEMO_LOGIN: Record<'patient' | 'clinician', string> = {
+  patient: 'paciente.alpha',
+  clinician: 'clinico.alpha',
+};
+const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD || 'wellq-demo';
+
 export function App() {
   // Theme state: dark default matching WellQ corporate visual style
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -28,6 +37,9 @@ export function App() {
 
   // Role state: 'patient' or 'clinician'
   const [role, setRole] = useState<'patient' | 'clinician'>('patient');
+
+  // JWT en memoria (no en localStorage): al recargar la página se vuelve a iniciar sesión.
+  const [token, setToken] = useState<string | null>(null);
 
   // Active Bottom Navigation Tab ('exams' | 'chat')
   const [activeTab, setActiveTab] = useState<ActiveTab>('exams');
@@ -81,11 +93,24 @@ export function App() {
     localStorage.setItem('wellq-lang', newLang);
   };
 
-  // Fetch exams from backend
-  const fetchExams = async () => {
+  // Llamadas a la API con el JWT. Si el servidor responde 401, se cierra la sesión.
+  const apiFetch = async (url: string, init: RequestInit = {}, authToken: string | null = token) => {
+    const headers = new Headers(init.headers);
+    if (authToken) headers.set('Authorization', `Bearer ${authToken}`);
+    const res = await fetch(url, { ...init, headers });
+    if (res.status === 401) {
+      setToken(null);
+      setIsLoggedIn(false);
+    }
+    return res;
+  };
+
+  // Fetch exams from backend (el tenant lo decide el backend a partir del JWT)
+  const fetchExams = async (authToken: string | null = token) => {
+    if (!authToken) return;
     setLoading(true);
     try {
-      const res = await fetch('/api/exams?client_id=clinic-alpha');
+      const res = await apiFetch('/api/exams', {}, authToken);
       const data = await res.json();
       if (data.success && data.data) {
         setExams(data.data);
@@ -98,18 +123,37 @@ export function App() {
   };
 
   useEffect(() => {
-    fetchExams();
-  }, []);
+    if (token) fetchExams(token);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
-  // Login handler
-  const handleLogin = (selectedRole: 'patient' | 'clinician') => {
-    setRole(selectedRole);
-    setIsLoggedIn(true);
-    setActiveTab('exams');
+  // Login handler: autentica contra POST /api/auth/login
+  const handleLogin = async (selectedRole: 'patient' | 'clinician') => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: DEMO_LOGIN[selectedRole], password: DEMO_PASSWORD }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success || !data.token) throw new Error(data.error || 'LOGIN_FAILED');
+      setRole(data.user.role);
+      setToken(data.token);
+      setIsLoggedIn(true);
+      setActiveTab('exams');
+    } catch {
+      window.alert(
+        lang === 'en'
+          ? 'Could not sign in. Check that the backend is running on port 5000.'
+          : 'No se pudo iniciar sesión. Verifica que el backend esté corriendo en el puerto 5000.'
+      );
+    }
   };
 
   // Logout handler
   const handleLogout = () => {
+    setToken(null);
+    setExams([]);
     setIsLoggedIn(false);
     setActiveTab('exams');
   };
@@ -121,12 +165,10 @@ export function App() {
       reader.onload = async () => {
         try {
           const base64Data = reader.result as string;
-          const res = await fetch('/api/exams/upload', {
+          const res = await apiFetch('/api/exams/upload', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              client_id: 'clinic-alpha',
-              patient_id: 'patient-001',
               filename: file.name,
               content_type: file.type,
               file_data: base64Data,
@@ -156,11 +198,10 @@ export function App() {
   // Confirm exam (Patient action)
   const handleConfirmExam = async (examId: string, reason: string) => {
     try {
-      const res = await fetch(`/api/exams/${examId}/confirm`, {
+      const res = await apiFetch(`/api/exams/${examId}/confirm`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          actor: 'patient-001',
           identity_confirmed: true,
           reason,
         }),
@@ -195,11 +236,10 @@ export function App() {
     }
 
     try {
-      const res = await fetch(`/api/exams/${examId}/validate`, {
+      const res = await apiFetch(`/api/exams/${examId}/validate`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          actor: 'clinician-001',
           decision,
           reason,
         }),
@@ -273,7 +313,7 @@ export function App() {
           <ClinicianView
             exams={exams}
             lang={lang}
-            onRefresh={fetchExams}
+            onRefresh={() => fetchExams()}
             onDownloadDemoPdf={handleDownloadDemoPdf}
             onValidateExam={handleValidateExam}
           />
