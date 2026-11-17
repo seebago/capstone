@@ -10,6 +10,7 @@ import {
   RANGE_VERSION,
   IMeasurement,
 } from '../utils/rangeReview.js';
+import { requireAuth, requireRole } from '../middleware/auth.js';
 
 const isMongoActive = () => mongoose.connection.readyState === 1;
 
@@ -17,6 +18,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const examsRouter = Router();
+
+// Todas las rutas de /api/exams exigen JWT válido (401 si falta o es inválido).
+examsRouter.use(requireAuth);
 
 // Locate the evaluation synthetic PDF fixture
 const DEMO_PDF_PATH = path.resolve(
@@ -256,10 +260,10 @@ examsRouter.get('/:id/file', async (req: Request, res: Response) => {
 });
 
 // POST /api/exams/upload (Subir documento real PDF o Imagen con límites seguros)
-examsRouter.post('/upload', async (req: Request, res: Response) => {
+examsRouter.post('/upload', requireRole('patient'), async (req: Request, res: Response) => {
+  // Identidad y tenant salen del JWT verificado; se ignora lo que mande el cliente.
+  const { client_id, user_id: patient_id } = req.auth!;
   const {
-    client_id = 'clinic-alpha',
-    patient_id = 'patient-001',
     filename,
     content_type,
     file_data,
@@ -393,9 +397,10 @@ examsRouter.post('/upload', async (req: Request, res: Response) => {
 });
 
 // POST /api/exams/:id/range-review (Ejecutar revisión aritmética de rangos)
-examsRouter.post('/:id/range-review', async (req: Request, res: Response) => {
+examsRouter.post('/:id/range-review', requireRole('clinician'), async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { actor = 'clinician-001', raw_text } = req.body;
+  const actor = req.auth!.user_id;
+  const { raw_text } = req.body;
 
   let examData: any = null;
   try {
@@ -458,9 +463,10 @@ examsRouter.post('/:id/range-review', async (req: Request, res: Response) => {
 });
 
 // PATCH /api/exams/:id/confirm (Paciente confirma recepción y cotejo de identidad)
-examsRouter.patch('/:id/confirm', async (req: Request, res: Response) => {
+examsRouter.patch('/:id/confirm', requireRole('patient'), async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { actor = 'patient-001', identity_confirmed = true, reason = '' } = req.body;
+  const actor = req.auth!.user_id;
+  const { identity_confirmed = true, reason = '' } = req.body;
 
   if (isMongoActive()) {
     try {
@@ -516,9 +522,10 @@ examsRouter.patch('/:id/confirm', async (req: Request, res: Response) => {
 });
 
 // PATCH /api/exams/:id/validate (Profesional valida, rechaza o marca con error)
-examsRouter.patch('/:id/validate', async (req: Request, res: Response) => {
+examsRouter.patch('/:id/validate', requireRole('clinician'), async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { actor = 'clinician-001', decision = 'validate', reason = '' } = req.body;
+  const actor = req.auth!.user_id;
+  const { decision = 'validate', reason = '' } = req.body;
 
   if (decision === 'error' && (!reason || reason.trim().length < 3)) {
     return res.status(422).json({ success: false, error: 'REVIEW_REASON_REQUIRED' });
