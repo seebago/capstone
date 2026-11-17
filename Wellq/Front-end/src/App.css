@@ -3411,6 +3411,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* --- Escritorio --- */
+:root {
+  --topbar-h: 70px; /* alto de .topbar-container (logo 40px + padding) */
+  --sidebar-w: 220px;
+}
+
 @media (min-width: 1025px) {
   .wellq-app-wrapper {
     padding-bottom: 0;
@@ -3426,13 +3431,17 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Barra inferior -> barra lateral izquierda */
   .bottom-nav-container {
-    top: 0;
-    bottom: 0;
+    position: fixed; /* explícito: fija al viewport, nunca hace scroll con el contenido */
+    top: var(--topbar-h);
+    bottom: auto;
     left: 0;
     right: auto;
-    width: 220px;
-    height: auto;
-    padding: 88px 0.85rem 1.5rem;
+    width: var(--sidebar-w);
+    height: calc(100vh - var(--topbar-h));
+    height: calc(100dvh - var(--topbar-h));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1.1rem 0.85rem 1.5rem;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
@@ -3461,6 +3470,11 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--soft-cyan);
   }
 
+  /* En la barra lateral, "Menú" va primero (en móvil se mantiene el orden original) */
+  .bottom-nav-item.menu-trigger {
+    order: -1;
+  }
+
   .bottom-nav-item.active .nav-icon-wrapper {
     background: transparent;
     padding: 0;
@@ -3472,12 +3486,18 @@ h1, h2, h3, h4, h5, h6 {
 
   .wellq-main-layout,
   .global-alert-banner {
-    margin-left: 220px;
+    margin-left: var(--sidebar-w);
   }
 
+  /* Todo el ancho disponible a la derecha de la barra lateral (antes max 1440px
+     dejaba una franja vacía en pantallas anchas). */
   .wellq-main-layout {
+    /* margin-right: auto (heredado de "0 auto") hacía que el contenedor se
+       encogiera al ancho de su contenido: con pocos exámenes se veía recortado. */
+    margin-right: 0;
+    align-self: stretch;
     width: auto;
-    max-width: 1440px;
+    max-width: none;
     padding: 2rem 2.5rem 3rem;
   }
 
