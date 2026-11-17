@@ -36,7 +36,7 @@ const act = (name: string) => (_req: Request, res: Response, next: () => void) =
 // Locate the evaluation synthetic PDF fixture
 const DEMO_PDF_PATH = path.resolve(
   __dirname,
-  '../../../front-end/public/evaluacion-kinesiologica-FICTICIA.pdf'
+  '../../../Front-end/public/evaluacion-kinesiologica-FICTICIA.pdf'
 );
 
 let demoPdfBase64 = '';
@@ -365,8 +365,25 @@ examsRouter.post('/upload', act('upload_document'), requireRole('patient'), asyn
     return res.status(400).json({ success: false, error: 'EMPTY_FILE' });
   }
 
+  // file_data debe ser un data URL base64 del MISMO tipo declarado y con la firma
+  // binaria real de PDF/PNG/JPEG. Sin esto se podía guardar HTML/JS disfrazado que
+  // luego se abría en el navegador del clínico (XSS almacenado).
+  const dataUrlMatch = /^data:([a-z]+\/[a-z0-9.+-]+);base64,([A-Za-z0-9+/]+={0,2})$/.exec(file_data);
+  const normalize = (t: string) => (t === 'image/jpg' ? 'image/jpeg' : t);
+  if (!dataUrlMatch || normalize(dataUrlMatch[1]) !== normalize(content_type)) {
+    return res.status(400).json({ success: false, error: 'INVALID_FILE_DATA' });
+  }
+  const MAGIC: Record<string, string> = {
+    'application/pdf': 'JVBER', // %PDF
+    'image/png': 'iVBORw0KGgo', // \x89PNG
+    'image/jpeg': '/9j/', // \xFF\xD8\xFF
+  };
+  if (!dataUrlMatch[2].startsWith(MAGIC[normalize(content_type)])) {
+    return res.status(400).json({ success: false, error: 'FILE_SIGNATURE_MISMATCH' });
+  }
+
   // Check approximate size (max 4 MB)
-  const base64Data = file_data.replace(/^data:[^;]+;base64,/, '');
+  const base64Data = dataUrlMatch[2];
   const approxBytes = Math.ceil((base64Data.length * 3) / 4);
   if (approxBytes > 4 * 1024 * 1024) {
     return res.status(400).json({ success: false, error: 'FILE_TOO_LARGE' });
@@ -524,6 +541,9 @@ examsRouter.post('/:id/range-review', act('document_range_review'), requireRole(
 examsRouter.patch('/:id/confirm', act('document_confirm'), requireRole('patient'), async (req: Request, res: Response) => {
   const actor = req.auth!.user_id;
   const { identity_confirmed = true, reason = '' } = req.body;
+  if (typeof reason !== 'string' || reason.length > 2000) {
+    return res.status(400).json({ success: false, error: 'INVALID_REASON' });
+  }
 
   const found = await loadExamForCaller(req, res);
   if (!found) return;
@@ -553,6 +573,14 @@ examsRouter.patch('/:id/confirm', act('document_confirm'), requireRole('patient'
 examsRouter.patch('/:id/validate', act('document_validate'), requireRole('clinician'), async (req: Request, res: Response) => {
   const actor = req.auth!.user_id;
   const { decision = 'validate', reason = '' } = req.body;
+
+  // Antes cualquier valor desconocido terminaba como 'rejected'.
+  if (!['validate', 'reject', 'error'].includes(decision)) {
+    return res.status(400).json({ success: false, error: 'INVALID_DECISION' });
+  }
+  if (typeof reason !== 'string' || reason.length > 2000) {
+    return res.status(400).json({ success: false, error: 'INVALID_REASON' });
+  }
 
   if (decision === 'error' && (!reason || reason.trim().length < 3)) {
     return res.status(422).json({ success: false, error: 'REVIEW_REASON_REQUIRED' });

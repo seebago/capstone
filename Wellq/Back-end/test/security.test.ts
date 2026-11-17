@@ -17,8 +17,13 @@ let base = '';
 const ALPHA_EXAM = 'mem-eval-kine-1'; // clinic-alpha, patient-001
 const BETA_EXAM = 'mem-beta-1'; // clinic-beta, patient-101
 
+// Secreto conocido SOLO en pruebas, para poder fabricar tokens vencidos.
+// Se fija antes del primer login (el secreto se lee de forma diferida).
+const TEST_SECRET = 'secreto-solo-para-pruebas-automatizadas-0123456789';
+
 before(async () => {
   delete process.env.DEMO_PASSWORD;
+  process.env.JWT_SECRET = TEST_SECRET;
   server = createApp().listen(0);
   await new Promise<void>((r) => server.once('listening', () => r()));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -205,5 +210,35 @@ describe('auditoría separada (audit_events)', () => {
     assert.equal(entry.outcome, 'denied');
     assert.equal(entry.actor_id, 'attempt:nadie');
     assert.ok(!JSON.stringify(readMemoryAudit()).includes('secreto-xyz'));
+  });
+});
+
+describe('validación de entrada (hallazgos 2026-11-18)', () => {
+  test('subir HTML disfrazado de PDF -> 400 (evita XSS almacenado)', async () => {
+    const token = await login('paciente.alpha');
+    const html = Buffer.from('<script>alert(1)</script>').toString('base64');
+    const cases = [
+      { content_type: 'application/pdf', file_data: `data:text/html;base64,${html}` }, // tipo distinto
+      { content_type: 'application/pdf', file_data: `data:application/pdf;base64,${html}` }, // firma no es PDF
+      { content_type: 'application/pdf', file_data: 'data:application/pdf;base64,JVBERi0x"><script>' }, // no es base64
+      { content_type: 'image/png', file_data: 'data:application/pdf;base64,JVBERi0xLjQK' }, // declara PNG, manda PDF
+    ];
+    for (const c of cases) {
+      const r = await call('POST', '/api/exams/upload', token, { filename: 'x.pdf', ...c });
+      assert.equal(r.status, 400, JSON.stringify(c).slice(0, 80));
+    }
+  });
+
+  test('decision desconocida al validar -> 400 (antes terminaba como rechazado)', async () => {
+    const c = await login('clinico.alpha');
+    const r = await call('PATCH', `/api/exams/${ALPHA_EXAM}/validate`, c, { decision: 'aprobar-todo' });
+    assert.equal(r.status, 400);
+    assert.equal(r.json.error, 'INVALID_DECISION');
+  });
+
+  test('reason que no es texto -> 400', async () => {
+    const p = await login('paciente.alpha');
+    const r = await call('PATCH', `/api/exams/${ALPHA_EXAM}/confirm`, p, { reason: { $gt: '' } });
+    assert.equal(r.status, 400);
   });
 });
