@@ -2,6 +2,7 @@ import React from 'react';
 import type { Language } from '../locales/translations';
 import { translations } from '../locales/translations';
 
+// 'chat' ya no es pestaña (ver ChatBubble); se conserva el tipo por compatibilidad.
 export type ActiveTab = 'exams' | 'chat';
 
 interface BottomNavProps {
@@ -18,18 +19,18 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onSelectTab,
   onOpenMenu,
   lang,
-  role = 'patient',
   unreadCount = 2,
 }) => {
   const t = translations[lang];
 
   return (
-    <nav className="bottom-nav-container">
+    <nav className="bottom-nav-container" aria-label={t.navMenu}>
       {/* Tab 1: Exámenes */}
       <button
         className={`bottom-nav-item ${activeTab === 'exams' ? 'active' : ''}`}
         onClick={() => onSelectTab('exams')}
         aria-label={t.navExams}
+        aria-current={activeTab === 'exams' ? 'page' : undefined}
       >
         <div className="nav-icon-wrapper">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -43,21 +44,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         <span className="nav-item-label">{t.navExams}</span>
       </button>
 
-      {/* Tab 2: Chat (Only visible for Patient, hidden for Clinician) */}
-      {role === 'patient' && (
-        <button
-          className={`bottom-nav-item ${activeTab === 'chat' ? 'active' : ''}`}
-          onClick={() => onSelectTab('chat')}
-          aria-label={t.navChat}
-        >
-          <div className="nav-icon-wrapper">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
-          </div>
-          <span className="nav-item-label">{t.navChat}</span>
-        </button>
-      )}
+      {/* El chat dejó de ser pestaña: ahora es una burbuja flotante (ChatBubble). */}
 
       {/* Tab 3: Menú (Opens Drawer) */}
       <button

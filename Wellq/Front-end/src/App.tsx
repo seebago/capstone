@@ -3,7 +3,7 @@ import { TopBar } from './components/TopBar';
 import { BottomNav, type ActiveTab } from './components/BottomNav';
 import { ExamsView } from './components/ExamsView';
 import { ClinicianView } from './components/ClinicianView';
-import { ChatView } from './components/ChatView';
+import { ChatBubble } from './components/ChatBubble';
 import { MenuDrawer } from './components/MenuDrawer';
 import { ProfileModal } from './components/ProfileModal';
 import { UploadModal } from './components/UploadModal';
@@ -99,7 +99,9 @@ export function App() {
     if (authToken) headers.set('Authorization', `Bearer ${authToken}`);
     const res = await fetch(url, { ...init, headers });
     if (res.status === 401) {
+      // Sesión inválida o expirada: no dejar datos clínicos en pantalla.
       setToken(null);
+      setExams([]);
       setIsLoggedIn(false);
     }
     return res;
@@ -144,8 +146,8 @@ export function App() {
     } catch {
       window.alert(
         lang === 'en'
-          ? 'Could not sign in. Check that the backend is running on port 5000.'
-          : 'No se pudo iniciar sesión. Verifica que el backend esté corriendo en el puerto 5000.'
+          ? 'Could not sign in. Check that the backend is running.'
+          : 'No se pudo iniciar sesión. Verifica que el backend esté corriendo.'
       );
     }
   };
@@ -260,6 +262,16 @@ export function App() {
     }
   };
 
+  // Cambiar de rol = iniciar sesión con el otro usuario demo y recibir un JWT nuevo.
+  // Antes solo cambiaba la vista en el navegador mientras el token seguía siendo
+  // del rol anterior (el backend respondía 403 a todo).
+  const handleChangeRole = async (newRole: 'patient' | 'clinician') => {
+    if (newRole === role) return;
+    setExams([]);
+    setIsProfileOpen(false);
+    await handleLogin(newRole);
+  };
+
   // Download official demo test PDF
   const handleDownloadDemoPdf = () => {
     window.open('/evaluacion-kinesiologica-FICTICIA.pdf', '_blank');
@@ -317,7 +329,7 @@ export function App() {
             onDownloadDemoPdf={handleDownloadDemoPdf}
             onValidateExam={handleValidateExam}
           />
-        ) : activeTab === 'exams' ? (
+        ) : (
           <ExamsView
             exams={exams}
             lang={lang}
@@ -327,15 +339,14 @@ export function App() {
             onConfirmExam={handleConfirmExam}
             onValidateExam={handleValidateExam}
           />
-        ) : (
-          <ChatView
-            exams={exams}
-            lang={lang}
-          />
         )}
       </main>
 
-      {/* 3. BOTTOM NAVIGATION BAR (Exámenes and Menú for Clinician; Exámenes, Chat, Menú for Patient) */}
+      {/* Chat simulado como burbuja flotante y arrastrable (solo paciente, como antes la pestaña).
+          100 % local: respuestas sintéticas fijas, sin llamadas a ningún LLM. */}
+      {role === 'patient' && <ChatBubble exams={exams} lang={lang} />}
+
+      {/* 3. NAVEGACIÓN: barra inferior en móvil, barra lateral en escritorio (solo CSS) */}
       <BottomNav
         activeTab={activeTab}
         onSelectTab={(tab) => setActiveTab(tab)}
@@ -361,7 +372,7 @@ export function App() {
         onClose={() => setIsProfileOpen(false)}
         lang={lang}
         role={role}
-        onChangeRole={(newRole) => setRole(newRole)}
+        onChangeRole={handleChangeRole}
         onLogout={handleLogout}
       />
 
