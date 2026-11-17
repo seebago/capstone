@@ -514,3 +514,26 @@ en el registro de aportes antes de integrarse.
 10. Registrar en CoreStream (equipo DEM_57) el avance a medida que se
     complete, no solo en este repositorio — recordar que CoreStream
     tendrá intermitencias hasta el lunes mediodía.
+
+## 17-18 de noviembre — seguridad de la app de Aron (`Wellq/`), rama `fix/seguridad-wellq-app-aron-2026-11-18`
+
+Solicitud de Vicente, a partir del diagnóstico de `ANALISIS_APP_ARON_DEVELOP_2026-11-17.md` (rama `docs/analisis-app-aron-defensa-2026-11-17`). Rama corta desde `origin/develop` (`3a95e61`); solo se tocó `Wellq/Front-end` y `Wellq/Back-end/src`, no `python-fastapi/` ni `wellq-base`. Sin merge a `develop` ni a `main`.
+
+- **Autenticación y RBAC:** `POST /api/auth/login` con 4 usuarios demo sintéticos (paciente/clínico de `clinic-alpha` y `clinic-beta`) devuelve JWT HS256 con `user_id`, `role`, `client_id`. `requireAuth` en todo `/api/exams` (401). Confirmar y subir: solo paciente; validar y revisar rangos: solo clínico (403). El actor sale del token, no del body. `JWT_SECRET` desde entorno (`.env.example` sin valores).
+- **Multi-tenancy:** `client_id` sale solo del JWT; `?client_id=` y el body se ignoran. `GET /:id`, `/:id/file`, confirm, validate y range-review devuelven 404 si el examen es de otro tenant; paciente solo ve y confirma lo suyo.
+- **Auditoría:** colección separada `audit_events` (quién, qué, cuándo, desde dónde, resultado), incluye rechazos y logins fallidos. Append-only **solo a nivel de aplicación**: no es inmutabilidad real (falta rol de BD solo-inserción, hash chain/WORM, outbox A-08) y hoy es fail-open. Documentado en `src/audit/auditLog.ts`. `exam.audit_trail` queda como historial visible de la UI.
+- **Higiene:** `Wellq/.gitignore`; 217 archivos de `dist/` fuera del índice (siguen en disco). El `.gitignore` raíz ya los cubría: entraron por subida web de GitHub, que no lo respeta. Lockfiles versionados.
+- **ChatView:** solo se agregó aviso visible "DEMO — sin validación clínica real" (ST-004/ST-032 siguen abiertos).
+
+**Probado:** `npm test` en `Wellq/Back-end` 13/13 (incluye "cliente A no puede acceder a datos del cliente B" en ambos sentidos, token adulterado, RBAC y auditoría). Humo contra MongoDB local real: aislamiento, flujo confirmar→validar y rechazo de update/delete en `audit_events`. Navegador: login paciente → listar → confirmar → subir (vía API desde la página) → login clínico → validar → aviso en chat.
+
+**No probado / bloqueos:**
+- **El frontend de `develop` no compila:** `components/BottomNav.tsx`, `types/index.ts` y `locales/translations.ts` nunca se versionaron (no existen en ninguna rama). La prueba de navegador usó stubs temporales fuera del repo. Aron debe subirlos antes de la práctica del sábado 21.
+- `components/BottomNavBar.tsx` contiene una copia del backend Express (commit `cf77868`), no un componente React. No se tocó; lo debe revisar Aron.
+- En macOS el puerto 5000 lo usa AirPlay Receiver: correr el backend con `PORT=5001` y el front con `VITE_API_TARGET=http://localhost:5001`.
+- El `node_modules` local copiado traía binarios de otra plataforma; usar `npm ci`.
+- Subida por el selector de archivos de la UI no se probó con clic (sí la misma llamada a la API).
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Claude (vía Vicente): login JWT demo, RBAC, multi-tenancy desde JWT, auditoría `audit_events`, higiene de `dist/`, aviso demo en chat, 13 pruebas | rama `fix/seguridad-wellq-app-aron-2026-11-18`, commits `c1e10c3`..`b978482`, `Wellq/Back-end/test/security.test.ts` | Pendiente integrante humano |
