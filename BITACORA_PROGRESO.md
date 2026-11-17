@@ -537,3 +537,52 @@ Solicitud de Vicente, a partir del diagnóstico de `ANALISIS_APP_ARON_DEVELOP_20
 | Aporte IA | Evidencia | Validación humana |
 |---|---|---|
 | Claude (vía Vicente): login JWT demo, RBAC, multi-tenancy desde JWT, auditoría `audit_events`, higiene de `dist/`, aviso demo en chat, 13 pruebas | rama `fix/seguridad-wellq-app-aron-2026-11-18`, commits `c1e10c3`..`b978482`, `Wellq/Back-end/test/security.test.ts` | Pendiente integrante humano |
+
+## 18 de noviembre — orden visual, responsive real, chat flotante y acceso directo por URL (`Wellq/`), rama `feature/ux-responsive-seguridad-2026-11-18`
+
+Solicitud de Vicente. Se rebaseó `fix/seguridad-wellq-app-aron-2026-11-18` sobre `origin/develop` (`b7dd9c3`), que ya trae `BottomNav.tsx`, `types/index.ts` y `locales/translations.ts` de Aron. **El bloqueo "el frontend no compila" de la entrada anterior queda resuelto.** El rebase fue limpio, sin conflictos. Los hashes de la entrada anterior cambiaron con el rebase; en esta rama los mismos commits van de `621b176` a `9d90baa`. Se agregó `Wellq/WORKLOG.md` para coordinar agentes: no había marcas `EN TRABAJO` previas.
+
+- **Orden visual:**
+  - "Subir" es la acción principal y la descarga demo pasa a secundaria.
+  - Se agregó un aviso de "próximo paso" (exámenes esperando confirmación o validación).
+  - La vista clínica muestra los KPIs arriba y "Revisar" como botón principal.
+  - En el perfil, las acciones de sesión van antes de la tarjeta informativa.
+  - Sin pantallas nuevas ni cambios de flujo.
+  - No se encontraron referencias públicas de la app WellQ de Alloxentric en internet. Se usó la identidad del repo: logo, paleta y tokens existentes.
+- **Responsive real (solo CSS):**
+  - Más de 1024px: barra lateral, contenido a todo el ancho, tabla con columnas ID y Revisión, archivos del clínico en grilla.
+  - Hasta 1024px: lo de antes (una columna y barra inferior).
+- **Chat como burbuja flotante:**
+  - `ChatBubble.tsx` es un ícono arrastrable que abre y cierra la ventana de chat.
+  - Sigue 100 % simulado, sin llamadas de red, con el aviso DEMO siempre visible.
+  - Solo para el rol paciente, igual que la pestaña anterior (decisión de Aron).
+- **Seguridad:**
+  - XSS almacenado: `file_data` sin validar + `document.write` en la vista clínica. Se arregló en backend y en frontend.
+  - El cambio de rol ahora pide un JWT nuevo.
+  - Ante un 401 se vacían los datos.
+  - `decision` y `reason` se validan.
+  - Se corrigió la ruta del PDF demo, que estaba en minúscula y fallaría en Linux.
+
+**Probado:**
+- `npm test` 21/21, con 8 pruebas nuevas de acceso directo por URL y validación de entrada.
+- `tsc` y `vite build` OK.
+- Curl contra el servidor: 401 sin token en `/exams`, `/demo-pdf` y `/:id/file`; el flujo subir → confirmar → validar funciona.
+- Navegador: escritorio y móvil, dark/light, es/en, chat (0 peticiones de red), cambio de rol, confirmar y validar desde la UI.
+- Detalle en `Wellq/INFORME_PRUEBAS_2026-11-18.md`.
+
+**No probado / pendiente:**
+- Subida con el selector de archivos de la UI.
+- "Descargar archivo" del clínico: el navegador integrado bloquea las ventanas emergentes.
+- Arrastre táctil en un celular real.
+- Esta ronda no se probó con MongoDB.
+- `npm run build` (`tsc -b`) falla por `src/components/tabs/*` de Aron, que no se usa. `vite build` y `npm run dev` funcionan.
+- Hallazgos sin arreglar que necesitan decisión del equipo:
+  - P1: no hay máquina de estados (el paciente puede "re-confirmar" un examen ya validado).
+  - P3: falta rate limit y helmet.
+  - P5: el chat tiene frases de orientación clínica.
+  - P6: el perfil demo usa el nombre real de Aron.
+
+| Aporte IA | Evidencia | Validación humana |
+|---|---|---|
+| Claude (vía Vicente): rebase sobre develop, WORKLOG, jerarquía visual, layout escritorio/móvil, chat flotante sin API, fix XSS almacenado y validaciones, cambio de rol con JWT, 8 pruebas nuevas, informe de pruebas | rama `feature/ux-responsive-seguridad-2026-11-18`, commits `b2cdd9e`..HEAD, `Wellq/INFORME_PRUEBAS_2026-11-18.md`, `Wellq/Back-end/test/security.test.ts` | Pendiente integrante humano |
+
