@@ -213,6 +213,81 @@ describe('auditoría separada (audit_events)', () => {
   });
 });
 
+describe('acceso directo por URL sin pasar por el login del frontend', () => {
+  // Simula pegar la URL en el navegador o usar curl: sin header Authorization.
+  async function raw(path: string, headers: Record<string, string> = {}) {
+    const r = await fetch(base + path, { headers });
+    return r.status;
+  }
+
+  test('GET directo a cualquier ruta de /api/exams sin token -> 401 (también rutas inexistentes)', async () => {
+    for (const p of [
+      '/api/exams',
+      '/api/exams/demo-pdf',
+      `/api/exams/${ALPHA_EXAM}`,
+      `/api/exams/${ALPHA_EXAM}/file`,
+      `/api/exams/${BETA_EXAM}/file`,
+      '/api/exams/no-existe',
+      '/api/exams/no-existe/file',
+      '/api/exams/?client_id=clinic-alpha',
+    ]) {
+      assert.equal(await raw(p), 401, p);
+    }
+  });
+
+  test('el token en la URL (?token=) no sirve: solo se acepta el header Bearer', async () => {
+    const token = await login('clinico.alpha');
+    assert.equal(await raw(`/api/exams?token=${token}`), 401);
+    assert.equal(await raw(`/api/exams/${ALPHA_EXAM}/file?access_token=${token}`), 401);
+    // Control positivo: con header sí funciona.
+    assert.equal(await raw(`/api/exams/${ALPHA_EXAM}/file`, { Authorization: `Bearer ${token}` }), 200);
+  });
+
+  test('headers mal formados, alg "none" y token vencido -> 401', async () => {
+    const token = await login('clinico.alpha');
+    assert.equal(await raw('/api/exams', { Authorization: token }), 401); // sin "Bearer"
+    assert.equal(await raw('/api/exams', { Authorization: 'Bearer ' }), 401);
+    assert.equal(await raw('/api/exams', { Authorization: 'Basic dXNlcjpwYXNz' }), 401);
+
+    const header = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url');
+    const body = Buffer.from(
+      JSON.stringify({ user_id: 'clinician-001', role: 'clinician', client_id: 'clinic-alpha', iss: 'wellq-demo' })
+    ).toString('base64url');
+    assert.equal(await raw('/api/exams', { Authorization: `Bearer ${header}.${body}.` }), 401);
+
+    const expired = jwt.sign(
+      { user_id: 'clinician-001', role: 'clinician', client_id: 'clinic-alpha' },
+      TEST_SECRET,
+      { algorithm: 'HS256', issuer: 'wellq-demo', expiresIn: -10 }
+    );
+    assert.equal(await raw('/api/exams', { Authorization: `Bearer ${expired}` }), 401);
+
+    const wrongIssuer = jwt.sign(
+      { user_id: 'clinician-001', role: 'clinician', client_id: 'clinic-alpha' },
+      TEST_SECRET,
+      { algorithm: 'HS256', issuer: 'otro-emisor' }
+    );
+    assert.equal(await raw('/api/exams', { Authorization: `Bearer ${wrongIssuer}` }), 401);
+  });
+
+  test('token válido pero con rol inventado -> 401', async () => {
+    const admin = jwt.sign({ user_id: 'x', role: 'admin', client_id: 'clinic-alpha' }, TEST_SECRET, {
+      algorithm: 'HS256',
+      issuer: 'wellq-demo',
+    });
+    assert.equal(await raw('/api/exams', { Authorization: `Bearer ${admin}` }), 401);
+  });
+
+  test('/demo-pdf y /:id/file respetan el tenant del token', async () => {
+    const beta = await login('clinico.beta');
+    // demo-pdf es un archivo sintético común: requiere sesión pero no es de ningún tenant.
+    const demo = await raw('/api/exams/demo-pdf', { Authorization: `Bearer ${beta}` });
+    assert.ok(demo === 200 || demo === 404, `demo-pdf con token: ${demo}`);
+    assert.equal(await raw(`/api/exams/${ALPHA_EXAM}/file`, { Authorization: `Bearer ${beta}` }), 404);
+    assert.equal(await raw(`/api/exams/${BETA_EXAM}/file`, { Authorization: `Bearer ${beta}` }), 200);
+  });
+});
+
 describe('validación de entrada (hallazgos 2026-11-18)', () => {
   test('subir HTML disfrazado de PDF -> 400 (evita XSS almacenado)', async () => {
     const token = await login('paciente.alpha');
