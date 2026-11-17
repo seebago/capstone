@@ -54,6 +54,29 @@ export const ExamsView: React.FC<ExamsViewProps> = ({
     return 'listo';
   };
 
+  // Estado del flujo de revisión (columna extra visible solo en escritorio).
+  const getWorkflowLabel = (exam: Exam): string => {
+    switch (exam.status) {
+      case 'awaiting_confirmation':
+        return t.statusAwaiting;
+      case 'confirmed_by_patient':
+        return t.statusConfirmed;
+      case 'clinically_validated':
+        return t.statusValidated;
+      case 'error':
+        return t.errorBadge;
+      case 'rejected':
+        return lang === 'en' ? 'Rejected' : 'Rechazado';
+      default:
+        return '—';
+    }
+  };
+
+  // Cuántos exámenes esperan una acción de quien está mirando (jerarquía: lo urgente primero).
+  const pendingActionCount = exams.filter((e) =>
+    role === 'patient' ? e.status === 'awaiting_confirmation' : e.status === 'confirmed_by_patient'
+  ).length;
+
   const filteredExams = exams.filter((exam) => {
     const category = getStatusCategory(exam);
     if (filter === 'all') return true;
@@ -69,22 +92,39 @@ export const ExamsView: React.FC<ExamsViewProps> = ({
           <p className="header-subtitle">{t.examsSubtitle}</p>
         </div>
 
+        {/* Acción principal primero y destacada; la descarga demo queda como secundaria. */}
         <div className="header-action-buttons">
           <button
-            className="btn-secondary"
+            className="btn-primary btn-primary-lg"
+            onClick={onOpenUpload}
+          >
+            {t.uploadButton}
+          </button>
+          <button
+            className="btn-link-subtle"
             onClick={onDownloadDemoPdf}
             title={t.downloadDemo}
           >
             {t.downloadDemo}
           </button>
-          <button
-            className="btn-primary"
-            onClick={onOpenUpload}
-          >
-            {t.uploadButton}
-          </button>
         </div>
       </div>
+
+      {/* Próximo paso: qué tiene que hacer la persona ahora */}
+      {pendingActionCount > 0 && (
+        <div className="next-step-callout" role="status">
+          <span className="next-step-icon" aria-hidden="true">👉</span>
+          <p>
+            {role === 'patient'
+              ? lang === 'en'
+                ? `${pendingActionCount} exam(s) are waiting for your confirmation. Open it, check the values and confirm.`
+                : `Tienes ${pendingActionCount} examen(es) esperando tu confirmación. Ábrelo, revisa los valores y confirma.`
+              : lang === 'en'
+              ? `${pendingActionCount} exam(s) confirmed by the patient are waiting for your validation.`
+              : `${pendingActionCount} examen(es) confirmados por el paciente esperan tu validación.`}
+          </p>
+        </div>
+      )}
 
       {/* Filter Tabs */}
       <div className="exams-filter-bar">
@@ -120,13 +160,15 @@ export const ExamsView: React.FC<ExamsViewProps> = ({
         <div className="exams-table-header">
           <div className="col-date">{t.colDate}</div>
           <div className="col-name">{t.colExamName}</div>
+          <div className="col-id desktop-only">ID</div>
+          <div className="col-workflow desktop-only">{lang === 'en' ? 'Review' : 'Revisión'}</div>
           <div className="col-status">{t.colStatus}</div>
         </div>
 
         {/* Table Body / Rows */}
         {filteredExams.length === 0 ? (
           <div className="empty-exams-state">
-            <p>No exams match the selected filter.</p>
+            <p>{lang === 'en' ? 'No exams match the selected filter.' : 'Ningún examen coincide con el filtro seleccionado.'}</p>
           </div>
         ) : (
           <div className="exams-table-rows">
@@ -149,6 +191,13 @@ export const ExamsView: React.FC<ExamsViewProps> = ({
                     onClick={() => toggleExpand(exam._id)}
                     role="button"
                     tabIndex={0}
+                    aria-expanded={isExpanded}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleExpand(exam._id);
+                      }
+                    }}
                   >
                     {/* Column 1: Date */}
                     <div className="col-date">
@@ -160,9 +209,18 @@ export const ExamsView: React.FC<ExamsViewProps> = ({
                       <strong className="exam-title-text">
                         {exam.document_name || exam.clinical_test_id}
                       </strong>
-                      <small className="exam-meta-sub">
+                      <small className="exam-meta-sub mobile-only">
                         ID: {exam.clinical_test_id} · Rev. {exam.revision}
                       </small>
+                    </div>
+
+                    {/* Columnas extra solo en escritorio */}
+                    <div className="col-id desktop-only">
+                      <code>{exam.clinical_test_id}</code>
+                      <small className="exam-meta-sub">Rev. {exam.revision}</small>
+                    </div>
+                    <div className="col-workflow desktop-only">
+                      <span className="workflow-text">{getWorkflowLabel(exam)}</span>
                     </div>
 
                     {/* Column 3: Status Badge */}

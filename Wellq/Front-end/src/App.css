@@ -3215,3 +3215,312 @@ h1, h2, h3, h4, h5, h6 {
   background: #fee2e2;
   border-color: #ef4444;
 }
+
+/* ==========================================================================
+   ORDEN VISUAL, ESCRITORIO Y CHAT FLOTANTE (2026-11-18)
+   Solo CSS para el layout: móvil = una columna + barra inferior (lo que ya
+   existía); escritorio (>1024px) = barra lateral + tabla con más columnas.
+   Mismos tokens de color, así dark/light siguen funcionando igual.
+   ========================================================================== */
+
+/* --- Jerarquía: acción principal y próximo paso --- */
+.btn-primary-lg {
+  padding: 0.8rem 1.7rem;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-link-subtle {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0.65rem 0.4rem;
+}
+
+.btn-link-subtle:hover {
+  color: var(--accent-cyan);
+}
+
+.header-action-buttons {
+  align-items: center;
+}
+
+.next-step-callout {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  background: var(--soft-cyan);
+  border: 1px solid var(--accent-cyan);
+  color: var(--text-main);
+}
+
+.next-step-callout p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.next-step-icon {
+  font-size: 1.15rem;
+}
+
+/* La confirmación del paciente es la acción clave de la fila: resaltarla. */
+.action-card.patient-action,
+.action-card.clinician-action {
+  border: 2px solid var(--accent-cyan);
+  background: var(--soft-cyan);
+}
+
+.role-switch-hint {
+  display: block;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  margin: -0.25rem 0 0.5rem;
+}
+
+.row-summary:focus-visible,
+.chat-fab:focus-visible,
+.bottom-nav-item:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* Columnas solo-escritorio / solo-móvil */
+.desktop-only {
+  display: none;
+}
+
+.col-id code {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.col-id {
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.workflow-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* --- Chat flotante (FAB) --- */
+.chat-fab {
+  position: fixed;
+  z-index: 90;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary-cyan);
+  color: var(--on-primary);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none; /* el arrastre con el dedo no hace scroll de la página */
+  user-select: none;
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+
+.chat-fab:hover {
+  background: var(--primary-cyan-hover);
+  transform: scale(1.05);
+}
+
+.chat-fab.dragging {
+  cursor: grabbing;
+  transform: scale(1.1);
+  transition: none;
+}
+
+.chat-fab-demo-tag {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-yellow);
+  color: #1d1d1d;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.chat-floating-panel {
+  position: fixed;
+  z-index: 95;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+}
+
+.chat-floating-panel[hidden] {
+  display: none;
+}
+
+.chat-floating-panel .chat-view-container {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  border-radius: 0;
+  border: none;
+}
+
+/* El aviso DEMO queda siempre visible, aunque se haga scroll de mensajes. */
+.chat-floating-panel .chat-demo-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.chat-floating-panel .chat-header {
+  padding-right: 3.5rem; /* espacio para el botón cerrar */
+}
+
+.chat-floating-close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: var(--raised-bg);
+  color: var(--text-main);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.chat-floating-close:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+/* --- Escritorio --- */
+@media (min-width: 1025px) {
+  .wellq-app-wrapper {
+    padding-bottom: 0;
+  }
+
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: flex;
+  }
+
+  /* Barra inferior -> barra lateral izquierda */
+  .bottom-nav-container {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: auto;
+    width: 220px;
+    height: auto;
+    padding: 88px 0.85rem 1.5rem;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0.35rem;
+    border-top: none;
+    border-right: 1px solid var(--nav-border);
+    box-shadow: none;
+    z-index: 30; /* debajo de la barra superior (40) */
+  }
+
+  .bottom-nav-item {
+    flex: 0 0 auto;
+    height: 48px;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    padding: 0 0.85rem;
+    border-radius: 10px;
+  }
+
+  .bottom-nav-item:hover {
+    background: var(--raised-bg);
+  }
+
+  .bottom-nav-item.active {
+    background: var(--soft-cyan);
+  }
+
+  .bottom-nav-item.active .nav-icon-wrapper {
+    background: transparent;
+    padding: 0;
+  }
+
+  .nav-item-label {
+    font-size: 0.92rem;
+  }
+
+  .wellq-main-layout,
+  .global-alert-banner {
+    margin-left: 220px;
+  }
+
+  .wellq-main-layout {
+    width: auto;
+    max-width: 1440px;
+    padding: 2rem 2.5rem 3rem;
+  }
+
+  /* Tabla de exámenes: 5 columnas */
+  .exams-table-header,
+  .row-summary {
+    grid-template-columns: 120px minmax(0, 2fr) minmax(0, 1.1fr) minmax(0, 1fr) 160px;
+    column-gap: 0.75rem;
+  }
+
+  .exams-table-header .desktop-only {
+    display: block;
+  }
+
+  /* Vista clínica: usa el ancho disponible */
+  .clinician-view-container {
+    max-width: none;
+  }
+
+  .exam-files-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .doc-card-action-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  /* Chat: ventana flotante en vez de pantalla completa */
+  .chat-floating-panel {
+    inset: auto 24px 24px auto;
+    width: 420px;
+    height: min(640px, calc(100vh - 110px));
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+/* Perfil: separar la tarjeta informativa de las acciones de sesión */
+.profile-modal-content .streak-goal-card {
+  margin-top: 1rem;
+}

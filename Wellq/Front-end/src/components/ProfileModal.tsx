@@ -73,7 +73,46 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
           </div>
         </div>
 
-        {/* Commitment & Stats Card */}
+        {/* Acciones de sesión primero (lo que la persona viene a hacer aquí) */}
+        <div className="role-switcher-section">
+          <label className="role-label">
+            {lang === 'en' ? 'Current Session Mode:' : 'Modo de Sesión Actual:'}
+          </label>
+          <small className="role-switch-hint">
+            {lang === 'en'
+              ? 'Switching role signs in again as the other demo user.'
+              : 'Cambiar de rol vuelve a iniciar sesión con el otro usuario demo.'}
+          </small>
+          <div className="role-button-group">
+            <button
+              className={`role-btn ${role === 'patient' ? 'active' : ''}`}
+              onClick={() => onChangeRole('patient')}
+            >
+              👤 {t.btnEnterPatient}
+            </button>
+            <button
+              className={`role-btn ${role === 'clinician' ? 'active' : ''}`}
+              onClick={() => onChangeRole('clinician')}
+            >
+              🩺 {t.btnEnterClinician}
+            </button>
+          </div>
+
+          {onLogout && (
+            <div className="logout-btn-container">
+              <button
+                className="btn-logout-session"
+                onClick={() => {
+                  onClose();
+                  onLogout();
+                }}
+              >
+                🚪 {t.btnLogout}
+              </button>
+            </div>
+          )}
+        </div>
+        {/* Información complementaria (sintética), después de las acciones */}
         {isClinician ? (
           <div className="streak-goal-card clinician-stats-card">
             <div className="streak-header">
@@ -132,40 +171,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
           </div>
         )}
 
-        {/* Action Buttons: Switch Profile & Change Role */}
-        <div className="role-switcher-section">
-          <label className="role-label">
-            {lang === 'en' ? 'Current Session Mode:' : 'Modo de Sesión Actual:'}
-          </label>
-          <div className="role-button-group">
-            <button
-              className={`role-btn ${role === 'patient' ? 'active' : ''}`}
-              onClick={() => onChangeRole('patient')}
-            >
-              👤 {t.btnEnterPatient}
-            </button>
-            <button
-              className={`role-btn ${role === 'clinician' ? 'active' : ''}`}
-              onClick={() => onChangeRole('clinician')}
-            >
-              🩺 {t.btnEnterClinician}
-            </button>
-          </div>
-
-          {onLogout && (
-            <div className="logout-btn-container">
-              <button
-                className="btn-logout-session"
-                onClick={() => {
-                  onClose();
-                  onLogout();
-                }}
-              >
-                🚪 {t.btnLogout}
-              </button>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
