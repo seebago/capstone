@@ -40,6 +40,22 @@ export const ClinicianView: React.FC<ClinicianViewProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
 
+  // Abre el documento en otra pestaña como Blob con su tipo real.
+  // Antes se hacía document.write con el data URL dentro de un <iframe>: un
+  // file_data manipulado podía inyectar HTML/JS en una ventana del mismo origen
+  // (XSS almacenado contra el clínico). Ahora solo se aceptan PDF/PNG/JPEG en base64.
+  const openDocumentSafely = (dataUrl: string) => {
+    const match = /^data:(application\/pdf|image\/png|image\/jpe?g);base64,([A-Za-z0-9+/=\s]+)$/.exec(dataUrl);
+    if (!match) {
+      window.alert(lang === 'en' ? 'Unsupported or invalid document.' : 'Documento no soportado o inválido.');
+      return;
+    }
+    const bytes = Uint8Array.from(atob(match[2].replace(/\s/g, '')), (c) => c.charCodeAt(0));
+    const url = URL.createObjectURL(new Blob([bytes], { type: match[1] }));
+    window.open(url, '_blank', 'noopener');
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  };
+
   // Toggle audit history expansion
   const toggleAudit = (examId: string) => {
     setExpandedAuditIds((prev) => ({
@@ -162,6 +178,26 @@ export const ClinicianView: React.FC<ClinicianViewProps> = ({
         </div>
       </div>
 
+      {/* KPIs primero: resumen de lo que requiere atención (jerarquía visual) */}
+      <section className="clinician-kpi-grid">
+        <div className="kpi-card">
+          <span className="kpi-label">{t.statVisibleExams}</span>
+          <span className="kpi-value">{totalVisible}</span>
+        </div>
+        <div className="kpi-card">
+          <span className="kpi-label">{t.statAwaitingPatient}</span>
+          <span className="kpi-value highlight-zero">{countAwaiting}</span>
+        </div>
+        <div className="kpi-card">
+          <span className="kpi-label">{t.statConfirmedByPatient}</span>
+          <span className="kpi-value highlight-zero">{countConfirmed}</span>
+        </div>
+        <div className="kpi-card">
+          <span className="kpi-label">{t.statClinicallyValidated}</span>
+          <span className="kpi-value highlight-cyan">{countValidated}</span>
+        </div>
+      </section>
+
       {/* Main Card: Archivos de examen (Images 2 & 3) */}
       <section className="clinician-card exam-files-card">
         <h2 className="clinician-card-title">{t.examFilesSection}</h2>
@@ -209,26 +245,23 @@ export const ClinicianView: React.FC<ClinicianViewProps> = ({
 
                 <div className="doc-card-action-buttons">
                   <button
+                    className="btn-card-review"
+                    onClick={() => handleOpenReview(exam)}
+                  >
+                    {t.btnReviewExam}
+                  </button>
+
+                  <button
                     className="btn-card-download"
                     onClick={() => {
                       if (exam.document_data) {
-                        const win = window.open();
-                        win?.document.write(
-                          `<iframe src="${exam.document_data}" frameborder="0" style="border:0; top:0; left:0; bottom:0; right:0; width:100%; height:100%;" allowfullscreen></iframe>`
-                        );
+                        openDocumentSafely(exam.document_data);
                       } else {
                         onDownloadDemoPdf();
                       }
                     }}
                   >
                     {t.btnDownloadFile}
-                  </button>
-
-                  <button
-                    className="btn-card-review"
-                    onClick={() => handleOpenReview(exam)}
-                  >
-                    {t.btnReviewExam}
                   </button>
                 </div>
 
@@ -298,26 +331,6 @@ export const ClinicianView: React.FC<ClinicianViewProps> = ({
               </div>
             );
           })}
-        </div>
-      </section>
-
-      {/* KPI Cards Grid (Image 4) */}
-      <section className="clinician-kpi-grid">
-        <div className="kpi-card">
-          <span className="kpi-label">{t.statVisibleExams}</span>
-          <span className="kpi-value">{totalVisible}</span>
-        </div>
-        <div className="kpi-card">
-          <span className="kpi-label">{t.statAwaitingPatient}</span>
-          <span className="kpi-value highlight-zero">{countAwaiting}</span>
-        </div>
-        <div className="kpi-card">
-          <span className="kpi-label">{t.statConfirmedByPatient}</span>
-          <span className="kpi-value highlight-zero">{countConfirmed}</span>
-        </div>
-        <div className="kpi-card">
-          <span className="kpi-label">{t.statClinicallyValidated}</span>
-          <span className="kpi-value highlight-cyan">{countValidated}</span>
         </div>
       </section>
 
