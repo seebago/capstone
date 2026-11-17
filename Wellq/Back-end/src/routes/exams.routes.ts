@@ -178,7 +178,92 @@ const memoryExams: any[] = [
     created_at: new Date(Date.now() - 86400000),
     updated_at: new Date(),
   },
+  // Tenant B sintético: existe para demostrar y probar el aislamiento entre clientes.
+  {
+    _id: 'mem-beta-1',
+    client_id: 'clinic-beta',
+    patient_id: 'patient-101',
+    clinical_test_id: 'DOC-BETA-2001',
+    document_name: 'hemograma-ficticio-beta.pdf',
+    document_type: 'application/pdf',
+    document_size: 2048,
+    document_data: demoPdfBase64,
+    status: 'awaiting_confirmation',
+    status_category: 'listo',
+    revision: 1,
+    proposal: [
+      { code: 'HB', name: 'Hemoglobina', value: 13.1, unit: 'g/dL', confidence: 0.99, reference_low: 12.0, reference_high: 16.0 },
+    ],
+    confirmed: [],
+    measurements: [],
+    identity_match: 'match',
+    identity_confirmed: false,
+    review_reason: '',
+    audit_trail: [
+      { action: 'upload_document', actor: 'patient-101', role: 'patient', timestamp: new Date().toISOString(), client_id: 'clinic-beta' },
+    ],
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
 ];
+
+type LoadedExam = { exam: any; persisted: boolean };
+
+/** Busca un examen por id en Mongo (si está activo) y si no en memoria. Sin filtrar tenant. */
+async function loadExam(id: string): Promise<LoadedExam | null> {
+  if (isMongoActive() && mongoose.isValidObjectId(id)) {
+    try {
+      const exam = await Exam.findById(id);
+      if (exam) return { exam, persisted: true };
+    } catch {
+      // fallback
+    }
+  }
+  const mem = memoryExams.find((e) => e._id === id || e.clinical_test_id === id);
+  return mem ? { exam: mem, persisted: false } : null;
+}
+
+/**
+ * Carga un examen SOLO si pertenece al tenant del JWT; si es paciente,
+ * además debe ser suyo. Responde y devuelve null si no corresponde:
+ * - otro tenant o inexistente -> 404 (no se revela que existe en otro cliente)
+ * - mismo tenant, paciente que no es dueño -> 403
+ */
+async function loadExamForCaller(req: Request, res: Response): Promise<LoadedExam | null> {
+  const auth = req.auth!;
+  const found = await loadExam(req.params.id);
+  if (!found || found.exam.client_id !== auth.client_id) {
+    res.status(404).json({ success: false, error: 'NOT_FOUND' });
+    return null;
+  }
+  if (auth.role === 'patient' && found.exam.patient_id !== auth.user_id) {
+    res.status(403).json({ success: false, error: 'FORBIDDEN_NOT_OWNER' });
+    return null;
+  }
+  return found;
+}
+
+/** Guarda el cambio (Mongo) o lo deja en memoria. Devuelve false si Mongo falla. */
+async function persist(found: LoadedExam): Promise<boolean> {
+  found.exam.updated_at = new Date();
+  if (!found.persisted) return true;
+  try {
+    await found.exam.save();
+    return true;
+  } catch (err) {
+    console.error('[Exams] Error al guardar en MongoDB:', (err as Error).message);
+    return false;
+  }
+}
+
+function persistFailed(res: Response) {
+  return res.status(500).json({ success: false, error: 'PERSISTENCE_FAILED' });
+}
+
+/** Solo para pruebas automatizadas: vista de solo lectura del almacenamiento en memoria. */
+export function __memoryExamsForTests(): readonly any[] {
+  return memoryExams;
+}
 
 // GET /api/exams/demo-pdf: Download the evaluation synthetic PDF directly
 examsRouter.get('/demo-pdf', (_req: Request, res: Response) => {
@@ -191,11 +276,16 @@ examsRouter.get('/demo-pdf', (_req: Request, res: Response) => {
 });
 
 // GET /api/exams
+// client_id sale del JWT verificado; cualquier ?client_id= del cliente se ignora.
+// Un paciente solo ve sus propios exámenes; un clínico, todos los de su tenant.
 examsRouter.get('/', async (req: Request, res: Response) => {
-  const clientId = (req.query.client_id as string) || 'clinic-alpha';
+  const { client_id: clientId, role, user_id } = req.auth!;
+  const belongs = (e: any) => e.client_id === clientId && (role !== 'patient' || e.patient_id === user_id);
   if (isMongoActive()) {
     try {
-      const exams = await Exam.find({ client_id: clientId }).sort({ created_at: -1 });
+      const query: Record<string, string> = { client_id: clientId };
+      if (role === 'patient') query.patient_id = user_id;
+      const exams = await Exam.find(query).sort({ created_at: -1 });
       if (exams.length > 0) {
         return res.json({ success: true, count: exams.length, data: exams });
       }
@@ -203,41 +293,22 @@ examsRouter.get('/', async (req: Request, res: Response) => {
       // fallback to memory
     }
   }
-  const filtered = memoryExams.filter((e) => e.client_id === clientId);
+  const filtered = memoryExams.filter(belongs);
   return res.json({ success: true, count: filtered.length, data: filtered, note: 'storage: local memory fallback' });
 });
 
-// GET /api/exams/:id
+// GET /api/exams/:id (filtrado por tenant y dueño)
 examsRouter.get('/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  if (isMongoActive()) {
-    try {
-      const exam = await Exam.findById(id);
-      if (exam) return res.json({ success: true, data: exam });
-    } catch {
-      // fallback
-    }
-  }
-  const mem = memoryExams.find((e) => e._id === id || e.clinical_test_id === id);
-  if (mem) return res.json({ success: true, data: mem });
-  return res.status(404).json({ success: false, error: 'NOT_FOUND' });
+  const found = await loadExamForCaller(req, res);
+  if (!found) return;
+  return res.json({ success: true, data: found.exam });
 });
 
-// GET /api/exams/:id/file (Download or stream raw document)
+// GET /api/exams/:id/file (Download or stream raw document; filtrado por tenant y dueño)
 examsRouter.get('/:id/file', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  let examData: any = null;
-
-  if (isMongoActive()) {
-    try {
-      examData = await Exam.findById(id);
-    } catch {
-      // fallback
-    }
-  }
-  if (!examData) {
-    examData = memoryExams.find((e) => e._id === id || e.clinical_test_id === id);
-  }
+  const found = await loadExamForCaller(req, res);
+  if (!found) return;
+  const examData = found.exam;
 
   if (!examData || !examData.document_data) {
     return res.status(404).json({ success: false, error: 'FILE_NOT_FOUND' });
@@ -396,25 +467,14 @@ examsRouter.post('/upload', requireRole('patient'), async (req: Request, res: Re
   return res.status(201).json({ success: true, data: mem, note: 'stored in local memory' });
 });
 
-// POST /api/exams/:id/range-review (Ejecutar revisión aritmética de rangos)
+// POST /api/exams/:id/range-review (Ejecutar revisión aritmética de rangos; solo clínico del mismo tenant)
 examsRouter.post('/:id/range-review', requireRole('clinician'), async (req: Request, res: Response) => {
-  const { id } = req.params;
   const actor = req.auth!.user_id;
   const { raw_text } = req.body;
 
-  let examData: any = null;
-  try {
-    examData = await Exam.findById(id);
-  } catch {
-    // fallback
-  }
-  if (!examData) {
-    examData = memoryExams.find((e) => e._id === id || e.clinical_test_id === id);
-  }
-
-  if (!examData) {
-    return res.status(404).json({ success: false, error: 'NOT_FOUND' });
-  }
+  const found = await loadExamForCaller(req, res);
+  if (!found) return;
+  const examData = found.exam;
 
   let measurements = examData.measurements || [];
   let outcome = 'read';
@@ -433,97 +493,51 @@ examsRouter.post('/:id/range-review', requireRole('clinician'), async (req: Requ
     requires_professional_review: true,
   };
 
-  const auditEntry = {
+  examData.range_review = reviewResult;
+  examData.measurements = measurements;
+  examData.audit_trail.push({
     action: 'document_range_review',
     actor,
     role: 'clinician',
     timestamp: new Date().toISOString(),
     client_id: examData.client_id,
     details: `Revisión aritmética completada (${measurements.length} mediciones comparadas)`,
-  };
-
-  try {
-    if (examData._id && examData.save) {
-      examData.range_review = reviewResult;
-      examData.measurements = measurements;
-      examData.audit_trail.push(auditEntry);
-      examData.updated_at = new Date();
-      await examData.save();
-      return res.json({ success: true, data: reviewResult });
-    }
-  } catch {
-    // fallback
-  }
-
-  examData.range_review = reviewResult;
-  examData.measurements = measurements;
-  examData.audit_trail.push(auditEntry);
-  examData.updated_at = new Date();
-  return res.json({ success: true, data: reviewResult, note: 'local memory fallback' });
+  });
+  if (!(await persist(found))) return persistFailed(res);
+  return res.json({ success: true, data: reviewResult });
 });
 
-// PATCH /api/exams/:id/confirm (Paciente confirma recepción y cotejo de identidad)
+// PATCH /api/exams/:id/confirm (Paciente confirma recepción y cotejo de identidad; solo SU examen)
 examsRouter.patch('/:id/confirm', requireRole('patient'), async (req: Request, res: Response) => {
-  const { id } = req.params;
   const actor = req.auth!.user_id;
   const { identity_confirmed = true, reason = '' } = req.body;
 
-  if (isMongoActive()) {
-    try {
-      const exam = await Exam.findById(id);
-      if (exam) {
-        exam.status = 'confirmed_by_patient';
-        exam.revision = (exam.revision || 1) + 1;
-        exam.confirmed = exam.proposal;
-        exam.confirmed_by = actor;
-        exam.confirmed_at = new Date().toISOString();
-        exam.identity_confirmed = Boolean(identity_confirmed);
-        exam.review_reason = reason;
-        exam.audit_trail.push({
-          action: 'document_confirm',
-          actor,
-          role: 'patient',
-          timestamp: new Date().toISOString(),
-          client_id: exam.client_id,
-          reason,
-          details: 'Paciente confirmó correspondencia del documento y valores recibidos',
-        });
-        exam.updated_at = new Date();
-        await exam.save();
-        return res.json({ success: true, data: exam });
-      }
-    } catch {
-      // fallback
-    }
-  }
+  const found = await loadExamForCaller(req, res);
+  if (!found) return;
+  const exam = found.exam;
 
-  const mem = memoryExams.find((e) => e._id === id || e.clinical_test_id === id);
-  if (!mem) return res.status(404).json({ success: false, error: 'Examen no encontrado' });
-
-  mem.status = 'confirmed_by_patient';
-  mem.revision = (mem.revision || 1) + 1;
-  mem.confirmed = mem.proposal;
-  mem.confirmed_by = actor;
-  mem.confirmed_at = new Date().toISOString();
-  mem.identity_confirmed = Boolean(identity_confirmed);
-  mem.review_reason = reason;
-  mem.audit_trail.push({
+  exam.status = 'confirmed_by_patient';
+  exam.revision = (exam.revision || 1) + 1;
+  exam.confirmed = exam.proposal;
+  exam.confirmed_by = actor;
+  exam.confirmed_at = new Date().toISOString();
+  exam.identity_confirmed = Boolean(identity_confirmed);
+  exam.review_reason = reason;
+  exam.audit_trail.push({
     action: 'document_confirm',
     actor,
     role: 'patient',
     timestamp: new Date().toISOString(),
-    client_id: mem.client_id,
+    client_id: exam.client_id,
     reason,
     details: 'Paciente confirmó correspondencia del documento y valores recibidos',
   });
-  mem.updated_at = new Date();
-
-  return res.json({ success: true, data: mem });
+  if (!(await persist(found))) return persistFailed(res);
+  return res.json({ success: true, data: exam });
 });
 
-// PATCH /api/exams/:id/validate (Profesional valida, rechaza o marca con error)
+// PATCH /api/exams/:id/validate (Profesional valida, rechaza o marca con error; solo clínico del mismo tenant)
 examsRouter.patch('/:id/validate', requireRole('clinician'), async (req: Request, res: Response) => {
-  const { id } = req.params;
   const actor = req.auth!.user_id;
   const { decision = 'validate', reason = '' } = req.body;
 
@@ -545,51 +559,24 @@ examsRouter.patch('/:id/validate', requireRole('clinician'), async (req: Request
     actionName = 'document_reject';
   }
 
-  if (isMongoActive()) {
-    try {
-      const exam = await Exam.findById(id);
-      if (exam) {
-        exam.status = nextStatus;
-        exam.revision = (exam.revision || 1) + 1;
-        exam.validated_by = actor;
-        exam.validated_at = new Date().toISOString();
-        exam.review_reason = reason;
-        exam.audit_trail.push({
-          action: actionName,
-          actor,
-          role: 'clinician',
-          timestamp: new Date().toISOString(),
-          client_id: exam.client_id,
-          reason,
-          details: `Decisión del profesional clínico: ${actionName}`,
-        });
-        exam.updated_at = new Date();
-        await exam.save();
-        return res.json({ success: true, data: exam });
-      }
-    } catch {
-      // fallback
-    }
-  }
+  const found = await loadExamForCaller(req, res);
+  if (!found) return;
+  const exam = found.exam;
 
-  const mem = memoryExams.find((e) => e._id === id || e.clinical_test_id === id);
-  if (!mem) return res.status(404).json({ success: false, error: 'Examen no encontrado' });
-
-  mem.status = nextStatus;
-  mem.revision = (mem.revision || 1) + 1;
-  mem.validated_by = actor;
-  mem.validated_at = new Date().toISOString();
-  mem.review_reason = reason;
-  mem.audit_trail.push({
+  exam.status = nextStatus;
+  exam.revision = (exam.revision || 1) + 1;
+  exam.validated_by = actor;
+  exam.validated_at = new Date().toISOString();
+  exam.review_reason = reason;
+  exam.audit_trail.push({
     action: actionName,
     actor,
     role: 'clinician',
     timestamp: new Date().toISOString(),
-    client_id: mem.client_id,
+    client_id: exam.client_id,
     reason,
     details: `Decisión del profesional clínico: ${actionName}`,
   });
-  mem.updated_at = new Date();
-
-  return res.json({ success: true, data: mem });
+  if (!(await persist(found))) return persistFailed(res);
+  return res.json({ success: true, data: exam });
 });
