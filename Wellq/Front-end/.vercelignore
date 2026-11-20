@@ -1,0 +1,4 @@
+# No subir a Vercel: secretos locales y copias estáticas antiguas
+.env
+.env.*
+legacy-static/

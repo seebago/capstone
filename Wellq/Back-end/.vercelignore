@@ -1,0 +1,6 @@
+# No subir a Vercel: backend FastAPI de otro integrante, pruebas y secretos locales
+python-fastapi/
+test/
+.env
+.env.*
+!.env.example
