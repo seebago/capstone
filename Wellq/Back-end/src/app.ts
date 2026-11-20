@@ -12,8 +12,14 @@ export function createApp() {
   const app = express();
 
   // Middlewares
-  // Autenticación por header Bearer (no cookies), por eso CORS abierto no expone sesión.
-  app.use(cors({ origin: '*' }));
+  // Autenticación por header Bearer (no cookies): CORS no expone sesión, pero en
+  // despliegue se restringe a los orígenes del frontend con CORS_ORIGINS
+  // (lista separada por comas). Sin la variable (desarrollo local) queda abierto.
+  const allowedOrigins = (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+  app.use(cors({ origin: allowedOrigins.length > 0 ? allowedOrigins : '*' }));
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

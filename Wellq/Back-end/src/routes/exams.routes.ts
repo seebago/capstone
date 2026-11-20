@@ -33,11 +33,14 @@ const act = (name: string) => (_req: Request, res: Response, next: () => void) =
   next();
 };
 
-// Locate the evaluation synthetic PDF fixture
-const DEMO_PDF_PATH = path.resolve(
-  __dirname,
-  '../../../Front-end/public/evaluacion-kinesiologica-FICTICIA.pdf'
-);
+// PDF sintético de demo. Primero la copia del propio backend (Back-end/assets),
+// que es la que existe cuando el backend se despliega solo (Vercel); si no, la
+// del frontend (desarrollo local en el monorepo).
+const DEMO_PDF_CANDIDATES = [
+  path.resolve(__dirname, '../../assets/evaluacion-kinesiologica-FICTICIA.pdf'),
+  path.resolve(__dirname, '../../../Front-end/public/evaluacion-kinesiologica-FICTICIA.pdf'),
+];
+const DEMO_PDF_PATH = DEMO_PDF_CANDIDATES.find((p) => fs.existsSync(p)) ?? DEMO_PDF_CANDIDATES[0];
 
 let demoPdfBase64 = '';
 try {
