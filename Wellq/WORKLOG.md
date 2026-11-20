@@ -70,7 +70,7 @@ Para otras IAs:
 
 ## 2026-11-19 — Claude (Opus 5.5) — despliegue en Vercel (misma rama `feature/ux-responsive-seguridad-2026-11-18`)
 
-Estado: **DESPLEGADO**, con persistencia **pendiente**: falta MongoDB Atlas (ver "Riesgo" más abajo).
+Estado: **DESPLEGADO**. Persistencia en MongoDB Atlas conectada el 2026-11-19 (ver la actualización al final).
 
 | Qué | URL pública | Proyecto Vercel (cuenta `vicentelopezhandres-7712`) |
 |---|---|---|
@@ -95,7 +95,7 @@ Estado: **DESPLEGADO**, con persistencia **pendiente**: falta MongoDB Atlas (ver
   | `CORS_ORIGINS` | plain | Configurada |
   | `SEED_DEMO_DATA` | plain | Configurada |
   | `MONGODB_TIMEOUT_MS` | plain | Configurada |
-  | `MONGODB_URI` | sensitive | **Falta** |
+  | `MONGODB_URI` | sensitive | Configurada (creada por la integración de Atlas) |
 
   Ningún secreto está en el repo.
 - **Despliegue:** se hace con la CLI, sin integración Git, porque el repo es de otra cuenta de GitHub. Para redesplegar:
@@ -124,3 +124,23 @@ Estado: **DESPLEGADO**, con persistencia **pendiente**: falta MongoDB Atlas (ver
 - **Siembra en Mongo:** probada en local con un `mongod` y dos procesos separados que simulan dos instancias. Los 5 exámenes sintéticos quedaron sembrados; lo confirmado en una instancia se ve y se valida en la otra.
 
 **Riesgo (sin `MONGODB_URI`):** el backend está en modo memoria. Cada instancia serverless tiene su propia copia de los datos sintéticos. Medido: tras una ráfaga de 20 peticiones concurrentes, 18 vieron el estado inicial y no el validado. Con Atlas configurado este riesgo desaparece.
+
+### Actualización 2026-11-19 (noche): MongoDB Atlas conectado
+
+- Vicente conectó **MongoDB Atlas** (plan Free, `iad1`) a `wellq-api` mediante la integración de Vercel, que creó `MONGODB_URI` (sensitive) en Production y Preview. Se verificó solo que la variable existe, sin leer su valor.
+- Al redesplegar, el primer arranque sembró los 5 exámenes sintéticos en Atlas (log `[Seed]`, una sola vez). El backend ya no usa el modo memoria: los ids son ObjectId de Mongo.
+- **Flujo en navegador** contra https://wellq-app-xi.vercel.app: login paciente → confirmar (200) → cambiar a clínico → validar (200) → "Validados 1". Todo quedó guardado en Atlas.
+- **Prueba de concurrencia** (la que antes falló con 18 de 20 peticiones viendo el estado inicial): **20/20 y luego 50/50** peticiones simultáneas ven el mismo estado (`clinically_validated`).
+- **Aislamiento y datos:**
+  - Alpha ve 4 exámenes, sin duplicados de la siembra; beta ve 1, solo de `clinic-beta`.
+  - Beta leyendo un examen de alpha recibe 404; sin token, 401.
+  - Sin errores ni warnings en los logs.
+- **Protección DDoS de Vercel:** tras más de 70 peticiones en segundos desde una misma IP, Vercel respondió `403 Security Checkpoint` (`x-vercel-mitigated: challenge`, `retry-after: 30`). No viene de la app y se libera solo. El uso normal de la demo no lo activa. **No hagas pruebas de carga contra estas URLs el día de la presentación.**
+- **Reset del estado demo:**
+
+  ```bash
+  cd Wellq/Back-end && MONGODB_URI='<URI de Atlas>' npm run reset-demo -- --yes
+  ```
+
+  Deja los 5 exámenes sintéticos como al inicio, solo de `clinic-alpha` y `clinic-beta`, y no toca `audit_events`. La URI se copia desde Vercel → Storage → MongoDB Atlas (o desde Atlas → Connect); no va al repo. Probado en local.
+- Tras estas pruebas, **el examen de kinesiología quedó validado en Atlas**. Antes de presentar hay que correr el reset, o usar el flujo "subir examen", que crea uno nuevo en `Por confirmar`.
