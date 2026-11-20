@@ -274,6 +274,15 @@ function persistFailed(res: Response) {
   return res.status(500).json({ success: false, error: 'PERSISTENCE_FAILED' });
 }
 
+// Copia inmutable de los exámenes sintéticos tal como arrancan (antes de cualquier acción),
+// para sembrar MongoDB en despliegues (ver src/config/seedDemo.ts).
+const SEED_SNAPSHOT: any[] = JSON.parse(JSON.stringify(memoryExams));
+
+/** Exámenes sintéticos iniciales, sin los _id 'mem-*' (Mongo asigna ObjectId). */
+export function syntheticSeedExams(): any[] {
+  return SEED_SNAPSHOT.map(({ _id, ...rest }) => JSON.parse(JSON.stringify(rest)));
+}
+
 /** Solo para pruebas automatizadas: vista de solo lectura del almacenamiento en memoria. */
 export function __memoryExamsForTests(): readonly any[] {
   return memoryExams;

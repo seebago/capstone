@@ -5,9 +5,11 @@ export async function connectDB(): Promise<void> {
   try {
     mongoose.set('bufferCommands', false);
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 1500,
+      // 1,5 s en local (si no hay Mongo, pasa rápido a memoria); en Vercel/Atlas
+      // conviene más margen para el primer arranque: MONGODB_TIMEOUT_MS.
+      serverSelectionTimeoutMS: Number(process.env.MONGODB_TIMEOUT_MS) || 1500,
     });
-    console.log(`[MongoDB] Conectado exitosamente a: ${uri}`);
+    console.log('[MongoDB] Conectado exitosamente.'); // sin imprimir la URI: puede traer credenciales
   } catch (error) {
     console.warn('[MongoDB] Aviso: No se pudo conectar a MongoDB local/remoto.');
     console.warn('[MongoDB] Error:', (error as Error).message);
