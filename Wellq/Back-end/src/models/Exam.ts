@@ -25,7 +25,21 @@ export interface IExam extends Document {
   client_id: string; // Tenant isolation (e.g., clinic-alpha, clinic-beta)
   patient_id: string;
   clinical_test_id: string;
-  status: 'awaiting_confirmation' | 'confirmed_by_patient' | 'clinically_validated' | 'rejected' | 'error';
+  // Alineado con ExamStatus del frontend (Front-end/src/types/index.ts) y con los
+  // datos sintéticos del modo memoria: antes 'pendiente'/'no_realizado' no se podían guardar en Mongo.
+  status:
+    | 'listo'
+    | 'pendiente'
+    | 'no_realizado'
+    | 'awaiting_confirmation'
+    | 'confirmed_by_patient'
+    | 'clinically_validated'
+    | 'rejected'
+    | 'error';
+  status_category?: 'listo' | 'pendiente' | 'no_realizado';
+  estimated_time?: string;
+  scheduled_date?: string;
+  preparation_notes?: string;
   revision: number;
   document_name?: string;
   document_type?: string;
@@ -94,9 +108,23 @@ const ExamSchema = new Schema<IExam>({
   clinical_test_id: { type: String, required: true, unique: true },
   status: {
     type: String,
-    enum: ['awaiting_confirmation', 'confirmed_by_patient', 'clinically_validated', 'rejected', 'error'],
+    enum: [
+      'listo',
+      'pendiente',
+      'no_realizado',
+      'awaiting_confirmation',
+      'confirmed_by_patient',
+      'clinically_validated',
+      'rejected',
+      'error',
+    ],
     default: 'awaiting_confirmation',
   },
+  // Campos que la interfaz usa para los filtros Listos / Pendientes / No realizados.
+  status_category: { type: String, enum: ['listo', 'pendiente', 'no_realizado'] },
+  estimated_time: String,
+  scheduled_date: String,
+  preparation_notes: String,
   revision: { type: Number, default: 1 },
   document_name: String,
   document_type: String,
