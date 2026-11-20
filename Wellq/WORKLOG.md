@@ -65,3 +65,62 @@ Estado: **TERMINADO**. Seis ajustes de layout reportados al probar la app. Solo 
 Para otras IAs:
 - El breakpoint de escritorio es `min-width: 1025px` en todo el CSS y en `ChatBubble`. Si se cambia, cámbialo en los dos lados.
 - `--topbar-h` debe coincidir con el alto real de `.topbar-container`, que hoy mide unos 70px.
+
+---
+
+## 2026-11-19 — Claude (Opus 5.5) — despliegue en Vercel (misma rama `feature/ux-responsive-seguridad-2026-11-18`)
+
+Estado: **DESPLEGADO**, con persistencia **pendiente**: falta MongoDB Atlas (ver "Riesgo" más abajo).
+
+| Qué | URL pública | Proyecto Vercel (cuenta `vicentelopezhandres-7712`) |
+|---|---|---|
+| Frontend (React + Vite) | https://wellq-app-xi.vercel.app | `wellq-app` (raíz `Wellq/Front-end`) |
+| Backend (Express) | https://wellq-api.vercel.app (`/api/health`) | `wellq-api` (raíz `Wellq/Back-end`) |
+
+**Cómo quedó:**
+- **Backend:**
+  - `Back-end/api/index.ts` es una Vercel Function que envuelve `createApp()` sin cambiar la lógica.
+  - Espera la conexión a MongoDB antes de atender y siembra los exámenes sintéticos si `SEED_DEMO_DATA=1` y la colección está vacía.
+  - `vercel.json` manda todas las rutas a esa función.
+  - El PDF demo tiene una copia en `Back-end/assets/`.
+- **Frontend:**
+  - `vercel.json` con `vite build`. `tsc -b` falla por `src/components/tabs/*`, que no se usa.
+  - Un rewrite envía `/api/*` a `https://wellq-api.vercel.app`, igual que el proxy de Vite en desarrollo, así que el código React no cambió.
+  - CORS del backend restringido a `https://wellq-app-xi.vercel.app` con `CORS_ORIGINS`.
+- **Variables en Vercel (`wellq-api`), solo nombres:**
+
+  | Variable | Tipo | Estado |
+  |---|---|---|
+  | `JWT_SECRET` | sensitive | Configurada |
+  | `CORS_ORIGINS` | plain | Configurada |
+  | `SEED_DEMO_DATA` | plain | Configurada |
+  | `MONGODB_TIMEOUT_MS` | plain | Configurada |
+  | `MONGODB_URI` | sensitive | **Falta** |
+
+  Ningún secreto está en el repo.
+- **Despliegue:** se hace con la CLI, sin integración Git, porque el repo es de otra cuenta de GitHub. Para redesplegar:
+
+  ```bash
+  cd Wellq/Back-end && npx vercel@latest deploy --prod
+  ```
+
+  ```bash
+  cd Wellq/Front-end && npx vercel@latest deploy --prod
+  ```
+
+  Hace falta `npx vercel login` con la cuenta de Vicente. `.vercel/` es local y está ignorado.
+- **Arreglos necesarios para desplegar:**
+  - El modelo `Exam` de Mongo no aceptaba `pendiente`/`no_realizado` ni `status_category`, que usa la UI.
+  - `db.ts` imprimía la URI de conexión, que puede traer credenciales.
+  - El título de la pestaña era "temp-vite".
+
+**Probado contra las URLs públicas:**
+- **Navegador:** login paciente → listar → confirmar (200) → chat (aviso DEMO) → cambiar a clínico → validar (200).
+- **curl:**
+  - 401 sin token en `/api/exams`, `/demo-pdf` y `/:id/file`.
+  - 404 entre tenants y 403 cuando el paciente intenta validar.
+  - CORS rechaza otros orígenes.
+  - Subir un PDF da 201.
+- **Siembra en Mongo:** probada en local con un `mongod` y dos procesos separados que simulan dos instancias. Los 5 exámenes sintéticos quedaron sembrados; lo confirmado en una instancia se ve y se valida en la otra.
+
+**Riesgo (sin `MONGODB_URI`):** el backend está en modo memoria. Cada instancia serverless tiene su propia copia de los datos sintéticos. Medido: tras una ráfaga de 20 peticiones concurrentes, 18 vieron el estado inicial y no el validado. Con Atlas configurado este riesgo desaparece.
